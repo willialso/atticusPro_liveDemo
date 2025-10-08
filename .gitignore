@@ -1,32 +1,6 @@
-# Python
-__pycache__/
-*.py[cod]
-*.class
-*.so
-.Python
 venv/
-ENV/
-env/
-
-# Environment variables
+venv_clean/
+__pycache__/
+*.pyc
 .env
-
-# IDE
-.vscode/
-.idea/
-
-# OS
 .DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Test coverage
-.coverage
-htmlcov/
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/

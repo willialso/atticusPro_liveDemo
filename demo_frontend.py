@@ -3,29 +3,8 @@ ATTICUS PROFESSIONAL - Working Version
 Using Streamlit-native approaches that actually work
 """
 import streamlit as st
-import sys
-import os
 import time
 import random
-
-# Fix import paths
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-sys.path.insert(0, os.path.join(current_dir, 'btc_platform'))
-
-try:
-    from btc_platform.core.portfolio.realistic_portfolio_generator import RealisticPortfolioGenerator
-    from btc_platform.core.strategies.integrated_strategy_engine import IntegratedStrategyEngine
-    from btc_platform.core.exchanges.coinbase_client import CoinbaseClient
-except ImportError:
-    try:
-        sys.path.append('./btc_platform')
-        from core.portfolio.realistic_portfolio_generator import RealisticPortfolioGenerator
-        from core.strategies.integrated_strategy_engine import IntegratedStrategyEngine
-        from core.exchanges.coinbase_client import CoinbaseClient
-    except ImportError:
-        st.error("❌ Platform modules not found. Make sure btc_platform directory exists.")
-        st.stop()
 
 # Page config
 st.set_page_config(
@@ -35,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# WORKING CSS - Only what Streamlit actually supports
+# WORKING CSS
 st.markdown("""
 <style>
     .stApp {
@@ -43,7 +22,6 @@ st.markdown("""
         color: #f1f5f9 !important;
     }
     
-    /* Only target elements that can actually be styled */
     .main-header {
         text-align: center;
         margin: 2rem 0 3rem 0;
@@ -120,36 +98,12 @@ if 'demo_step' not in st.session_state:
     st.session_state.portfolio = None
     st.session_state.strategies = None
     st.session_state.selected_strategy = None
-    st.session_state.execution_data = None
     st.session_state.custom_positions = []
-    st.session_state.portfolio_source = None
-
-# WORKING FUNCTIONS
-def get_real_btc_price():
-    try:
-        coinbase = CoinbaseClient()
-        return coinbase.get_real_btc_price()
-    except:
-        return 121425
-
-def determine_position_type(portfolio):
-    net_btc = portfolio.get('net_btc_exposure', 0)
-    if net_btc > 5:
-        return 'long'
-    elif net_btc < -5:
-        return 'short'
-    else:
-        return 'mixed'
-
-def custom_selectbox(label, options, key):
-    """WORKING dropdown replacement"""
-    st.markdown(f"**{label}**")
-    return st.radio("", options, key=key, horizontal=True, label_visibility="collapsed")
 
 def show_top_disclaimer():
     st.markdown("""
     <div class="top-disclaimer">
-        <p><strong>Live Demo Platform</strong> • Portfolio positions are representative models based on institutional allocations • All strategies and premiums utilize real-time executable pricing from institutional exchanges</p>
+        <p><strong>Live Demo Platform</strong> • Portfolio positions are representative models • All strategies utilize real-time executable pricing</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -175,23 +129,20 @@ def screen_1_portfolio():
         </div>
         """, unsafe_allow_html=True)
         
-        # WORKING dropdown replacement
-        fund_type = custom_selectbox(
-            "Institution Type:", 
+        fund_type = st.radio(
+            "Institution Type:",
             ["Small Crypto Fund ($20-50M AUM)", "Mid-Cap Fund ($50-200M AUM)"],
-            key="fund_type_select"
+            horizontal=True
         )
         
         if st.button("🎯 Generate Institutional Portfolio", type="primary", use_container_width=True):
             with st.spinner("Generating institutional portfolio..."):
-                # Simplified portfolio generation for demo
-                current_btc_price = get_real_btc_price()
+                current_btc_price = 121425
                 if "Small" in fund_type:
                     portfolio = {
                         'aum': 38000000,
                         'total_btc_size': 162.4,
                         'net_btc_exposure': 162.4,
-                        'gross_btc_exposure': 162.4,
                         'total_current_value': 162.4 * current_btc_price,
                         'total_pnl': 1700000,
                         'current_btc_price': current_btc_price
@@ -201,7 +152,6 @@ def screen_1_portfolio():
                         'aum': 128000000,
                         'total_btc_size': 425.7,
                         'net_btc_exposure': 425.7,
-                        'gross_btc_exposure': 425.7,
                         'total_current_value': 425.7 * current_btc_price,
                         'total_pnl': 3200000,
                         'current_btc_price': current_btc_price
@@ -211,8 +161,7 @@ def screen_1_portfolio():
                 st.session_state.portfolio_source = 'generated'
                 st.rerun()
         
-        # Show portfolio if generated
-        if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
+        if st.session_state.portfolio and st.session_state.get('portfolio_source') == 'generated':
             portfolio = st.session_state.portfolio
             st.success("✅ Institutional Portfolio Generated")
             
@@ -235,25 +184,21 @@ def screen_1_portfolio():
         </div>
         """, unsafe_allow_html=True)
         
-        # Custom position entry
-        with st.form("position_entry", clear_on_submit=False):
+        with st.form("position_entry"):
             col1, col2, col3 = st.columns([2, 1, 1])
             
             with col1:
-                btc_amount = st.number_input("BTC Amount", min_value=0.1, max_value=1000.0, value=50.0, step=0.1)
+                btc_amount = st.number_input("BTC Amount", min_value=0.1, value=50.0, step=0.1)
             with col2:
-                # WORKING dropdown replacement
-                position_type = st.radio("Position", ["Long", "Short"], horizontal=True, label_visibility="visible")
+                position_type = st.radio("Position", ["Long", "Short"], horizontal=True)
             with col3:
                 st.write("")
                 add_position = st.form_submit_button("Add Position", type="primary")
         
         if add_position and btc_amount > 0:
-            new_position = {'btc_amount': btc_amount, 'position_type': position_type}
-            st.session_state.custom_positions.append(new_position)
+            st.session_state.custom_positions.append({'btc_amount': btc_amount, 'position_type': position_type})
             st.rerun()
         
-        # Show positions
         if st.session_state.custom_positions:
             st.markdown("**📋 Current Positions**")
             
@@ -268,7 +213,7 @@ def screen_1_portfolio():
                     color = "🟢" if pos['position_type'] == 'Long' else "🔴"
                     st.write(f"{color} {pos['position_type']}")
                 with col3:
-                    if st.button("Remove", key=f"remove_{i}", type="secondary"):
+                    if st.button("Remove", key=f"remove_{i}"):
                         st.session_state.custom_positions.pop(i)
                         st.rerun()
             
@@ -280,22 +225,19 @@ def screen_1_portfolio():
             with col3:
                 st.metric("Net BTC", f"{total_long - total_short:+.1f}")
             
-            # Create custom portfolio
-            net_btc = total_long - total_short
-            current_btc_price = get_real_btc_price()
-            custom_portfolio = {
-                'aum': abs(net_btc) * current_btc_price * 2,
-                'total_btc_size': abs(net_btc),
-                'net_btc_exposure': net_btc,
-                'gross_btc_exposure': total_long + total_short,
-                'total_current_value': (total_long + total_short) * current_btc_price,
-                'total_pnl': abs(net_btc) * current_btc_price * 0.08,
-                'current_btc_price': current_btc_price
-            }
-            st.session_state.portfolio = custom_portfolio
-            st.session_state.portfolio_source = 'custom'
-            
             if st.button("⚡ Analyze Custom Positions", type="primary", use_container_width=True):
+                net_btc = total_long - total_short
+                current_btc_price = 121425
+                custom_portfolio = {
+                    'aum': abs(net_btc) * current_btc_price * 2,
+                    'total_btc_size': abs(net_btc),
+                    'net_btc_exposure': net_btc,
+                    'total_current_value': (total_long + total_short) * current_btc_price,
+                    'total_pnl': abs(net_btc) * current_btc_price * 0.08,
+                    'current_btc_price': current_btc_price
+                }
+                st.session_state.portfolio = custom_portfolio
+                st.session_state.portfolio_source = 'custom'
                 st.session_state.demo_step = 2
                 st.rerun()
 
@@ -309,70 +251,58 @@ def screen_2_strategies():
     
     portfolio = st.session_state.portfolio
     net_btc = portfolio.get('net_btc_exposure', 0)
-    position_type = determine_position_type(portfolio)
-    current_btc_price = portfolio.get('current_btc_price', get_real_btc_price())
+    current_btc_price = portfolio.get('current_btc_price', 121425)
     
-    st.info(f"📊 Analyzing: **{st.session_state.portfolio_source.title()} Portfolio** | {position_type.title()} {abs(net_btc):.1f} BTC | BTC: ${current_btc_price:,.2f}")
+    st.info(f"📊 Analyzing Portfolio | {abs(net_btc):.1f} BTC | BTC: ${current_btc_price:,.2f}")
     st.markdown(f"### Protection Strategies for {abs(net_btc):.1f} BTC Position")
     
-    # WORKING strategy display using st.empty()
-    strategy_container = st.empty()
-    
     if not st.session_state.strategies:
-        with st.spinner("Generating strategies... (Est. 60-90 seconds)"):
-            time.sleep(3)  # Simulate processing
+        with st.spinner("Generating strategies... (Est. 60 seconds)"):
+            time.sleep(3)
             
-            # Generate simplified strategies for demo
-            strategies = [
-                {
-                    'strategy_name': 'protective_put' if position_type == 'long' else 'protective_call',
-                    'target_exposure': abs(net_btc),
-                    'priority': 'high',
-                    'rationale': f'Protect {abs(net_btc):.1f} BTC {"long" if position_type == "long" else "short"} position',
-                    'pricing': {
-                        'client_pricing': {
-                            'total_premium': abs(net_btc) * current_btc_price * 0.025,
-                            'cost_as_pct_of_position': 2.5,
-                            'days_to_expiry': 7
-                        }
+            strategies = [{
+                'strategy_name': 'protective_put',
+                'target_exposure': abs(net_btc),
+                'priority': 'high',
+                'rationale': f'Protect {abs(net_btc):.1f} BTC long position',
+                'pricing': {
+                    'client_pricing': {
+                        'total_premium': abs(net_btc) * current_btc_price * 0.025,
+                        'cost_as_pct_of_position': 2.5,
+                        'days_to_expiry': 7
                     }
                 }
-            ]
+            }]
             st.session_state.strategies = strategies
     
-    # WORKING: Show strategies only if none selected
     if st.session_state.strategies and not st.session_state.selected_strategy:
-        with strategy_container.container():
-            for i, strategy in enumerate(st.session_state.strategies):
-                st.markdown(f"""
-                <div class="strategy-card">
-                    <h4>🔥 {strategy['strategy_name'].replace('_', ' ').title()}</h4>
-                    <p><strong>Coverage:</strong> {strategy['target_exposure']:.1f} BTC</p>
-                    <p><strong>Purpose:</strong> {strategy['rationale']}</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                pricing = strategy['pricing']['client_pricing']
-                
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.info(f"**Cost**\n${pricing['total_premium']:,.0f}")
-                with col2:
-                    st.info(f"**Rate**\n🟢 {pricing['cost_as_pct_of_position']:.1f}%")
-                with col3:
-                    st.info(f"**Duration**\n{pricing['days_to_expiry']} days")
-                with col4:
-                    if st.button("Select Strategy", key=f"select_{i}", type="primary"):
-                        st.session_state.selected_strategy = strategy
-                        st.session_state.execution_data = {
-                            'btc_price_at_execution': current_btc_price,
-                            'execution_time': random.randint(8, 18),
-                            'position_type': position_type
-                        }
-                        st.session_state.demo_step = 3
-                        st.rerun()
-                
-                st.markdown("---")
+        for i, strategy in enumerate(st.session_state.strategies):
+            st.markdown(f"""
+            <div class="strategy-card">
+                <h4>🔥 {strategy['strategy_name'].replace('_', ' ').title()}</h4>
+                <p><strong>Coverage:</strong> {strategy['target_exposure']:.1f} BTC</p>
+                <p><strong>Purpose:</strong> {strategy['rationale']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            pricing = strategy['pricing']['client_pricing']
+            
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.info(f"**Cost**\n${pricing['total_premium']:,.0f}")
+            with col2:
+                st.info(f"**Rate**\n🟢 {pricing['cost_as_pct_of_position']:.1f}%")
+            with col3:
+                st.info(f"**Duration**\n{pricing['days_to_expiry']} days")
+            with col4:
+                if st.button("Select Strategy", key=f"select_{i}", type="primary"):
+                    st.session_state.selected_strategy = strategy
+                    st.session_state.execution_data = {
+                        'btc_price_at_execution': current_btc_price,
+                        'execution_time': random.randint(8, 18)
+                    }
+                    st.session_state.demo_step = 3
+                    st.rerun()
     
     if st.button("← Back to Portfolio", type="secondary"):
         st.session_state.demo_step = 1
@@ -383,10 +313,6 @@ def screen_2_strategies():
 def screen_3_execution():
     show_top_disclaimer()
     show_header()
-    
-    if not st.session_state.selected_strategy:
-        st.error("Please select a strategy first")
-        return
     
     strategy = st.session_state.selected_strategy
     execution_data = st.session_state.execution_data
@@ -399,7 +325,6 @@ def screen_3_execution():
     st.success("✅ STRATEGY EXECUTED SUCCESSFULLY")
     st.metric("Execution Time", f"{execution_data['execution_time']} seconds")
     
-    # Show execution details
     pricing = strategy['pricing']['client_pricing']
     entry_price = execution_data['btc_price_at_execution']
     
@@ -407,7 +332,7 @@ def screen_3_execution():
     
     with col1:
         st.markdown("#### Options Purchase Details")
-        st.info(f"**Type:** {strategy['target_exposure']:.1f} BTC Options")
+        st.info(f"**Type:** {strategy['target_exposure']:.1f} BTC Put Options")
         st.info(f"**Total Cost:** ${pricing['total_premium']:,.0f}")
         st.info(f"**Entry Price:** ${entry_price:,.0f}")
     
@@ -424,11 +349,9 @@ def screen_3_execution():
     </div>
     """, unsafe_allow_html=True)
     
-    # WORKING button alignment
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔄 New Analysis", type="primary", use_container_width=True):
-            # Reset all state
             for key in ['portfolio', 'strategies', 'selected_strategy', 'execution_data', 'custom_positions']:
                 if key in st.session_state:
                     del st.session_state[key]
@@ -436,10 +359,8 @@ def screen_3_execution():
             st.rerun()
     
     with col2:
-        # WORKING Telegram button using link_button
         st.link_button("💬 Contact via Telegram", "https://t.me/willialso", use_container_width=True)
 
-# Main app
 def main():
     if st.session_state.demo_step == 1:
         screen_1_portfolio()
