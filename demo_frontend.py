@@ -1,8 +1,8 @@
 """
-ATTICUS PROFESSIONAL - RENDER PRODUCTION OPTIMIZED
-✅ Guaranteed session state initialization
-✅ Production-ready error handling
-✅ Live pricing with proper caching
+ATTICUS PROFESSIONAL - DESKTOP LAYOUT OPTIMIZED
+✅ Proper column spacing for desktop
+✅ Responsive font sizing for metrics
+✅ Uniform card heights and clean layout
 """
 import streamlit as st
 import requests
@@ -11,7 +11,7 @@ import random
 from datetime import datetime, timedelta
 import os
 
-# Page config FIRST
+# Page config
 st.set_page_config(
     page_title="Atticus Professional",
     page_icon="🏛️",
@@ -19,9 +19,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# GUARANTEED session state initialization
+# Session state initialization
 def ensure_session_state():
-    """PRODUCTION: Ensure all session state variables exist"""
     required_keys = {
         'demo_step': 1,
         'portfolio': None,
@@ -38,41 +37,35 @@ def ensure_session_state():
         if key not in st.session_state:
             st.session_state[key] = default_value
 
-# CRITICAL: Call immediately
 ensure_session_state()
 
-# PRODUCTION: Live pricing with robust error handling
+# Live pricing functions
 @st.cache_data(ttl=30)
 def get_live_btc_price():
-    """PRODUCTION: Get live BTC price with multiple fallbacks"""
     try:
-        # Primary: Coinbase
         response = requests.get("https://api.coinbase.com/v2/exchange-rates?currency=BTC", timeout=5)
         if response.status_code == 200:
             data = response.json()
             price = float(data['data']['rates']['USD'])
-            if price > 10000:  # Sanity check
+            if price > 10000:
                 return price
-    except Exception as e:
-        st.write(f"Coinbase API: {str(e)}")
+    except:
+        pass
     
     try:
-        # Fallback: CoinGecko
         response = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd", timeout=5)
         if response.status_code == 200:
             data = response.json()
             price = float(data['bitcoin']['usd'])
-            if price > 10000:  # Sanity check
+            if price > 10000:
                 return price
-    except Exception as e:
-        st.write(f"CoinGecko API: {str(e)}")
+    except:
+        pass
     
-    # Production fallback
     return 95420.0
 
 def calculate_live_options_pricing(current_price, days_to_expiry=7):
-    """Calculate realistic options pricing"""
-    volatility = 0.65  # 65% IV for BTC
+    volatility = 0.65
     time_factor = (days_to_expiry / 365.0) ** 0.5
     
     return {
@@ -83,7 +76,6 @@ def calculate_live_options_pricing(current_price, days_to_expiry=7):
     }
 
 def generate_professional_strategies(net_btc, current_price):
-    """Generate institutional-grade strategies with live pricing"""
     options_data = calculate_live_options_pricing(current_price)
     contracts_needed = int(abs(net_btc))
     
@@ -139,7 +131,7 @@ def generate_professional_strategies(net_btc, current_price):
     
     return strategies
 
-# CSS
+# DESKTOP-OPTIMIZED CSS
 st.markdown("""
 <style>
     .stApp {
@@ -170,6 +162,7 @@ st.markdown("""
     
     .main .block-container {
         padding-top: 4rem !important;
+        max-width: 1200px !important;
     }
     
     .main-header {
@@ -178,6 +171,22 @@ st.markdown("""
         padding: 1rem;
     }
     
+    /* FIXED: Desktop column spacing */
+    .desktop-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin: 2rem 0;
+    }
+    
+    @media (max-width: 768px) {
+        .desktop-columns {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+    
+    /* FIXED: Uniform card heights */
     .atticus-card {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
@@ -185,6 +194,9 @@ st.markdown("""
         padding: 2rem;
         margin: 1rem 0;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
     }
     
     .atticus-card h4 {
@@ -192,6 +204,82 @@ st.markdown("""
         font-size: 1.5rem;
         margin-bottom: 1rem;
         text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .card-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* FIXED: Responsive metric sizing */
+    [data-testid="metric-container"] {
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 0.8rem;
+        margin: 0.3rem 0;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-value"] {
+        color: #fbbf24 !important;
+        font-size: 1.2rem !important;
+        font-weight: 600;
+        line-height: 1.2;
+        word-break: break-word;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-label"] {
+        color: #cbd5e1 !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.2rem;
+    }
+    
+    /* FIXED: Position display styling */
+    .position-item {
+        background: #0f172a;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .position-item p {
+        margin: 0;
+        font-size: 1rem;
+        color: #f8fafc !important;
+    }
+    
+    .position-summary {
+        background: #1e293b;
+        border: 1px solid #fbbf24;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .position-summary .metric {
+        padding: 0.5rem;
+    }
+    
+    .position-summary .metric-label {
+        color: #cbd5e1 !important;
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .position-summary .metric-value {
+        color: #fbbf24 !important;
+        font-size: 1.1rem;
+        font-weight: 600;
     }
     
     .strategy-card {
@@ -210,7 +298,7 @@ st.markdown("""
         font-size: 0.9rem;
         font-weight: 600;
         display: inline-block;
-        margin: 0.5rem;
+        margin: 0.5rem 0 1rem 0;
     }
     
     .options-detail-box {
@@ -243,6 +331,12 @@ st.markdown("""
         margin: 2rem 0;
     }
     
+    /* Button styling */
+    .stButton > button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
@@ -272,94 +366,119 @@ def screen_1_portfolio():
     
     st.markdown(f'<div class="live-price">🔴 LIVE: BTC ${live_btc_price:,.2f}</div>', unsafe_allow_html=True)
     
-    col_left, col_right = st.columns(2)
+    # FIXED: Better desktop spacing using custom grid
+    st.markdown('<div class="desktop-columns">', unsafe_allow_html=True)
     
-    with col_left:
-        st.markdown("""
-        <div class="atticus-card">
-            <h4>📊 Institutional BTC Portfolio Options</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        fund_type = st.radio("Institution Type:", ["Small Fund ($20-50M)", "Mid-Cap Fund ($50-200M)"], horizontal=True)
-        
-        if st.button("🎯 Generate Portfolio", type="primary", use_container_width=True):
-            with st.spinner("Generating with live pricing..."):
-                if "Small" in fund_type:
-                    portfolio = {
-                        'aum': 38000000,
-                        'total_btc_size': 125.5,
-                        'net_btc_exposure': 125.5,
-                        'total_current_value': 125.5 * live_btc_price,
-                        'total_pnl': 1400000,
-                        'current_btc_price': live_btc_price
-                    }
-                else:
-                    portfolio = {
-                        'aum': 128000000,
-                        'total_btc_size': 285.7,
-                        'net_btc_exposure': 285.7,
-                        'total_current_value': 285.7 * live_btc_price,
-                        'total_pnl': 2800000,
-                        'current_btc_price': live_btc_price
-                    }
-                
-                st.session_state.portfolio = portfolio
-                st.session_state.portfolio_source = 'generated'
-                st.session_state.strategies = None
-                st.session_state.strategies_generated = False
-                st.success(f"✅ Portfolio Generated | BTC: ${live_btc_price:,.2f}")
-                time.sleep(1)
-                st.rerun()
-        
-        if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
-            portfolio = st.session_state.portfolio
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("AUM", f"${portfolio['aum']:,.0f}")
-                st.metric("BTC Exposure", f"{portfolio['total_btc_size']:.1f} BTC")
-            with col2:
-                st.metric("Position Value", f"${portfolio['total_current_value']:,.0f}")
-                st.metric("P&L", f"${portfolio['total_pnl']:,.0f}")
-            
-            if st.button("📊 Analyze Portfolio", type="primary", use_container_width=True):
-                st.session_state.demo_step = 2
-                st.session_state.current_page = 'strategies'
-                st.rerun()
+    # LEFT COLUMN - Institutional Portfolio
+    st.markdown("""
+    <div class="atticus-card">
+        <h4>📊 Institutional BTC Portfolio Options</h4>
+        <div class="card-content">
+    """, unsafe_allow_html=True)
     
-    with col_right:
-        st.markdown("""
-        <div class="atticus-card">
-            <h4>⚡ Custom BTC Position</h4>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        with st.form("custom_position"):
-            btc_amount = st.number_input("BTC Amount", min_value=0.1, value=25.0, step=0.1)
-            position_type = st.radio("Position", ["Long", "Short"], horizontal=True)
-            
-            if st.form_submit_button("Analyze Position", type="primary"):
-                custom_portfolio = {
-                    'aum': btc_amount * live_btc_price * 3,
-                    'total_btc_size': btc_amount,
-                    'net_btc_exposure': btc_amount if position_type == 'Long' else -btc_amount,
-                    'total_current_value': btc_amount * live_btc_price,
-                    'total_pnl': btc_amount * live_btc_price * 0.12,
+    fund_type = st.radio("Institution Type:", ["Small Fund ($20-50M)", "Mid-Cap Fund ($50-200M)"], horizontal=True)
+    
+    if st.button("🎯 Generate Portfolio", type="primary", use_container_width=True, key="gen_inst"):
+        with st.spinner("Generating with live pricing..."):
+            if "Small" in fund_type:
+                portfolio = {
+                    'aum': 38000000,
+                    'total_btc_size': 125.5,
+                    'net_btc_exposure': 125.5,
+                    'total_current_value': 125.5 * live_btc_price,
+                    'total_pnl': 1400000,
                     'current_btc_price': live_btc_price
                 }
-                st.session_state.portfolio = custom_portfolio
-                st.session_state.portfolio_source = 'custom'
-                st.session_state.strategies = None
-                st.session_state.strategies_generated = False
-                st.session_state.demo_step = 2
-                st.session_state.current_page = 'strategies'
-                st.rerun()
+            else:
+                portfolio = {
+                    'aum': 128000000,
+                    'total_btc_size': 285.7,
+                    'net_btc_exposure': 285.7,
+                    'total_current_value': 285.7 * live_btc_price,
+                    'total_pnl': 2800000,
+                    'current_btc_price': live_btc_price
+                }
+            
+            st.session_state.portfolio = portfolio
+            st.session_state.portfolio_source = 'generated'
+            st.session_state.strategies = None
+            st.session_state.strategies_generated = False
+            st.success(f"✅ Portfolio Generated | BTC: ${live_btc_price:,.2f}")
+            time.sleep(1)
+            st.rerun()
+    
+    if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
+        portfolio = st.session_state.portfolio
+        
+        # FIXED: Responsive metrics in columns
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("AUM", f"${portfolio['aum']/1000000:.0f}M")
+            st.metric("BTC Exposure", f"{portfolio['total_btc_size']:.1f}")
+        with col2:
+            st.metric("Position Value", f"${portfolio['total_current_value']/1000000:.1f}M")
+            st.metric("P&L", f"${portfolio['total_pnl']/1000000:.1f}M")
+        
+        st.button("📊 Analyze Portfolio", type="primary", use_container_width=True, key="analyze_gen", 
+                 on_click=lambda: [setattr(st.session_state, 'demo_step', 2), 
+                                  setattr(st.session_state, 'current_page', 'strategies')])
+    
+    st.markdown('</div></div>', unsafe_allow_html=True)
+    
+    # RIGHT COLUMN - Custom Position
+    st.markdown("""
+    <div class="atticus-card">
+        <h4>⚡ Custom BTC Position</h4>
+        <div class="card-content">
+    """, unsafe_allow_html=True)
+    
+    with st.form("custom_position"):
+        btc_amount = st.number_input("BTC Amount", min_value=0.1, value=25.0, step=0.1)
+        position_type = st.radio("Position", ["Long", "Short"], horizontal=True)
+        
+        if st.form_submit_button("Analyze Position", type="primary", use_container_width=True):
+            custom_portfolio = {
+                'aum': btc_amount * live_btc_price * 3,
+                'total_btc_size': btc_amount,
+                'net_btc_exposure': btc_amount if position_type == 'Long' else -btc_amount,
+                'total_current_value': btc_amount * live_btc_price,
+                'total_pnl': btc_amount * live_btc_price * 0.12,
+                'current_btc_price': live_btc_price
+            }
+            st.session_state.portfolio = custom_portfolio
+            st.session_state.portfolio_source = 'custom'
+            st.session_state.strategies = None
+            st.session_state.strategies_generated = False
+            st.session_state.demo_step = 2
+            st.session_state.current_page = 'strategies'
+            st.rerun()
+    
+    # Show position preview
+    position_value = btc_amount * live_btc_price
+    st.markdown(f"""
+    <div class="position-summary">
+        <div class="metric">
+            <div class="metric-label">Position Size</div>
+            <div class="metric-value">{btc_amount:.1f} BTC</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Position Value</div>
+            <div class="metric-value">${position_value/1000:.0f}K</div>
+        </div>
+        <div class="metric">
+            <div class="metric-label">Direction</div>
+            <div class="metric-value">{"🟢" if position_type == "Long" else "🔴"} {position_type}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown('</div></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)  # Close desktop-columns
 
 def screen_2_strategies():
     show_disclaimer_and_header()
     
-    ensure_session_state()  # Extra safety
+    ensure_session_state()
     
     if not st.session_state.portfolio:
         st.error("Please create a portfolio first")
@@ -426,7 +545,7 @@ def screen_2_strategies():
 def screen_3_execution():
     show_disclaimer_and_header()
     
-    ensure_session_state()  # Extra safety
+    ensure_session_state()
     
     if not st.session_state.selected_strategy:
         st.error("Strategy not selected")
@@ -486,7 +605,6 @@ def screen_3_execution():
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔄 New Analysis", type="primary", use_container_width=True):
-            # Complete reset
             for key in ['portfolio', 'strategies', 'selected_strategy', 'execution_data', 'custom_positions']:
                 if key in st.session_state:
                     st.session_state[key] = None
@@ -499,11 +617,7 @@ def screen_3_execution():
         st.link_button("💬 Contact Telegram", "https://t.me/willialso", use_container_width=True)
 
 def main():
-    """PRODUCTION: Main with guaranteed session state"""
-    # Ensure session state exists before any access
     ensure_session_state()
-    
-    # Safe access to demo_step
     current_step = st.session_state.get('demo_step', 1)
     
     if current_step == 1:
@@ -513,10 +627,8 @@ def main():
     elif current_step == 3:
         screen_3_execution()
     else:
-        # Fallback
         st.session_state.demo_step = 1
         screen_1_portfolio()
 
-# For production deployment
 if __name__ == "__main__":
     main()
