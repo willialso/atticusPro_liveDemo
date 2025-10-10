@@ -4,15 +4,20 @@ services:
     env: python
     plan: free
     region: oregon
+    runtime: python
+    runtimeVersion: "3.11"
     buildCommand: |
-      pip install --upgrade pip setuptools wheel
+      python -V
+      pip install --upgrade pip==23.3.1
+      pip install --upgrade setuptools==68.2.2
+      pip install --upgrade wheel==0.41.2
       pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1 --worker-class sync
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: PIP_NO_CACHE_DIR
-        value: 1
+      - key: FRED_API_KEY
+        value: 17d3b0a9b20e8b012e99238c48ef8da1
       - key: FLASK_ENV
         value: production
     autoDeploy: true

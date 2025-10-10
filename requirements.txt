@@ -1,19 +1,19 @@
-# Core Flask Framework
-Flask==2.3.3
-Werkzeug==2.3.7
-gunicorn==21.2.0
+# Core Flask - Known working versions
+Flask==2.3.2
+Werkzeug==2.3.6
+gunicorn==20.1.0
 
 # HTTP Requests
-requests==2.31.0
+requests==2.28.2
 
-# Scientific Computing
+# Scientific Computing - Python 3.11 compatible
 numpy==1.24.3
 scipy==1.10.1
 
-# Build Tools (Fix for Render)
-setuptools>=65.0.0
-wheel>=0.37.0
-pip>=23.0.0
+# Build Tools - Explicit versions
+setuptools==68.2.2
+wheel==0.41.2
+pip==23.3.1
 
-# Optional: For better error handling
+# Utilities
 python-dotenv==1.0.0
