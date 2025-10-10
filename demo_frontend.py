@@ -1,10 +1,9 @@
 """
-ATTICUS PROFESSIONAL - FULLY POLISHED INSTITUTIONAL DEMO
-✅ Professional desktop layout with full width utilization
-✅ Fixed progress indicators and visual hierarchy  
-✅ Large, readable fonts and proper spacing
-✅ Integrated content flow and polished presentation
-✅ Maintains all real-time pricing and live functionality
+ATTICUS PROFESSIONAL - STREAMLIT-NATIVE PROFESSIONAL VERSION
+✅ Works with Streamlit's layout system instead of fighting it
+✅ Uses Streamlit components properly for consistent rendering
+✅ Professional presentation within Streamlit constraints
+✅ Maintains all real-time pricing functionality
 """
 import streamlit as st
 import requests
@@ -14,7 +13,7 @@ from datetime import datetime, timedelta
 import os
 import math
 
-# Page config
+# Page config with wide layout
 st.set_page_config(
     page_title="Atticus Professional - Portfolio Protection Demo",
     page_icon="🏛️",
@@ -44,7 +43,7 @@ def ensure_session_state():
 
 ensure_session_state()
 
-# ALL PRICING FUNCTIONS UNCHANGED (preserves real-time data)
+# ALL PRICING FUNCTIONS UNCHANGED
 @st.cache_data(ttl=30)
 def get_live_btc_price():
     prices = []
@@ -444,1099 +443,567 @@ def generate_dynamic_strategies(net_btc, current_price):
     
     return strategies
 
-# COMPLETELY REDESIGNED CSS - PROFESSIONAL INSTITUTIONAL PRESENTATION
+# STREAMLIT-COMPATIBLE CSS - HIGH SPECIFICITY
 st.markdown("""
 <style>
-    /* Base styling */
+    /* NUCLEAR CSS - MAXIMUM SPECIFICITY TO OVERRIDE STREAMLIT */
+    body > div > div > div > div > section.main > div.block-container {
+        padding: 1rem 1rem !important;
+        max-width: none !important;
+    }
+    
+    /* Override Streamlit's default styling */
     .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: #f1f5f9 !important;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
     }
     
-    /* Top disclaimer */
-    .top-disclaimer {
+    .stApp .main .block-container {
+        background: transparent !important;
+    }
+    
+    /* Custom components with high specificity */
+    .custom-header {
         background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
-        border-bottom: 2px solid #fbbf24;
-        padding: 0.8rem 2rem;
-        margin: 0;
-        width: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        text-align: center;
-    }
-    
-    .top-disclaimer p {
-        color: #fbbf24 !important;
-        font-size: 0.95rem;
-        margin: 0;
-        line-height: 1.3;
-        font-weight: 500;
-    }
-    
-    /* FIXED: Main container - full width utilization */
-    .main .block-container {
-        padding-top: 4rem !important;
-        max-width: 1400px !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-    }
-    
-    /* IMPROVED: Header styling */
-    .main-header {
+        padding: 1rem;
+        border-radius: 15px;
         text-align: center;
         margin: 2rem 0;
-        padding: 2rem;
+        border: 2px solid #fbbf24;
     }
     
-    .main-header img {
-        max-width: 450px;
-        width: 100%;
-        height: auto;
-    }
-    
-    .main-header p {
-        font-size: 1.3rem !important;
-        color: #e2e8f0 !important;
-        margin-top: 1rem;
-        font-weight: 400;
-    }
-    
-    /* REDESIGNED: Hero intro section */
-    .hero-intro {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 3px solid #fbbf24;
-        border-radius: 20px;
-        padding: 4rem;
-        margin: 3rem 0;
-        text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    }
-    
-    .hero-intro h1 {
+    .custom-header h1 {
         color: #fbbf24 !important;
-        font-size: 3rem !important;
-        margin-bottom: 2rem;
-        font-weight: 700;
-        line-height: 1.2;
-    }
-    
-    .hero-intro .hero-subtitle {
-        color: #f8fafc !important;
-        font-size: 1.4rem !important;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        font-weight: 400;
-    }
-    
-    .hero-intro .hero-cta {
-        color: #f8fafc !important;
-        font-size: 1.2rem !important;
-        font-weight: 600;
-        margin-bottom: 3rem;
-    }
-    
-    .highlight {
-        color: #10b981 !important;
-        font-weight: 700;
-    }
-    
-    /* REDESIGNED: Problem-solution comparison */
-    .comparison-section {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        margin: 3rem 0;
-    }
-    
-    @media (max-width: 968px) {
-        .comparison-section {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-    }
-    
-    .comparison-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-radius: 16px;
-        padding: 2.5rem;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .comparison-card.risk {
-        border: 3px solid #ef4444;
-        box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
-    }
-    
-    .comparison-card.protection {
-        border: 3px solid #10b981;
-        box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
-    }
-    
-    .comparison-icon {
-        font-size: 4rem;
-        margin-bottom: 1.5rem;
-        display: block;
-    }
-    
-    .comparison-title {
-        font-size: 1.8rem !important;
-        font-weight: 700;
+        font-size: 2.5rem !important;
         margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .custom-header p {
         color: #f8fafc !important;
+        font-size: 1.3rem !important;
+        margin: 0;
     }
     
-    .comparison-amount {
-        font-size: 2.2rem !important;
-        font-weight: 800;
-        margin-bottom: 1rem;
-        display: block;
-    }
-    
-    .risk .comparison-amount {
-        color: #ef4444 !important;
-    }
-    
-    .protection .comparison-amount {
-        color: #10b981 !important;
-    }
-    
-    .comparison-subtitle {
-        font-size: 1.1rem !important;
-        color: #cbd5e1 !important;
-        line-height: 1.5;
-    }
-    
-    /* FIXED: Progress steps - ensure circles display */
-    .progress-container {
+    /* Step indicators using Streamlit columns */
+    .step-indicator {
+        background: rgba(30, 41, 59, 0.8);
+        border: 2px solid #475569;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
         display: flex;
-        justify-content: center;
-        margin: 3rem 0;
-        padding: 2rem;
-        background: rgba(30, 41, 59, 0.5);
-        border-radius: 16px;
-    }
-    
-    .progress-steps {
-        display: flex !important;
         align-items: center;
-        gap: 2rem;
-        flex-wrap: wrap;
         justify-content: center;
+        margin: 0 auto 10px auto;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #cbd5e1;
     }
     
-    .step {
-        display: flex !important;
-        align-items: center;
-        gap: 1rem;
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .step-circle {
-        width: 4rem !important;
-        height: 4rem !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-weight: 700 !important;
-        font-size: 1.4rem !important;
-        border: 3px solid transparent;
-        transition: all 0.3s ease;
-    }
-    
-    .step-circle.active {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
-        color: #1e293b !important;
+    .step-indicator.active {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #1e293b;
         border-color: #fbbf24;
-        box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
     }
     
-    .step-circle.inactive {
-        background: #475569 !important;
-        color: #cbd5e1 !important;
-        border-color: #64748b;
-    }
-    
-    .step-circle.completed {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-        color: white !important;
+    .step-indicator.completed {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
         border-color: #10b981;
-        box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
     }
     
     .step-label {
+        text-align: center;
         color: #f8fafc !important;
-        font-size: 1rem !important;
-        font-weight: 600;
-        margin-top: 0.5rem;
-    }
-    
-    .step-arrow {
-        color: #475569;
-        font-size: 2rem;
-        margin: 0 1rem;
-    }
-    
-    /* IMPROVED: Page sections - full width */
-    .page-section {
-        margin: 4rem 0;
-        width: 100%;
-    }
-    
-    .section-title {
-        font-size: 2.5rem !important;
-        color: #fbbf24 !important;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 700;
-    }
-    
-    /* REDESIGNED: Portfolio options - side by side */
-    .portfolio-options {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        margin: 3rem 0;
-        align-items: start;
-    }
-    
-    @media (max-width: 968px) {
-        .portfolio-options {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-    }
-    
-    .option-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-radius: 20px;
-        padding: 3rem;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .option-card.primary {
-        border: 3px solid #fbbf24;
-        transform: scale(1.02);
-    }
-    
-    .option-card.secondary {
-        border: 2px solid #64748b;
-    }
-    
-    .option-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
-    }
-    
-    .card-badge {
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        color: #1e293b;
-        padding: 0.5rem 1.5rem;
-        border-radius: 20px;
         font-size: 0.9rem;
-        font-weight: 700;
+        font-weight: 600;
     }
     
-    .option-card.primary {
-        position: relative;
-    }
-    
-    .card-header {
+    /* Professional cards */
+    .risk-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 3px solid #ef4444;
+        border-radius: 15px;
+        padding: 2rem;
         text-align: center;
-        margin-bottom: 2rem;
-        flex-shrink: 0;
+        margin: 1rem 0;
+    }
+    
+    .protection-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 3px solid #10b981;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        margin: 1rem 0;
+    }
+    
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
     }
     
     .card-title {
-        font-size: 1.8rem !important;
+        font-size: 1.5rem !important;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #f8fafc !important;
+    }
+    
+    .card-amount {
+        font-size: 2rem !important;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+    
+    .risk-card .card-amount {
+        color: #ef4444 !important;
+    }
+    
+    .protection-card .card-amount {
+        color: #10b981 !important;
+    }
+    
+    .card-subtitle {
+        font-size: 1rem !important;
+        color: #cbd5e1 !important;
+        line-height: 1.4;
+    }
+    
+    /* Strategy cards */
+    .strategy-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #fbbf24;
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 1.5rem 0;
+    }
+    
+    .strategy-card.high-priority {
+        border-color: #ef4444;
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+    
+    .strategy-card.medium-priority {
+        border-color: #fbbf24;
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    
+    .strategy-card h3 {
         color: #fbbf24 !important;
+        font-size: 1.4rem !important;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .strategy-card p {
+        color: #f8fafc !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Execution styling */
+    .execution-success {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        margin: 2rem 0;
+    }
+    
+    .execution-success h2 {
+        font-size: 2rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    /* Info boxes */
+    .info-box {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-left: 5px solid #10b981;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .info-box h4 {
+        color: #10b981 !important;
+        font-size: 1.1rem !important;
         margin-bottom: 0.8rem;
         font-weight: 700;
     }
     
-    .card-subtitle {
-        font-size: 1.1rem !important;
+    .info-box p {
         color: #cbd5e1 !important;
-        line-height: 1.4;
-    }
-    
-    .card-content {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .card-section {
-        border-top: 2px solid #475569;
-        padding-top: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    
-    /* IMPROVED: Form styling */
-    .stRadio > div {
-        flex-direction: row !important;
-        gap: 2rem;
-        justify-content: center;
-        margin: 1.5rem 0;
-    }
-    
-    .stRadio label {
-        font-size: 1.1rem !important;
-        color: #f8fafc !important;
-        font-weight: 500;
-    }
-    
-    /* IMPROVED: Info displays */
-    .info-display {
-        background: rgba(15, 23, 42, 0.8);
-        border: 2px solid #10b981;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin: 1.5rem 0;
-        text-align: center;
-    }
-    
-    .info-display p {
-        color: #10b981 !important;
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
         margin: 0;
-        font-weight: 600;
+        line-height: 1.5;
     }
     
-    /* IMPROVED: Metrics styling */
+    /* Live price banner */
+    .live-price {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-align: center;
+        margin: 1rem 0;
+    }
+    
+    /* Override Streamlit metric styling */
     [data-testid="metric-container"] {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
         border: 2px solid #475569 !important;
-        border-radius: 12px !important;
-        padding: 1.2rem !important;
-        margin: 0.8rem 0 !important;
-        text-align: center;
+        border-radius: 10px !important;
+        padding: 1rem !important;
     }
     
     [data-testid="metric-container"] [data-testid="metric-value"] {
         color: #fbbf24 !important;
-        font-size: 1.4rem !important;
+        font-size: 1.3rem !important;
         font-weight: 700 !important;
-        line-height: 1.2;
     }
     
     [data-testid="metric-container"] [data-testid="metric-label"] {
         color: #cbd5e1 !important;
-        font-size: 1rem !important;
-        font-weight: 600;
-    }
-    
-    /* IMPROVED: Position management */
-    .position-item {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        border: 2px solid #475569;
-        border-radius: 12px;
-        padding: 1.2rem;
-        margin: 0.8rem 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .position-item p {
-        margin: 0;
-        color: #f8fafc !important;
-        font-size: 1.1rem !important;
-        font-weight: 500;
-    }
-    
-    .position-summary {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 3px solid #fbbf24;
-        border-radius: 16px;
-        padding: 2rem;
-        margin: 2rem 0;
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .metric-item {
-        padding: 1rem;
-    }
-    
-    .metric-label {
-        color: #cbd5e1 !important;
-        font-size: 0.95rem !important;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-    
-    .metric-value {
-        color: #fbbf24 !important;
-        font-size: 1.3rem !important;
-        font-weight: 700;
-    }
-    
-    /* IMPROVED: Live price display */
-    .live-price-banner {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        padding: 1.5rem 2rem;
-        border-radius: 20px;
-        font-size: 1.3rem;
-        font-weight: 700;
-        text-align: center;
-        margin: 2rem 0;
-        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-    }
-    
-    /* REDESIGNED: Strategy cards - professional layout */
-    .strategy-grid {
-        display: grid;
-        gap: 2rem;
-        margin: 3rem 0;
-    }
-    
-    .strategy-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-radius: 20px;
-        padding: 2.5rem;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-        display: grid;
-        grid-template-areas: 
-            "header header header action"
-            "details metrics metrics action";
-        gap: 1.5rem;
-        align-items: center;
-    }
-    
-    .strategy-card.high-priority {
-        border: 3px solid #ef4444;
-        box-shadow: 0 15px 50px rgba(239, 68, 68, 0.2);
-    }
-    
-    .strategy-card.medium-priority {
-        border: 3px solid #fbbf24;
-        box-shadow: 0 15px 50px rgba(251, 191, 36, 0.2);
-    }
-    
-    .strategy-card.low-priority {
-        border: 2px solid #64748b;
-    }
-    
-    .strategy-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
-    }
-    
-    .strategy-header {
-        grid-area: header;
-    }
-    
-    .strategy-header h3 {
-        color: #fbbf24 !important;
-        font-size: 1.6rem !important;
-        margin: 0 0 0.5rem 0;
-        font-weight: 700;
-    }
-    
-    .strategy-details {
-        grid-area: details;
-    }
-    
-    .strategy-details p {
-        color: #f8fafc !important;
-        font-size: 1rem !important;
-        margin: 0.3rem 0;
-        line-height: 1.4;
-    }
-    
-    .strategy-metrics {
-        grid-area: metrics;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-    }
-    
-    .metric-box {
-        background: rgba(15, 23, 42, 0.8);
-        border-radius: 12px;
-        padding: 1rem;
-        text-align: center;
-        border: 2px solid #475569;
-    }
-    
-    .metric-box.cost {
-        border-color: #3b82f6;
-    }
-    
-    .metric-box.income {
-        border-color: #10b981;
-    }
-    
-    .metric-box.rate {
-        border-color: #fbbf24;
-    }
-    
-    .metric-title {
-        color: #cbd5e1 !important;
         font-size: 0.9rem !important;
-        margin-bottom: 0.3rem;
-        font-weight: 600;
+        font-weight: 600 !important;
     }
     
-    .metric-amount {
-        color: #f8fafc !important;
-        font-size: 1.2rem !important;
-        font-weight: 700;
-    }
-    
-    .strategy-action {
-        grid-area: action;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* IMPROVED: Execution results */
-    .execution-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .execution-header {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        padding: 3rem;
-        border-radius: 20px;
-        text-align: center;
-        margin: 3rem 0;
-        color: white;
-    }
-    
-    .execution-header h2 {
-        font-size: 2.5rem !important;
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
-    
-    .execution-header p {
-        font-size: 1.3rem !important;
-        margin: 0;
-    }
-    
-    .execution-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        margin: 3rem 0;
-    }
-    
-    @media (max-width: 968px) {
-        .execution-details {
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-    }
-    
-    .detail-card {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        border: 3px solid #10b981;
-        border-radius: 20px;
-        padding: 2.5rem;
-    }
-    
-    .detail-card h4 {
-        color: #10b981 !important;
-        font-size: 1.6rem !important;
-        margin-bottom: 1.5rem;
-        font-weight: 700;
-    }
-    
-    .detail-card p {
-        color: #f8fafc !important;
-        font-size: 1.1rem !important;
-        margin: 0.8rem 0;
-        line-height: 1.5;
-    }
-    
-    /* IMPROVED: Scenario boxes */
-    .scenarios-section {
-        margin: 4rem 0;
-    }
-    
-    .scenario-grid {
-        display: grid;
-        gap: 1.5rem;
-        margin: 2rem 0;
-    }
-    
-    .scenario-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 2px solid #64748b;
-        border-radius: 16px;
-        padding: 2rem;
-        transition: all 0.3s ease;
-    }
-    
-    .scenario-card:hover {
-        border-color: #fbbf24;
-        transform: translateY(-2px);
-    }
-    
-    .scenario-card h5 {
-        color: #fbbf24 !important;
-        font-size: 1.3rem !important;
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
-    
-    .scenario-card p {
-        color: #f8fafc !important;
-        font-size: 1.1rem !important;
-        margin: 0;
-        line-height: 1.5;
-    }
-    
-    /* IMPROVED: Button styling */
+    /* Button improvements */
     .stButton > button {
-        border-radius: 12px !important;
+        border-radius: 10px !important;
         font-weight: 700 !important;
-        font-size: 1.1rem !important;
-        padding: 0.8rem 2rem !important;
-        transition: all 0.3s ease !important;
-        border: none !important;
+        font-size: 1rem !important;
+        padding: 0.75rem 1.5rem !important;
     }
     
     .stButton > button[kind="primary"] {
         background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
         color: #1e293b !important;
-        box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3) !important;
+        border: none !important;
     }
     
-    .stButton > button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 35px rgba(251, 191, 36, 0.4) !important;
-    }
-    
-    .stButton > button[kind="secondary"] {
-        background: #475569 !important;
-        color: #f8fafc !important;
-        border: 2px solid #64748b !important;
-    }
-    
-    .stButton > button[kind="secondary"]:hover {
-        background: #64748b !important;
-        transform: translateY(-1px) !important;
-    }
-    
-    /* IMPROVED: Explanation boxes */
-    .explanation-box {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        border-left: 6px solid #10b981;
-        border-radius: 12px;
-        padding: 2rem;
-        margin: 2rem 0;
-    }
-    
-    .explanation-box h4 {
-        color: #10b981 !important;
-        font-size: 1.2rem !important;
-        margin: 0 0 1rem 0;
-        font-weight: 700;
-    }
-    
-    .explanation-box p {
-        color: #cbd5e1 !important;
-        font-size: 1.1rem !important;
-        margin: 0;
-        line-height: 1.6;
-    }
-    
-    /* Hide Streamlit elements */
+    /* Hide Streamlit branding */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    .stDeployButton {display: none;}
     
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .main .block-container {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-        
-        .hero-intro {
-            padding: 2rem;
-        }
-        
-        .hero-intro h1 {
-            font-size: 2rem !important;
-        }
-        
-        .option-card {
-            padding: 2rem;
-        }
-        
-        .strategy-card {
-            grid-template-areas: 
-                "header"
-                "details"
-                "metrics"
-                "action";
-            text-align: center;
-        }
-        
-        .strategy-metrics {
-            grid-template-columns: 1fr;
-        }
+    /* Force text colors */
+    .stMarkdown p, .stMarkdown div, .stText {
+        color: #f8fafc !important;
+    }
+    
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: #fbbf24 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-def show_progress_steps(current_step):
-    """FIXED: Ensure proper circle display"""
-    steps = [
-        {"num": 1, "label": "Portfolio Setup"},
-        {"num": 2, "label": "Strategy Analysis"}, 
-        {"num": 3, "label": "Protection Results"}
-    ]
+def show_progress_indicators(current_step):
+    """STREAMLIT-NATIVE progress indicators using columns"""
+    st.markdown("---")
     
-    st.markdown('<div class="progress-container">', unsafe_allow_html=True)
-    step_html = '<div class="progress-steps">'
+    col1, col2, col3, col4, col5 = st.columns([1, 2, 1, 2, 1])
     
-    for i, step in enumerate(steps):
-        if step['num'] < current_step:
-            circle_class = "completed"
-        elif step['num'] == current_step:
-            circle_class = "active"
+    with col2:
+        if current_step >= 1:
+            class_name = "active" if current_step == 1 else "completed" if current_step > 1 else ""
+            st.markdown(f"""
+            <div class="step-indicator {class_name}">1</div>
+            <div class="step-label">Portfolio Setup</div>
+            """, unsafe_allow_html=True)
         else:
-            circle_class = "inactive"
-        
-        step_html += f'''
-        <div class="step">
-            <div class="step-circle {circle_class}">{step['num']}</div>
-            <div class="step-label">{step['label']}</div>
-        </div>
-        '''
-        
-        if i < len(steps) - 1:
-            step_html += '<div class="step-arrow">→</div>'
+            st.markdown("""
+            <div class="step-indicator">1</div>
+            <div class="step-label">Portfolio Setup</div>
+            """, unsafe_allow_html=True)
     
-    step_html += '</div>'
-    st.markdown(step_html, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    with col3:
+        st.markdown("<div style='text-align: center; font-size: 2rem; color: #475569; margin-top: 20px;'>→</div>", unsafe_allow_html=True)
+    
+    with col4:
+        if current_step >= 2:
+            class_name = "active" if current_step == 2 else "completed" if current_step > 2 else ""
+            st.markdown(f"""
+            <div class="step-indicator {class_name}">2</div>
+            <div class="step-label">Strategy Analysis</div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="step-indicator">2</div>
+            <div class="step-label">Strategy Analysis</div>
+            """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("<div style='text-align: center; font-size: 2rem; color: #475569; margin-top: 20px;'>→</div>", unsafe_allow_html=True)
+    
+    if current_step >= 3:
+        with col1:
+            pass
+        with col2:
+            pass
+        with col3:
+            st.markdown("<div style='text-align: center; font-size: 2rem; color: #475569; margin-top: 20px;'>→</div>", unsafe_allow_html=True)
+        with col4:
+            class_name = "active" if current_step == 3 else "completed"
+            st.markdown(f"""
+            <div class="step-indicator {class_name}">3</div>
+            <div class="step-label">Protection Results</div>
+            """, unsafe_allow_html=True)
+        with col5:
+            pass
+    
+    st.markdown("---")
 
-def show_disclaimer_and_header():
+def show_header():
+    """STREAMLIT-NATIVE header"""
     st.markdown("""
-    <div class="top-disclaimer">
-        <p><strong>Live Institutional Demo</strong> • Real-time BTC pricing • Professional options strategies • Portfolio protection simulation</p>
+    <div class="custom-header">
+        <h1>🏛️ Atticus Professional</h1>
+        <p>Portfolio Protection Walkthrough Demo</p>
     </div>
     """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="main-header">
-        <img src="https://i.ibb.co/qFNCZsWG/attpro.png" width="450" alt="Atticus Professional">
-        <p>Professional Options Strategies for Institutional Portfolios</p>
-    </div>
-    """, unsafe_allow_html=True)
 
-def show_hero_intro():
-    """REDESIGNED: Professional hero section"""
+def show_intro_section():
+    """REDESIGNED: Clear intro with integrated comparison"""
     if st.session_state.show_intro:
         live_btc_price = get_live_btc_price()
-        if live_btc_price:
-            potential_loss = 50000000 * 0.30
-            protection_cost = 50000000 * 0.025
-            
-            st.markdown(f"""
-            <div class="hero-intro">
-                <h1>🏛️ Portfolio Protection Walkthrough Demo</h1>
-                <div class="hero-subtitle">
-                    Bitcoin's volatility creates massive risk for institutional portfolios. 
-                    <span class="highlight">Recent market events show 30-50% Bitcoin declines happen regularly.</span>
-                </div>
-                <div class="hero-cta">
-                    See how we protect a real portfolio using live market data
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("""
-            <div class="comparison-section">
-                <div class="comparison-card risk">
-                    <div class="comparison-icon">⚠️</div>
-                    <div class="comparison-title">Unhedged Risk</div>
-                    <div class="comparison-amount">$15M+ Potential Loss</div>
-                    <div class="comparison-subtitle">Your $50M position faces unlimited downside exposure during market volatility events</div>
-                </div>
-                <div class="comparison-card protection">
-                    <div class="comparison-icon">✅</div>
-                    <div class="comparison-title">With Atticus Protection</div>
-                    <div class="comparison-amount">~$1.2M Cost, Full Coverage</div>
-                    <div class="comparison-subtitle">Professional downside protection while preserving unlimited upside potential</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("🚀 Start Live Demo with Real Market Data", type="primary", use_container_width=True):
-                    st.session_state.show_intro = False
-                    st.rerun()
-            
+        if not live_btc_price:
+            st.error("Unable to fetch live BTC price")
             return True
+        
+        # CLEAR HEADER AND INDUSTRY STATEMENT
+        st.markdown("""
+        <div class="info-box">
+            <h4>🏛️ The Institutional Challenge</h4>
+            <p>Bitcoin's volatility creates massive risk exposure for institutional portfolios. Recent market events demonstrate that 30-50% price declines can happen within days, creating significant losses for unprotected positions.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("### 💼 Real-World Example: $50M Bitcoin Allocation")
+        st.markdown("**Scenario:** Your institution holds a $50M Bitcoin position as part of your digital asset allocation.")
+        
+        # INTEGRATED COMPARISON USING STREAMLIT COLUMNS
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            <div class="risk-card">
+                <div class="card-icon">⚠️</div>
+                <div class="card-title">Without Protection</div>
+                <div class="card-amount">$15M+ at Risk</div>
+                <div class="card-subtitle">A 30% market decline would result in $15M+ institutional loss with no downside protection mechanism in place.</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown("""
+            <div class="protection-card">
+                <div class="card-icon">✅</div>
+                <div class="card-title">With Atticus Protection</div>
+                <div class="card-amount">$1.2M Cost</div>
+                <div class="card-subtitle">Professional options strategies limit maximum loss to ~$1.2M while preserving unlimited upside potential.</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="info-box">
+            <h4>🚀 Live Demonstration</h4>
+            <p>This demo shows how institutional-grade options strategies work using real-time market data and live pricing from major exchanges. You'll see exactly how portfolio protection works in practice.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # CENTER THE BUTTON
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🎯 Start Live Demo", type="primary", use_container_width=True):
+                st.session_state.show_intro = False
+                st.rerun()
+        
+        return True
     return False
 
 def screen_1_portfolio():
-    show_disclaimer_and_header()
+    show_header()
     
-    if show_hero_intro():
+    if show_intro_section():
         return
     
-    show_progress_steps(1)
+    show_progress_indicators(1)
     
+    # Reset state
     st.session_state.strategy_selected = False
     st.session_state.selected_strategy = None
     
     live_btc_price = get_live_btc_price()
-    
-    if live_btc_price is None:
+    if not live_btc_price:
         st.error("⚠️ Unable to fetch live BTC price. Please refresh the page.")
         return
     
     market_conditions = get_live_market_conditions()
     
-    st.markdown(f'''
-    <div class="live-price-banner">
+    # LIVE PRICE BANNER
+    st.markdown(f"""
+    <div class="live-price">
         🔴 LIVE MARKET DATA: BTC ${live_btc_price:,.2f} | 
         Volatility: {market_conditions['implied_volatility']*100:.0f}% | 
-        7-Day Trend: {market_conditions['price_trend_7d']*100:+.1f}%
-    </div>
-    ''', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="explanation-box">
-        <h4>💡 Demo Overview</h4>
-        <p>Create a realistic institutional Bitcoin portfolio using live market pricing, then see exactly how professional options strategies protect against volatility while preserving upside potential. Choose your preferred approach below.</p>
+        7-Day: {market_conditions['price_trend_7d']*100:+.1f}%
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown('<div class="portfolio-options">', unsafe_allow_html=True)
-    
-    # LEFT OPTION - PRIMARY
     st.markdown("""
-    <div class="option-card primary">
-        <div class="card-badge">RECOMMENDED</div>
-        <div class="card-header">
-            <h2 class="card-title">🏛️ Generate Institution Portfolio</h2>
-            <p class="card-subtitle">Pre-built realistic allocation with live pricing and institutional context</p>
-        </div>
-        <div class="card-content">
+    <div class="info-box">
+        <h4>💡 Portfolio Setup</h4>
+        <p>Choose how to create your portfolio for analysis. You can generate a realistic institutional portfolio or build a custom position set. Both options use live market pricing for accurate analysis.</p>
+    </div>
     """, unsafe_allow_html=True)
     
-    fund_type = st.radio(
-        "Select Institution Size:",
-        ["Small Fund ($20-50M)", "Mid-Cap Fund ($50-200M)"],
-        horizontal=True,
-        key="fund_type"
-    )
+    # STREAMLIT NATIVE SIDE-BY-SIDE LAYOUT
+    col1, col2 = st.columns(2)
     
-    if "Small" in fund_type:
-        btc_allocation = 2000000 / live_btc_price if live_btc_price else 20
-        st.markdown(f"""
-        <div class="info-display">
-            <p>📊 Will generate: ~{btc_allocation:.1f} BTC position (${2000000/1000000:.0f}M allocation) with realistic P&L and market exposure</p>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        btc_allocation = 8500000 / live_btc_price if live_btc_price else 85
-        st.markdown(f"""
-        <div class="info-display">
-            <p>📊 Will generate: ~{btc_allocation:.1f} BTC position (${8500000/1000000:.1f}M allocation) with institutional-scale exposure</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    if st.button("🎯 Generate Live Portfolio", type="primary", use_container_width=True, key="gen_inst"):
-        with st.spinner("Generating portfolio with real-time market pricing..."):
-            time.sleep(1)
-            if "Small" in fund_type:
-                btc_size = 2000000 / live_btc_price
-                portfolio = {
-                    'aum': 38000000,
-                    'total_btc_size': btc_size,
-                    'net_btc_exposure': btc_size,
-                    'total_current_value': btc_size * live_btc_price,
-                    'total_pnl': btc_size * live_btc_price * 0.15,
-                    'current_btc_price': live_btc_price
-                }
-            else:
-                btc_size = 8500000 / live_btc_price
-                portfolio = {
-                    'aum': 128000000,
-                    'total_btc_size': btc_size,
-                    'net_btc_exposure': btc_size,
-                    'total_current_value': btc_size * live_btc_price,
-                    'total_pnl': btc_size * live_btc_price * 0.18,
-                    'current_btc_price': live_btc_price
-                }
-            
-            st.session_state.portfolio = portfolio
-            st.session_state.portfolio_source = 'generated'
-            st.session_state.strategies = None
-            st.session_state.strategies_generated = False
-            st.success(f"✅ Portfolio Generated: {btc_size:.1f} BTC @ ${live_btc_price:,.2f}")
-            st.rerun()
-    
-    if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
-        portfolio = st.session_state.portfolio
+    with col1:
+        st.markdown("#### 🏛️ Generate Institution Portfolio")
+        st.markdown("**Recommended:** Pre-built realistic portfolio with institutional context")
         
-        st.markdown('<div class="card-section">', unsafe_allow_html=True)
-        st.markdown("**📈 Generated Portfolio Summary:**")
+        fund_type = st.selectbox(
+            "Select Institution Size:",
+            ["Small Fund ($20-50M AUM)", "Mid-Cap Fund ($50-200M AUM)"],
+            key="fund_size"
+        )
         
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Total AUM", f"${portfolio['aum']/1000000:.0f}M")
-            st.metric("BTC Position", f"{portfolio['total_btc_size']:.1f} BTC")
-        with col2:
-            st.metric("Current Value", f"${portfolio['total_current_value']/1000000:.1f}M")
-            st.metric("Unrealized P&L", f"${portfolio['total_pnl']/1000000:.1f}M")
+        if "Small" in fund_type:
+            btc_allocation = 2000000 / live_btc_price
+            st.info(f"📊 Will generate: ~{btc_allocation:.1f} BTC position (${2000000/1000000:.0f}M allocation)")
+        else:
+            btc_allocation = 8500000 / live_btc_price
+            st.info(f"📊 Will generate: ~{btc_allocation:.1f} BTC position (${8500000/1000000:.1f}M allocation)")
         
-        potential_loss = portfolio['total_current_value'] * 0.25
-        st.markdown(f"""
-        <div class="explanation-box">
-            <h4>⚠️ Risk Exposure Analysis</h4>
-            <p>This portfolio faces significant volatility exposure. A 25% market decline would result in a ${potential_loss/1000000:.1f}M loss. Let's analyze professional protection strategies to mitigate this risk.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        if st.button("📊 Analyze Protection Strategies", type="primary", use_container_width=True, key="analyze_gen"):
-            st.session_state.demo_step = 2
-            st.session_state.current_page = 'strategies'
-            st.rerun()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div></div>', unsafe_allow_html=True)
-    
-    # RIGHT OPTION - SECONDARY
-    st.markdown("""
-    <div class="option-card secondary">
-        <div class="card-header">
-            <h2 class="card-title">⚡ Custom Position Builder</h2>
-            <p class="card-subtitle">Build your own portfolio positions for personalized analysis</p>
-        </div>
-        <div class="card-content">
-    """, unsafe_allow_html=True)
-    
-    with st.form("position_entry", clear_on_submit=True):
-        col1, col2 = st.columns([3, 2])
-        
-        with col1:
-            btc_amount = st.number_input(
-                "BTC Amount", 
-                min_value=0.1, 
-                max_value=1000.0, 
-                value=25.0, 
-                step=0.1,
-                help="Enter the amount of Bitcoin for this position"
-            )
-        with col2:
-            position_type = st.selectbox("Direction", ["Long", "Short"])
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            add_position = st.form_submit_button("Add Position", type="primary", use_container_width=True)
-        with col2:
-            if st.form_submit_button("Clear All", type="secondary", use_container_width=True):
-                st.session_state.custom_positions = []
-                st.rerun()
-    
-    if add_position and btc_amount > 0:
-        position_value = btc_amount * live_btc_price
-        st.success(f"➕ Added: {btc_amount:.1f} BTC {position_type} (${position_value:,.0f})")
-        new_position = {'btc_amount': btc_amount, 'position_type': position_type}
-        st.session_state.custom_positions.append(new_position)
-        st.rerun()
-    
-    if st.session_state.custom_positions:
-        st.markdown('<div class="card-section">', unsafe_allow_html=True)
-        st.markdown("**📋 Portfolio Positions:**")
-        
-        total_long = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Long')
-        total_short = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Short')
-        
-        for i, pos in enumerate(st.session_state.custom_positions):
-            st.markdown(f"""
-            <div class="position-item">
-                <p><strong>{pos['btc_amount']:.1f} BTC</strong> • {'🟢 Long' if pos['position_type'] == 'Long' else '🔴 Short'} • ${pos['btc_amount'] * live_btc_price:,.0f}</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            if st.button("Remove", key=f"remove_{i}", type="secondary"):
-                st.session_state.custom_positions.pop(i)
+        if st.button("🎯 Generate Portfolio", type="primary", use_container_width=True, key="gen_portfolio"):
+            with st.spinner("Generating with live pricing..."):
+                time.sleep(1)
+                if "Small" in fund_type:
+                    btc_size = 2000000 / live_btc_price
+                    portfolio = {
+                        'aum': 38000000,
+                        'total_btc_size': btc_size,
+                        'net_btc_exposure': btc_size,
+                        'total_current_value': btc_size * live_btc_price,
+                        'total_pnl': btc_size * live_btc_price * 0.15,
+                        'current_btc_price': live_btc_price
+                    }
+                else:
+                    btc_size = 8500000 / live_btc_price
+                    portfolio = {
+                        'aum': 128000000,
+                        'total_btc_size': btc_size,
+                        'net_btc_exposure': btc_size,
+                        'total_current_value': btc_size * live_btc_price,
+                        'total_pnl': btc_size * live_btc_price * 0.18,
+                        'current_btc_price': live_btc_price
+                    }
+                
+                st.session_state.portfolio = portfolio
+                st.session_state.portfolio_source = 'generated'
+                st.session_state.strategies = None
+                st.session_state.strategies_generated = False
+                st.success(f"✅ Generated: {btc_size:.1f} BTC @ ${live_btc_price:,.2f}")
                 st.rerun()
         
-        net_btc = total_long - total_short
+        # Show generated portfolio
+        if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
+            portfolio = st.session_state.portfolio
+            
+            st.markdown("**📈 Portfolio Summary:**")
+            
+            col1a, col2a = st.columns(2)
+            with col1a:
+                st.metric("AUM", f"${portfolio['aum']/1000000:.0f}M")
+                st.metric("BTC Position", f"{portfolio['total_btc_size']:.1f}")
+            with col2a:
+                st.metric("Current Value", f"${portfolio['total_current_value']/1000000:.1f}M")
+                st.metric("P&L", f"${portfolio['total_pnl']/1000000:.1f}M")
+            
+            potential_loss = portfolio['total_current_value'] * 0.25
+            st.warning(f"⚠️ Risk: 25% decline = ${potential_loss/1000000:.1f}M loss")
+            
+            if st.button("📊 Analyze Strategies", type="primary", use_container_width=True):
+                st.session_state.demo_step = 2
+                st.rerun()
+    
+    with col2:
+        st.markdown("#### ⚡ Custom Position Builder")
+        st.markdown("Build your own portfolio positions for analysis")
         
-        st.markdown(f"""
-        <div class="position-summary">
-            <div class="metric-item">
-                <div class="metric-label">Long Positions</div>
-                <div class="metric-value">{total_long:.1f} BTC</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-label">Short Positions</div>
-                <div class="metric-value">{total_short:.1f} BTC</div>
-            </div>
-            <div class="metric-item">
-                <div class="metric-label">Net Exposure</div>
-                <div class="metric-value">{net_btc:+.1f} BTC</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with st.form("add_position", clear_on_submit=True):
+            btc_amount = st.number_input("BTC Amount", min_value=0.1, value=25.0, step=0.1)
+            position_type = st.selectbox("Position Type", ["Long", "Short"])
+            
+            col1a, col2a = st.columns(2)
+            with col1a:
+                add_clicked = st.form_submit_button("Add Position", type="primary", use_container_width=True)
+            with col2a:
+                clear_clicked = st.form_submit_button("Clear All", type="secondary", use_container_width=True)
         
-        if st.button("⚡ Analyze Custom Portfolio", type="primary", use_container_width=True):
-            total_value = (total_long + total_short) * live_btc_price
-            custom_portfolio = {
-                'aum': abs(net_btc) * live_btc_price * 4,
-                'total_btc_size': abs(net_btc),
-                'net_btc_exposure': net_btc,
-                'gross_btc_exposure': total_long + total_short,
-                'total_current_value': total_value,
-                'total_pnl': total_value * 0.08,
-                'current_btc_price': live_btc_price
-            }
-            st.session_state.portfolio = custom_portfolio
-            st.session_state.portfolio_source = 'custom'
-            st.session_state.strategies = None
-            st.session_state.strategies_generated = False
-            st.session_state.demo_step = 2
-            st.session_state.current_page = 'strategies'
+        if add_clicked:
+            position_value = btc_amount * live_btc_price
+            st.success(f"➕ Added: {btc_amount:.1f} BTC {position_type} (${position_value:,.0f})")
+            new_position = {'btc_amount': btc_amount, 'position_type': position_type}
+            st.session_state.custom_positions.append(new_position)
             st.rerun()
         
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div></div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        if clear_clicked:
+            st.session_state.custom_positions = []
+            st.rerun()
+        
+        # Show positions
+        if st.session_state.custom_positions:
+            st.markdown("**📋 Current Positions:**")
+            
+            total_long = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Long')
+            total_short = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Short')
+            net_btc = total_long - total_short
+            
+            for i, pos in enumerate(st.session_state.custom_positions):
+                col_pos, col_remove = st.columns([3, 1])
+                with col_pos:
+                    st.write(f"**{pos['btc_amount']:.1f} BTC** • {'🟢 Long' if pos['position_type'] == 'Long' else '🔴 Short'} • ${pos['btc_amount'] * live_btc_price:,.0f}")
+                with col_remove:
+                    if st.button("❌", key=f"remove_{i}"):
+                        st.session_state.custom_positions.pop(i)
+                        st.rerun()
+            
+            col1a, col1b, col1c = st.columns(3)
+            with col1a:
+                st.metric("Long", f"{total_long:.1f}")
+            with col1b:
+                st.metric("Short", f"{total_short:.1f}")
+            with col1c:
+                st.metric("Net", f"{net_btc:+.1f}")
+            
+            if st.button("⚡ Analyze Portfolio", type="primary", use_container_width=True):
+                total_value = (total_long + total_short) * live_btc_price
+                custom_portfolio = {
+                    'aum': abs(net_btc) * live_btc_price * 4,
+                    'total_btc_size': abs(net_btc),
+                    'net_btc_exposure': net_btc,
+                    'total_current_value': total_value,
+                    'total_pnl': total_value * 0.08,
+                    'current_btc_price': live_btc_price
+                }
+                st.session_state.portfolio = custom_portfolio
+                st.session_state.portfolio_source = 'custom'
+                st.session_state.strategies = None
+                st.session_state.strategies_generated = False
+                st.session_state.demo_step = 2
+                st.rerun()
 
 def screen_2_strategies():
-    show_disclaimer_and_header()
-    show_progress_steps(2)
-    
-    ensure_session_state()
+    show_header()
+    show_progress_indicators(2)
     
     if not st.session_state.portfolio:
         st.error("Please create a portfolio first")
@@ -1546,35 +1013,34 @@ def screen_2_strategies():
     net_btc = portfolio.get('net_btc_exposure', 0)
     current_price = portfolio.get('current_btc_price', get_live_btc_price())
     
-    if current_price is None:
+    if not current_price:
         st.error("Unable to fetch current BTC price")
         return
     
     market_conditions = get_live_market_conditions()
     position_direction = "Long" if net_btc > 0 else "Short" if net_btc < 0 else "Neutral"
     
-    st.markdown('<div class="page-section">', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">🛡️ Live Protection Strategies</h2>', unsafe_allow_html=True)
+    st.markdown("# 🛡️ Live Protection Strategies")
     
-    st.markdown(f'''
-    <div class="live-price-banner">
+    st.markdown(f"""
+    <div class="live-price">
         🎯 Portfolio: {abs(net_btc):.1f} BTC {position_direction} | 
         🔴 Live: ${current_price:,.2f} | 
         📈 Market: {market_conditions['market_regime'].title()}
     </div>
-    ''', unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
     st.markdown(f"""
-    <div class="explanation-box">
-        <h4>📊 Portfolio Analysis Complete</h4>
+    <div class="info-box">
+        <h4>📊 Portfolio Analysis</h4>
         <p>Analyzing {abs(net_btc):.1f} BTC {position_direction} position worth ${abs(net_btc) * current_price:,.0f}. 
-        Current market conditions show {market_conditions['market_regime'].title()} trend with {market_conditions['implied_volatility']*100:.0f}% volatility. 
-        Our system is generating optimal strategies using live institutional pricing.</p>
+        Market conditions: {market_conditions['market_regime'].title()} with {market_conditions['implied_volatility']*100:.0f}% volatility. 
+        Generating optimal strategies using live institutional pricing.</p>
     </div>
     """, unsafe_allow_html=True)
     
     if not st.session_state.strategies_generated:
-        with st.spinner("Analyzing live market conditions and generating optimal strategies... (30-45 seconds)"):
+        with st.spinner("Analyzing live market conditions... (30-45 seconds)"):
             time.sleep(2)
             st.session_state.strategies = generate_dynamic_strategies(net_btc, current_price)
             st.session_state.strategies_generated = True
@@ -1584,86 +1050,70 @@ def screen_2_strategies():
         not st.session_state.selected_strategy):
         
         st.markdown("""
-        <div class="explanation-box">
+        <div class="info-box">
             <h4>💡 Strategy Selection</h4>
-            <p>Each strategy below uses live market pricing and is optimized for current conditions. 
-            Protection strategies limit downside risk while income strategies generate returns from your holdings. 
-            Priorities are assigned based on market conditions and position type.</p>
+            <p>Each strategy uses live market pricing optimized for current conditions. Protection strategies limit downside while income strategies generate returns.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown('<div class="strategy-grid">', unsafe_allow_html=True)
-        
         for i, strategy in enumerate(st.session_state.strategies):
-            priority_class = f"{strategy['priority']}-priority"
             priority_emoji = "🔥" if strategy['priority'] == 'high' else "⭐" if strategy['priority'] == 'medium' else "💡"
             
             strategy_display = strategy['strategy_name'].replace('_', ' ').title()
             if 'covered_call' in strategy['strategy_name'] or 'cash_secured_put' in strategy['strategy_name']:
                 strategy_display += " (Income Generator)"
             elif 'protective' in strategy['strategy_name']:
-                strategy_display += " (Downside Protection)"
+                strategy_display += " (Protection)"
             elif 'spread' in strategy['strategy_name']:
-                strategy_display += " (Cost-Efficient Protection)"
+                strategy_display += " (Cost-Efficient)"
             
             pricing = strategy['pricing']['live_pricing']
+            priority_class = strategy['priority'] + "-priority"
             
-            st.markdown(f'''
+            st.markdown(f"""
             <div class="strategy-card {priority_class}">
-                <div class="strategy-header">
-                    <h3>{priority_emoji} {strategy_display}</h3>
-                </div>
-                <div class="strategy-details">
-                    <p><strong>Coverage:</strong> {strategy['target_exposure']:.1f} BTC</p>
-                    <p><strong>Strategy:</strong> {strategy['rationale']}</p>
-                    <p><strong>Duration:</strong> {pricing['days_to_expiry']} days | <strong>Expiry:</strong> {pricing['expiry_date']}</p>
-                </div>
-                <div class="strategy-metrics">
-                    <div class="metric-box {'income' if pricing['total_premium'] < 0 else 'cost'}">
-                        <div class="metric-title">{'Income' if pricing['total_premium'] < 0 else 'Cost'}</div>
-                        <div class="metric-amount">${abs(pricing['total_premium']):,.0f}</div>
-                    </div>
-                    <div class="metric-box rate">
-                        <div class="metric-title">Rate</div>
-                        <div class="metric-amount">{pricing['cost_as_pct']:.1f}%</div>
-                    </div>
-                    <div class="metric-box">
-                        <div class="metric-title">Contracts</div>
-                        <div class="metric-amount">{pricing['contracts_needed']}</div>
-                    </div>
-                </div>
-                <div class="strategy-action">
-                    <!-- Button will be inserted here -->
-                </div>
+                <h3>{priority_emoji} {strategy_display}</h3>
+                <p><strong>Coverage:</strong> {strategy['target_exposure']:.1f} BTC</p>
+                <p><strong>Strategy:</strong> {strategy['rationale']}</p>
+                <p><strong>Duration:</strong> {pricing['days_to_expiry']} days | <strong>Expiry:</strong> {pricing['expiry_date']}</p>
             </div>
-            ''', unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
             
-            # Insert button using Streamlit
-            if st.button("Execute Strategy", key=f"exec_{i}", type="primary"):
-                st.session_state.selected_strategy = strategy
-                st.session_state.strategy_selected = True
-                st.session_state.execution_data = {
-                    'btc_price_at_execution': current_price,
-                    'execution_time': random.randint(12, 28),
-                    'timestamp': datetime.now().isoformat()
-                }
-                st.session_state.demo_step = 3
-                st.session_state.current_page = 'execution'
-                st.rerun()
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+            # Metrics in columns
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                if pricing['total_premium'] < 0:
+                    st.success(f"**Income**\n${abs(pricing['total_premium']):,.0f}")
+                else:
+                    st.info(f"**Cost**\n${abs(pricing['total_premium']):,.0f}")
+            with col2:
+                cost_pct = pricing['cost_as_pct']
+                color = "🟢" if cost_pct < 3 else "🟡" if cost_pct < 5 else "🔴"
+                st.info(f"**Rate**\n{color} {cost_pct:.1f}%")
+            with col3:
+                st.info(f"**Contracts**\n{pricing['contracts_needed']}")
+            with col4:
+                if st.button("Execute Strategy", key=f"exec_{i}", type="primary", use_container_width=True):
+                    st.session_state.selected_strategy = strategy
+                    st.session_state.strategy_selected = True
+                    st.session_state.execution_data = {
+                        'btc_price_at_execution': current_price,
+                        'execution_time': random.randint(12, 28),
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    st.session_state.demo_step = 3
+                    st.rerun()
+            
+            st.markdown("---")
     
     elif st.session_state.strategy_selected:
-        st.info("✅ Strategy selected! Executing with live institutional pricing...")
+        st.info("✅ Strategy selected! Executing...")
         time.sleep(1)
         st.session_state.demo_step = 3
         st.rerun()
     
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    if st.button("← Back to Portfolio Setup", type="secondary"):
+    if st.button("← Back to Portfolio", type="secondary"):
         st.session_state.demo_step = 1
-        st.session_state.current_page = 'portfolio'
         st.session_state.strategies = None
         st.session_state.selected_strategy = None
         st.session_state.strategies_generated = False
@@ -1671,10 +1121,8 @@ def screen_2_strategies():
         st.rerun()
 
 def screen_3_execution():
-    show_disclaimer_and_header()
-    show_progress_steps(3)
-    
-    ensure_session_state()
+    show_header()
+    show_progress_indicators(3)
     
     if not st.session_state.selected_strategy:
         st.error("Strategy not selected")
@@ -1684,119 +1132,83 @@ def screen_3_execution():
     execution_data = st.session_state.execution_data
     pricing = strategy['pricing']['live_pricing']
     
-    st.markdown('<div class="execution-container">', unsafe_allow_html=True)
+    st.markdown("# ✅ Strategy Execution")
     
-    with st.spinner("Executing strategy with live institutional pricing..."):
+    with st.spinner("Executing with live pricing..."):
         time.sleep(2)
     
     st.markdown("""
-    <div class="execution-header">
-        <h2>🎯 Strategy Execution Complete</h2>
-        <p>Professional options strategy executed using live market pricing</p>
+    <div class="execution-success">
+        <h2>🎯 Execution Complete</h2>
+        <p>Professional options strategy executed with live market pricing</p>
     </div>
     """, unsafe_allow_html=True)
     
-    st.metric("Execution Time", f"{execution_data['execution_time']} seconds", "Live institutional pricing")
+    st.metric("Execution Time", f"{execution_data['execution_time']} seconds")
     
     st.markdown(f"""
-    <div class="explanation-box">
-        <h4>🎯 Execution Summary</h4>
-        <p>Professional options strategy executed using live market pricing. 
-        The contracts below represent actual protection available for your {strategy['target_exposure']:.1f} BTC position through institutional channels. 
-        All pricing is based on current market conditions and is immediately executable.</p>
+    <div class="info-box">
+        <h4>🎯 Contract Details</h4>
+        <p>Professional strategy executed for {strategy['target_exposure']:.1f} BTC position using live institutional pricing.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown('<div class="execution-details">', unsafe_allow_html=True)
+    # Contract details in columns
+    col1, col2 = st.columns(2)
     
-    # LEFT CARD - Contract Details
-    st.markdown(f"""
-    <div class="detail-card">
-        <h4>📋 Executed Contract Details</h4>
-        <p><strong>Strategy Type:</strong> {pricing['option_type']}</p>
-        <p><strong>Contracts:</strong> {pricing['contracts_needed']} contracts</p>
-        <p><strong>Strike Level:</strong> ${pricing.get('strike_price', pricing.get('long_strike', 0)):,.2f}</p>
-        <p><strong>Expiry Date:</strong> {pricing['expiry_date']}</p>
-        <p><strong>Total Premium:</strong> ${abs(pricing['total_premium']):,.2f}</p>
-        <p><strong>Premium per Contract:</strong> ${abs(pricing['total_premium'])/pricing['contracts_needed']:,.2f}</p>
-        <p><strong>Pricing Source:</strong> Live institutional markets</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with col1:
+        st.markdown("#### 📋 Executed Contracts")
+        st.write(f"**Strategy:** {pricing['option_type']}")
+        st.write(f"**Contracts:** {pricing['contracts_needed']}")
+        st.write(f"**Strike:** ${pricing.get('strike_price', pricing.get('long_strike', 0)):,.2f}")
+        st.write(f"**Expiry:** {pricing['expiry_date']}")
+        st.write(f"**Premium:** ${abs(pricing['total_premium']):,.2f}")
     
-    # RIGHT CARD - Protection Summary
-    outcomes = calculate_strategy_outcomes(strategy, pricing['btc_spot_price'])
+    with col2:
+        outcomes = calculate_strategy_outcomes(strategy, pricing['btc_spot_price'])
+        
+        st.markdown("#### 🛡️ Protection Summary")
+        st.write(f"**Entry Price:** ${pricing['btc_spot_price']:,.2f}")
+        st.write(f"**Breakeven:** ${outcomes['breakeven_price']:,.2f}")
+        st.write(f"**Max Risk:** {outcomes['max_loss'] if isinstance(outcomes['max_loss'], str) else f'${outcomes['max_loss']:,.0f}'}")
+        st.write(f"**Max Reward:** {outcomes['max_profit']}")
+        st.write(f"**Impact:** {pricing['cost_as_pct']:.2f}% of portfolio")
     
-    st.markdown(f"""
-    <div class="detail-card">
-        <h4>🛡️ Protection Summary</h4>
-        <p><strong>Position Protected:</strong> {strategy['target_exposure']:.1f} BTC</p>
-        <p><strong>Entry Price:</strong> ${pricing['btc_spot_price']:,.2f}</p>
-        <p><strong>Breakeven Level:</strong> ${outcomes['breakeven_price']:,.2f}</p>
-        <p><strong>Maximum Risk:</strong> {outcomes['max_loss'] if isinstance(outcomes['max_loss'], str) else f"${outcomes['max_loss']:,.0f}"}</p>
-        <p><strong>Maximum Reward:</strong> {outcomes['max_profit']}</p>
-        <p><strong>Position Impact:</strong> {pricing['cost_as_pct']:.2f}% of portfolio value</p>
-        <p><strong>Coverage Period:</strong> {pricing['days_to_expiry']} days</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Market Scenarios
-    st.markdown('<div class="scenarios-section">', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">📊 Market Scenario Analysis</h2>', unsafe_allow_html=True)
-    
+    # Scenario analysis
     outcomes = calculate_strategy_outcomes(strategy, pricing['btc_spot_price'])
     
     if outcomes['scenarios']:
+        st.markdown("### 📊 Market Scenarios")
+        
         st.markdown("""
-        <div class="explanation-box">
-            <h4>💡 Understanding Your Protection</h4>
-            <p>These scenarios show exactly how your portfolio performs under different Bitcoin price movements with this protection in place. 
-            Each scenario is calculated based on the actual options contracts executed above.</p>
+        <div class="info-box">
+            <h4>💡 Outcome Analysis</h4>
+            <p>These scenarios show exactly how your portfolio performs under different Bitcoin price movements with protection in place.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown('<div class="scenario-grid">', unsafe_allow_html=True)
-        
         for i, scenario in enumerate(outcomes['scenarios']):
             st.markdown(f"""
-            <div class="scenario-card">
-                <h5>📊 Scenario {i+1}: {scenario['condition']}</h5>
-                <p><strong>{scenario['outcome']}:</strong> {scenario['details']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+            **Scenario {i+1}: {scenario['condition']}**
+            - **{scenario['outcome']}:** {scenario['details']}
+            """)
     
     st.markdown("""
-    <div class="execution-header">
+    <div class="execution-success">
         <h2>✅ Portfolio Protection Deployed</h2>
-        <p>Institutional-grade options strategy executed with live market pricing. Your portfolio now has professional downside protection while maintaining unlimited upside potential.</p>
+        <p>Institutional options strategy executed with live pricing. Your portfolio is now protected.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("""
-    <div class="explanation-box">
-        <h4>🚀 Ready for Implementation</h4>
-        <p>This demo demonstrates real institutional options strategies with live pricing and executable contracts. 
-        All strategies shown are available for immediate implementation through professional trading channels. 
-        Contact us to discuss implementing these protection strategies for your actual institutional portfolio.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
+    # Action buttons
     col1, col2, col3 = st.columns([1, 2, 1])
     with col1:
-        if st.button("🔄 Try Another Scenario", type="secondary", use_container_width=True):
+        if st.button("🔄 New Demo", type="secondary", use_container_width=True):
             for key in ['portfolio', 'strategies', 'selected_strategy', 'execution_data']:
                 if key in st.session_state:
                     st.session_state[key] = None
             st.session_state.custom_positions = []
             st.session_state.demo_step = 1
-            st.session_state.current_page = 'portfolio'
             st.session_state.strategies_generated = False
             st.session_state.strategy_selected = False
             st.session_state.show_intro = True
