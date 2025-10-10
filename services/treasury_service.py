@@ -1,31 +1,25 @@
 """
-ATTICUS V1 - 100% REAL Treasury Rates
-NO FALLBACKS - Raises exceptions if real FRED data unavailable
+ATTICUS V1 - ENHANCED Real Treasury Service
+100% Real FRED API integration
 """
 import requests
 from datetime import datetime
 import os
 
 class RealTreasuryService:
-    """
-    100% Real Treasury rates from Federal Reserve FRED API
-    NO FALLBACKS - Platform requires real data
-    """
+    """100% Real Treasury rates from Federal Reserve FRED API"""
     
     def __init__(self):
         self.fred_api_key = os.environ.get('FRED_API_KEY', '17d3b0a9b20e8b012e99238c48ef8da1')
         
         if not self.fred_api_key:
-            raise Exception("FRED_API_KEY environment variable required - No fallbacks allowed")
+            raise Exception("FRED_API_KEY environment variable required")
         
         self.base_url = "https://api.stlouisfed.org/fred"
-        self.rate_series = 'GS1M'  # 1-Month Treasury Constant Maturity Rate
+        self.rate_series = 'GS1M'
     
     def get_current_risk_free_rate(self) -> dict:
-        """
-        Get REAL current Treasury rate from Federal Reserve
-        NO fallbacks - raises exception if FRED API unavailable
-        """
+        """Get REAL Treasury rate from Federal Reserve"""
         try:
             url = f"{self.base_url}/series/observations"
             params = {
@@ -39,7 +33,7 @@ class RealTreasuryService:
             response = requests.get(url, params=params, timeout=10)
             
             if response.status_code == 400:
-                raise Exception("INVALID FRED API KEY - Check your API key")
+                raise Exception("INVALID FRED API KEY")
             elif response.status_code != 200:
                 raise Exception(f"FRED API ERROR: HTTP {response.status_code}")
             
@@ -59,7 +53,6 @@ class RealTreasuryService:
             rate_percent = float(latest_obs['value'])
             rate_decimal = rate_percent / 100.0
             
-            # Validate reasonable range
             if rate_percent < 0 or rate_percent > 20:
                 raise Exception(f"INVALID TREASURY RATE: {rate_percent}%")
             
@@ -71,12 +64,5 @@ class RealTreasuryService:
                 'source': 'Federal Reserve FRED API (Official)'
             }
             
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"FRED API CONNECTION FAILED: {str(e)}")
-        except ValueError as e:
-            raise Exception(f"FRED API DATA PARSING FAILED: {str(e)}")
         except Exception as e:
-            if "FRED" in str(e).upper():
-                raise e
-            else:
-                raise Exception(f"TREASURY RATE SERVICE FAILED: {str(e)}")
+            raise Exception(f"TREASURY RATE SERVICE FAILED: {str(e)}")
