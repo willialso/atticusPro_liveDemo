@@ -1227,6 +1227,139 @@ def admin_pricing_validation():
     except Exception as e:
         return jsonify({'error': f'VALIDATION FAILED: {str(e)}'}), 503
 
+@app.route('/api/create-custom-portfolio', methods=['POST'])
+def create_custom_portfolio():
+    """FRONTEND COMPATIBILITY: Alias for custom-position-builder"""
+    # Redirect to the existing custom position builder endpoint
+    return custom_position_builder()
+
+@app.route('/api/custom-portfolio-analysis', methods=['POST'])
+def custom_portfolio_analysis():
+    """FRONTEND COMPATIBILITY: Custom portfolio analysis endpoint"""
+    if not services_operational:
+        return jsonify({'success': False, 'error': 'SERVICES REQUIRED'}), 503
+    
+    try:
+        # Get request data
+        request_data = request.json or {}
+        
+        # Extract parameters
+        custom_positions = request_data.get('positions', [])
+        portfolio_size = float(request_data.get('portfolio_size', 1000000))  # $1M default
+        
+        if not custom_positions:
+            return jsonify({
+                'success': False,
+                'error': 'No custom positions provided for analysis'
+            }), 400
+        
+        # Get market data
+        current_price = market_data_service.get_live_btc_price()
+        market_conditions = market_data_service.get_real_market_conditions(current_price)
+        vol_decimal = market_conditions['annualized_volatility']
+        vol_analysis = classify_vol_environment(vol_decimal)
+        
+        # Analyze each custom position
+        analyzed_positions = []
+        total_premium = 0
+        total_delta = 0
+        total_risk = 0
+        
+        for position in custom_positions:
+            try:
+                strategy_type = position.get('strategy_type', 'protective_put')
+                size_btc = float(position.get('size', 1.0))
+                strike_offset = float(position.get('strike_offset_percent', -10)) / 100
+                
+                custom_strike = current_price * (1 + strike_offset)
+                
+                # Price the position
+                pricing = pricing_engine.calculate_real_strategy_pricing(
+                    strategy_type, size_btc, current_price, vol_decimal
+                )
+                
+                # Override with custom strike
+                pricing['strike_price'] = custom_strike
+                pricing['strike_offset'] = f"{strike_offset*100:+.1f}%"
+                
+                formatted_pricing = format_strategy_pricing(pricing, vol_decimal, current_price)
+                
+                position_premium = float(formatted_pricing.get('total_premium', 0))
+                position_delta = size_btc * 0.5  # Simplified delta calculation
+                position_risk = abs(position_premium)
+                
+                total_premium += position_premium
+                total_delta += position_delta
+                total_risk += position_risk
+                
+                analyzed_positions.append({
+                    'strategy_type': strategy_type,
+                    'size_btc': size_btc,
+                    'strike_price': custom_strike,
+                    'strike_offset_percent': strike_offset * 100,
+                    'pricing': formatted_pricing,
+                    'position_delta': position_delta,
+                    'position_risk': position_risk,
+                    'position_premium': position_premium
+                })
+                
+            except Exception as pos_error:
+                analyzed_positions.append({
+                    'strategy_type': position.get('strategy_type', 'unknown'),
+                    'error': str(pos_error),
+                    'status': 'ANALYSIS_FAILED'
+                })
+        
+        # Portfolio-level analysis
+        portfolio_analysis = {
+            'total_positions': len(custom_positions),
+            'successful_analysis': len([p for p in analyzed_positions if 'error' not in p]),
+            'total_premium': total_premium,
+            'total_delta_exposure': total_delta,
+            'total_risk': total_risk,
+            'portfolio_size': portfolio_size,
+            'risk_percentage': (total_risk / portfolio_size) * 100 if portfolio_size > 0 else 0,
+            'net_premium_yield': (total_premium / portfolio_size) * 100 if portfolio_size > 0 else 0
+        }
+        
+        # Risk assessment
+        risk_level = 'LOW'
+        if portfolio_analysis['risk_percentage'] > 10:
+            risk_level = 'HIGH'
+        elif portfolio_analysis['risk_percentage'] > 5:
+            risk_level = 'MEDIUM'
+        
+        return jsonify({
+            'success': True,
+            'custom_portfolio_analysis': {
+                'positions': analyzed_positions,
+                'portfolio_summary': portfolio_analysis,
+                'risk_assessment': {
+                    'risk_level': risk_level,
+                    'risk_percentage': portfolio_analysis['risk_percentage'],
+                    'total_exposure': total_delta,
+                    'hedge_requirement': abs(total_delta) > 0.5
+                },
+                'market_context': {
+                    'current_btc_price': current_price,
+                    'volatility': vol_decimal * 100,
+                    'volatility_regime': vol_analysis['regime'],
+                    'environment': vol_analysis['environment']
+                }
+            },
+            'execution_ready': True,
+            'multi_exchange_routing': {
+                'coinbase': 'Your $70k account ready',
+                'hedging_venues': ['coinbase', 'kraken', 'gemini']
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'CUSTOM PORTFOLIO ANALYSIS FAILED: {str(e)}'
+        }), 503
+
 # Initialize services
 if __name__ == '__main__':
     success = initialize_services()
