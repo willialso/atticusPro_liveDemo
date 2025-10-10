@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="app" class="min-h-screen">
+    <!-- Professional Header -->
+    <header class="bg-slate-800 border-b-2 border-yellow-400 py-6">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="mx-auto mb-4" style="max-width: 450px; height: auto;">
+            <h1 class="text-3xl font-bold text-yellow-400 mb-3">Professional Portfolio Protection Demo</h1>
+            <p class="text-slate-300 text-lg">Live market data • Real-time options pricing • Institutional strategies</p>
+        </div>
+    </header>
+
+    <!-- Professional Progress Indicator -->
+    <div id="progress-container" class="bg-slate-800 py-6 border-b border-slate-700">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="step-item flex flex-col items-center">
+                    <div id="step-1" class="step-circle w-16 h-16 rounded-full bg-yellow-400 text-slate-900 flex items-center justify-center font-bold text-xl mb-2">1</div>
+                    <span class="text-white font-semibold text-lg">Portfolio Setup</span>
+                </div>
+                <div class="flex-1 h-2 bg-slate-600 mx-8 rounded-full">
+                    <div class="h-2 bg-slate-600 rounded-full"></div>
+                </div>
+                <div class="step-item flex flex-col items-center">
+                    <div id="step-2" class="step-circle w-16 h-16 rounded-full bg-slate-600 text-slate-300 flex items-center justify-center font-bold text-xl mb-2">2</div>
+                    <span class="text-slate-300 font-semibold text-lg">Strategy Analysis</span>
+                </div>
+                <div class="flex-1 h-2 bg-slate-600 mx-8 rounded-full">
+                    <div class="h-2 bg-slate-600 rounded-full"></div>
+                </div>
+                <div class="step-item flex flex-col items-center">
+                    <div id="step-3" class="step-circle w-16 h-16 rounded-full bg-slate-600 text-slate-300 flex items-center justify-center font-bold text-xl mb-2">3</div>
+                    <span class="text-slate-300 font-semibold text-lg">Protection Results</span>
+                </div>
+            </div>
+            <div class="w-full bg-slate-600 rounded-full h-3">
+                <div id="progress-bar" class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-3 rounded-full transition-all duration-500" style="width: 33%"></div>
+            </div>
+            <div class="text-center mt-3">
+                <p class="text-slate-300 font-medium">Step <span id="current-step-text">1</span> of 3 completed</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        
+        <!-- Professional Intro Section -->
+        <div id="intro-section" class="mb-16">
+            <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-8 mb-8 shadow-xl">
+                <h2 class="text-3xl font-bold text-white mb-4">🚨 The Institutional Challenge</h2>
+                <p class="text-red-100 text-xl leading-relaxed">Bitcoin's volatility creates massive risk exposure for institutional portfolios. Recent market events demonstrate that 30-50% Bitcoin price declines can occur within days, creating significant losses for unprotected institutional positions.</p>
+            </div>
+
+            <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-8 mb-8 shadow-xl">
+                <h2 class="text-3xl font-bold text-white mb-4">✅ The Professional Solution</h2>
+                <p class="text-green-100 text-xl leading-relaxed">Atticus provides sophisticated options strategies that limit downside risk while preserving unlimited upside potential, using the same professional risk management principles employed by traditional institutional asset managers.</p>
+            </div>
+
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 mb-10 shadow-xl">
+                <h2 class="text-3xl font-bold text-white mb-4">📊 Live Market Example</h2>
+                <p class="text-blue-100 text-xl leading-relaxed">$50M Bitcoin Position Protection (Live BTC: <span id="live-btc-price" class="font-bold">Loading...</span>)</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-10">
+                <div class="bg-slate-800 border-l-8 border-red-500 rounded-xl p-8 shadow-xl">
+                    <h3 class="text-2xl font-bold text-red-400 mb-4">⚠️ Unprotected Portfolio Risk</h3>
+                    <div class="text-5xl font-bold text-red-400 mb-4">$15M+ at Risk</div>
+                    <div class="space-y-2 text-slate-300 text-lg">
+                        <p>• No downside protection mechanism</p>
+                        <p>• Full exposure to market volatility</p>
+                        <p>• Unlimited loss potential during market stress</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800 border-l-8 border-green-500 rounded-xl p-8 shadow-xl">
+                    <h3 class="text-2xl font-bold text-green-400 mb-4">✅ Professional Portfolio Protection</h3>
+                    <div class="text-5xl font-bold text-green-400 mb-4">$1.2M Cost</div>
+                    <div class="space-y-2 text-slate-300 text-lg">
+                        <p>• Capped maximum loss exposure</p>
+                        <p>• Unlimited upside potential preserved</p>
+                        <p>• Professional institutional risk management</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button id="start-demo" class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-2xl px-12 py-6 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl">
+                    🚀 Start Professional Demo with Live Market Data
+                </button>
+                <p class="text-slate-400 mt-4 text-lg">Experience institutional-grade portfolio protection with real market data</p>
+            </div>
+        </div>
+
+        <!-- Portfolio Setup Section -->
+        <div id="portfolio-section" class="hidden mb-16">
+            <div id="market-banner" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 mb-8 text-center shadow-xl">
+                <p class="text-white font-bold text-2xl">🔴 LIVE MARKET DATA: <span id="market-data">Loading...</span></p>
+            </div>
+
+            <div class="bg-blue-600 rounded-xl p-6 mb-8 shadow-xl">
+                <p class="text-white text-xl font-semibold">💡 <strong>Portfolio Setup:</strong> Choose your preferred method to create a portfolio for protection analysis. Both options use live market pricing for accurate strategy generation.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-10">
+                <!-- Generate Institution Portfolio -->
+                <div class="bg-slate-800 rounded-xl p-8 border-4 border-yellow-400 shadow-xl relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold text-sm">
+                        RECOMMENDED
+                    </div>
+                    <h3 class="text-3xl font-bold text-yellow-400 mb-4 mt-2">🏛️ Generate Institution Portfolio</h3>
+                    <p class="text-slate-300 text-lg mb-8">Pre-configured realistic institutional allocation with professional context</p>
+                    
+                    <select id="fund-type" class="w-full bg-slate-700 text-white p-4 rounded-xl mb-6 text-lg font-medium">
+                        <option value="Small Fund ($20-50M AUM)">Small Fund ($20-50M AUM)</option>
+                        <option value="Mid-Cap Fund ($50-200M AUM)">Mid-Cap Fund ($50-200M AUM)</option>
+                    </select>
+
+                    <div id="portfolio-info" class="bg-blue-600 rounded-xl p-6 mb-6 shadow-lg">
+                        <p class="text-white font-semibold text-lg">📊 Portfolio specifications will appear here...</p>
+                    </div>
+
+                    <button id="generate-portfolio" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl transition-all duration-300 shadow-lg">
+                        Generate Professional Portfolio
+                    </button>
+
+                    <div id="portfolio-results" class="hidden mt-8">
+                        <h4 class="text-2xl font-bold text-yellow-400 mb-6">📈 Portfolio Summary</h4>
+                        <div class="grid grid-cols-2 gap-4 mb-6" id="portfolio-metrics">
+                            <!-- Metrics will be populated here -->
+                        </div>
+                        <div id="risk-analysis" class="bg-orange-600 rounded-xl p-6 mb-6">
+                            <p class="text-white font-bold text-lg">⚠️ <span id="risk-text">Risk analysis will appear here</span></p>
+                        </div>
+                        <button id="analyze-strategies" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl transition-all duration-300">
+                            Analyze Professional Protection Strategies
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Position Builder -->
+                <div class="bg-slate-800 rounded-xl p-8 border-2 border-slate-600 shadow-xl">
+                    <h3 class="text-3xl font-bold text-yellow-400 mb-4">⚡ Custom Position Builder</h3>
+                    <p class="text-slate-300 text-lg mb-8">Build customized portfolio positions for specialized analysis</p>
+                    
+                    <div class="space-y-6">
+                        <input type="number" id="btc-amount" placeholder="Bitcoin Amount (BTC)" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg" min="0.1" max="1000" step="0.1" value="25">
+                        <select id="position-type" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg">
+                            <option value="Long">Long Position</option>
+                            <option value="Short">Short Position</option>
+                        </select>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button id="add-position" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-3 px-4 rounded-xl text-lg transition-all duration-300">
+                                Add Position
+                            </button>
+                            <button id="clear-positions" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl text-lg transition-all duration-300">
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="positions-list" class="mt-8">
+                        <!-- Custom positions will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategy Analysis Section -->
+        <div id="strategy-section" class="hidden mb-16">
+            <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🛡️ Professional Protection Strategies</h2>
+            
+            <div id="strategy-analysis-banner" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 mb-8 text-center shadow-xl">
+                <p class="text-white font-bold text-xl">🎯 <span id="strategy-portfolio-summary">Portfolio analysis in progress...</span></p>
+            </div>
+
+            <div class="bg-blue-600 rounded-xl p-6 mb-8 shadow-xl">
+                <p class="text-white text-lg font-semibold">💡 <strong>Strategy Selection Guide:</strong> Each strategy below uses live institutional market pricing and is optimized for current market conditions. Protection strategies limit downside risk while income strategies generate returns from existing holdings.</p>
+            </div>
+            
+            <div id="strategy-list">
+                <!-- Strategies will be populated here -->
+            </div>
+
+            <div class="text-center mt-8">
+                <button id="back-to-portfolio" class="bg-slate-600 hover:bg-slate-700 text-white font-bold text-lg py-3 px-8 rounded-xl transition-all duration-300">
+                    ← Return to Portfolio Setup
+                </button>
+            </div>
+        </div>
+
+        <!-- Execution Results Section -->
+        <div id="execution-section" class="hidden mb-16">
+            <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">✅ Strategy Execution Complete</h2>
+            <div id="execution-results">
+                <!-- Execution results will be populated here -->
+            </div>
+        </div>
+
+    </main>
+</div>
