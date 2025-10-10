@@ -1,250 +1,230 @@
 """
-ATTICUS V1 - Professional Market Data Service
-Real-time BTC options data from Deribit with caching
+ATTICUS V1 - 100% REAL Market Data - NYC Compliant
+NO FALLBACKS, NO FAKE DATA, NO RESTRICTED EXCHANGES
 """
 import requests
 import time
 from datetime import datetime, timedelta
 import json
 from typing import Dict, List, Optional
-from config.settings import Config
-from config.exchanges import EXCHANGES
 
-class DeribitDataService:
+class RealMarketDataService:
     """
-    Professional Deribit integration for BTC options market data
-    Provides real pricing for institutional strategies
+    100% Real market data from NYC-compliant sources ONLY
+    NO fallbacks - raises exceptions if real data unavailable
     """
     
     def __init__(self):
-        self.base_url = EXCHANGES['deribit']['base_url']
-        self.endpoints = EXCHANGES['deribit']['endpoints']
         self.cache = {}
-        self.rate_limiter = RateLimiter(EXCHANGES['deribit']['rate_limit'])
-    
-    def get_live_btc_price(self) -> float:
-        """
-        Get real-time BTC index price from Deribit
-        This is the reference price for all option calculations
-        """
-        cache_key = 'btc_index_price'
-        if self._is_cached(cache_key):
-            return self.cache[cache_key]['data']
+        self.last_price_update = None
         
-        try:
-            self.rate_limiter.wait_if_needed()
-            response = requests.get(f"{self.base_url}{self.endpoints['btc_index']}", timeout=5)
-            
-            if response.status_code == 200:
-                data = response.json()
-                price = float(data['result']['BTC'])
-                
-                self._cache_data(cache_key, price)
-                return price
-            else:
-                raise Exception(f"Deribit API error: {response.status_code}")
-                
-        except Exception as e:
-            print(f"Error fetching BTC price: {e}")
-            # Fallback to cached data if available
-            if cache_key in self.cache:
-                return self.cache[cache_key]['data']
-            return None
+        # NYC-COMPLIANT EXCHANGES ONLY
+        self.price_sources = [
+            {
+                'name': 'Coinbase',
+                'url': 'https://api.coinbase.com/v2/exchange-rates?currency=BTC',
+                'parser': self._parse_coinbase_price
+            },
+            {
+                'name': 'CoinGecko', 
+                'url': 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
+                'parser': self._parse_coingecko_price
+            },
+            {
+                'name': 'Kraken',
+                'url': 'https://api.kraken.com/0/public/Ticker?pair=XBTUSD',
+                'parser': self._parse_kraken_price
+            }
+        ]
     
-    def get_available_options(self) -> List[Dict]:
+    def get_live_btc_price(self) -> Optional[float]:
         """
-        Get all available BTC options from Deribit
-        Returns liquid instruments suitable for institutional hedging
+        Get REAL BTC price from NYC-compliant exchanges ONLY
+        NO fallbacks - returns None if all sources fail
         """
-        cache_key = 'btc_options'
-        if self._is_cached(cache_key):
-            return self.cache[cache_key]['data']
+        prices = []
         
-        try:
-            self.rate_limiter.wait_if_needed()
-            response = requests.get(f"{self.base_url}{self.endpoints['options']}", timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                options = data['result']
-                
-                # Filter for liquid options suitable for institutional use
-                liquid_options = self._filter_liquid_options(options)
-                
-                self._cache_data(cache_key, liquid_options)
-                return liquid_options
-            else:
-                raise Exception(f"Deribit options API error: {response.status_code}")
-                
-        except Exception as e:
-            print(f"Error fetching options: {e}")
-            return []
-    
-    def get_option_orderbook(self, instrument_name: str) -> Dict:
-        """
-        Get real-time orderbook for specific option
-        Critical for understanding actual liquidity and spreads
-        """
-        cache_key = f'orderbook_{instrument_name}'
-        if self._is_cached(cache_key, ttl=10):  # Shorter cache for orderbooks
-            return self.cache[cache_key]['data']
-        
-        try:
-            self.rate_limiter.wait_if_needed()
-            url = f"{self.base_url}{self.endpoints['orderbook']}?instrument_name={instrument_name}"
-            response = requests.get(url, timeout=5)
-            
-            if response.status_code == 200:
-                data = response.json()
-                orderbook = data['result']
-                
-                # Calculate mid-price and spread
-                if orderbook['bids'] and orderbook['asks']:
-                    best_bid = orderbook['bids'][0][0]
-                    best_ask = orderbook['asks'][0][0]
-                    mid_price = (best_bid + best_ask) / 2
-                    spread_bps = ((best_ask - best_bid) / mid_price) * 10000
-                    
-                    orderbook['mid_price'] = mid_price
-                    orderbook['spread_bps'] = spread_bps
-                
-                self._cache_data(cache_key, orderbook)
-                return orderbook
-                
-        except Exception as e:
-            print(f"Error fetching orderbook for {instrument_name}: {e}")
-            return {}
-    
-    def get_implied_volatility_surface(self) -> Dict:
-        """
-        Build implied volatility surface from Deribit options
-        Essential for accurate Black-Scholes pricing
-        """
-        options = self.get_available_options()
-        iv_surface = {}
-        
-        for option in options:
-            instrument = option['instrument_name']
-            
+        for source in self.price_sources:
             try:
-                # Get current ticker data including IV
-                ticker_data = self._get_ticker_data(instrument)
-                
-                if ticker_data and 'mark_iv' in ticker_data:
-                    strike = option['strike']
-                    expiry = datetime.fromtimestamp(option['expiration_timestamp'] / 1000)
-                    option_type = option['option_type'].lower()
-                    
-                    surface_key = (strike, expiry, option_type)
-                    iv_surface[surface_key] = {
-                        'implied_volatility': ticker_data['mark_iv'] / 100,  # Convert percentage
-                        'mark_price': ticker_data.get('mark_price', 0),
-                        'last_price': ticker_data.get('last_price', 0),
-                        'bid_price': ticker_data.get('bid_price', 0),
-                        'ask_price': ticker_data.get('ask_price', 0),
-                        'open_interest': ticker_data.get('open_interest', 0)
-                    }
-                    
+                response = requests.get(source['url'], timeout=8)
+                if response.status_code == 200:
+                    price = source['parser'](response.json())
+                    if price and price > 10000:  # Sanity check
+                        prices.append(price)
+                        print(f"✅ {source['name']}: ${price:,.2f}")
             except Exception as e:
-                print(f"Error processing option {instrument}: {e}")
+                print(f"❌ {source['name']} failed: {e}")
                 continue
         
-        return iv_surface
-    
-    def _filter_liquid_options(self, options: List[Dict]) -> List[Dict]:
-        """
-        Filter options for institutional liquidity requirements
-        Only return options suitable for real hedging
-        """
-        liquid_options = []
-        current_time = datetime.now()
+        if not prices:
+            raise Exception("NO REAL BTC PRICE AVAILABLE - All NYC-compliant sources failed")
         
-        for option in options:
-            # Filter criteria for institutional use
-            expiry = datetime.fromtimestamp(option['expiration_timestamp'] / 1000)
-            days_to_expiry = (expiry - current_time).days
-            
-            # Institutional liquidity filters
-            if (option['is_active'] and 
-                option['settlement_period'] == 'day' and
-                7 <= days_to_expiry <= 90 and  # 1 week to 3 months
-                option['strike'] > 0):
-                
-                liquid_options.append({
-                    'instrument_name': option['instrument_name'],
-                    'strike': option['strike'],
-                    'option_type': option['option_type'],
-                    'expiration_timestamp': option['expiration_timestamp'],
-                    'days_to_expiry': days_to_expiry,
-                    'tick_size': option['tick_size'],
-                    'contract_size': option['contract_size']
-                })
+        # Use median price from available sources
+        prices.sort()
+        median_price = prices[len(prices)//2] if prices else None
         
-        return liquid_options
+        if median_price:
+            self.last_price_update = datetime.now()
+            self._cache_price(median_price)
+        
+        return median_price
     
-    def _get_ticker_data(self, instrument_name: str) -> Optional[Dict]:
-        """Get ticker data including implied volatility"""
+    def get_real_historical_prices(self, days: int) -> List[Dict]:
+        """
+        Get REAL historical BTC prices from Coinbase Pro (NYC compliant)
+        NO synthetic data - raises exception if unavailable
+        """
         try:
-            self.rate_limiter.wait_if_needed()
-            url = f"{self.base_url}{self.endpoints['ticker']}?instrument_name={instrument_name}"
-            response = requests.get(url, timeout=5)
+            end_time = datetime.now()
+            start_time = end_time - timedelta(days=days)
             
-            if response.status_code == 200:
-                data = response.json()
-                return data['result']
-        except:
-            pass
-        return None
+            # Coinbase Pro historical data (NYC compliant)
+            url = "https://api.exchange.coinbase.com/products/BTC-USD/candles"
+            params = {
+                'start': start_time.isoformat(),
+                'end': end_time.isoformat(),
+                'granularity': 86400  # Daily candles
+            }
+            
+            response = requests.get(url, params=params, timeout=15)
+            
+            if response.status_code != 200:
+                raise Exception(f"Coinbase Pro API failed: {response.status_code}")
+            
+            data = response.json()
+            
+            if not data or len(data) < days//2:
+                raise Exception(f"Insufficient historical data: got {len(data)} days")
+            
+            historical_prices = []
+            for candle in reversed(data):  # Coinbase returns newest first
+                timestamp, low, high, open_price, close, volume = candle
+                historical_prices.append({
+                    'timestamp': timestamp,
+                    'date': datetime.fromtimestamp(timestamp),
+                    'price': float(close),
+                    'volume': float(volume),
+                    'source': 'Coinbase Pro'
+                })
+            
+            return historical_prices
+            
+        except Exception as e:
+            raise Exception(f"REAL HISTORICAL DATA UNAVAILABLE: {str(e)}")
     
-    def _is_cached(self, key: str, ttl: int = None) -> bool:
-        """Check if data is cached and still valid"""
-        if key not in self.cache:
-            return False
+    def calculate_real_volatility(self, historical_prices: List[Dict]) -> float:
+        """
+        Calculate REAL volatility from actual price returns
+        NO estimates - uses actual market data only
+        """
+        if len(historical_prices) < 10:
+            raise Exception("Insufficient price data for real volatility calculation")
         
-        cache_ttl = ttl or Config.CACHE_TTL
-        elapsed = time.time() - self.cache[key]['timestamp']
-        return elapsed < cache_ttl
+        # Calculate daily returns from real prices
+        returns = []
+        for i in range(1, len(historical_prices)):
+            prev_price = historical_prices[i-1]['price']
+            curr_price = historical_prices[i]['price']
+            
+            if prev_price <= 0 or curr_price <= 0:
+                continue
+                
+            daily_return = (curr_price - prev_price) / prev_price
+            returns.append(daily_return)
+        
+        if len(returns) < 7:
+            raise Exception("Insufficient valid returns for volatility calculation")
+        
+        # Calculate standard deviation of returns
+        mean_return = sum(returns) / len(returns)
+        variance = sum((r - mean_return) ** 2 for r in returns) / (len(returns) - 1)
+        
+        if variance <= 0:
+            raise Exception("Invalid variance calculation from real data")
+        
+        daily_volatility = variance ** 0.5
+        annualized_volatility = daily_volatility * (365 ** 0.5)
+        
+        return annualized_volatility
     
-    def _cache_data(self, key: str, data):
-        """Cache data with timestamp"""
-        self.cache[key] = {
-            'data': data,
+    def get_real_market_conditions(self, current_price: float) -> Dict:
+        """
+        Calculate REAL market conditions from actual data
+        NO estimates or fallbacks
+        """
+        try:
+            # Get real 30-day price history
+            historical_prices = self.get_real_historical_prices(30)
+            
+            # Calculate real volatility
+            real_volatility = self.calculate_real_volatility(historical_prices)
+            
+            # Calculate real 7-day trend
+            if len(historical_prices) < 7:
+                raise Exception("Insufficient data for 7-day trend")
+            
+            week_ago_price = historical_prices[-7]['price']
+            price_trend_7d = (current_price - week_ago_price) / week_ago_price
+            
+            # Calculate real momentum
+            if len(historical_prices) >= 14:
+                two_weeks_ago = historical_prices[-14]['price']
+                one_week_ago = historical_prices[-7]['price']
+                
+                week1_change = (one_week_ago - two_weeks_ago) / two_weeks_ago
+                week2_change = (current_price - one_week_ago) / one_week_ago
+                
+                momentum = 'accelerating' if week2_change > week1_change else 'decelerating'
+            else:
+                momentum = 'insufficient_data'
+            
+            # Real market regime assessment
+            if price_trend_7d > 0.05:
+                regime = 'strong_bullish'
+            elif price_trend_7d > 0.02:
+                regime = 'bullish' 
+            elif price_trend_7d < -0.05:
+                regime = 'strong_bearish'
+            elif price_trend_7d < -0.02:
+                regime = 'bearish'
+            else:
+                regime = 'neutral'
+            
+            return {
+                'annualized_volatility': real_volatility,
+                'price_trend_7d': price_trend_7d,
+                'realized_volatility': real_volatility / (365 ** 0.5),
+                'market_regime': regime,
+                'momentum': {'trend': momentum},
+                'data_points': len(historical_prices),
+                'source': 'Real Coinbase Pro Historical Data',
+                'calculation_method': 'Actual returns-based volatility'
+            }
+            
+        except Exception as e:
+            raise Exception(f"REAL MARKET CONDITIONS UNAVAILABLE: {str(e)}")
+    
+    # Price parsers for different exchanges
+    def _parse_coinbase_price(self, data: dict) -> Optional[float]:
+        try:
+            return float(data['data']['rates']['USD'])
+        except:
+            return None
+    
+    def _parse_coingecko_price(self, data: dict) -> Optional[float]:
+        try:
+            return float(data['bitcoin']['usd'])
+        except:
+            return None
+    
+    def _parse_kraken_price(self, data: dict) -> Optional[float]:
+        try:
+            return float(data['result']['XXBTZUSD']['c'][0])
+        except:
+            return None
+    
+    def _cache_price(self, price: float):
+        self.cache['btc_price'] = {
+            'price': price,
             'timestamp': time.time()
         }
-
-class RateLimiter:
-    """Simple rate limiter for API calls"""
-    
-    def __init__(self, max_requests_per_second: int):
-        self.max_rps = max_requests_per_second
-        self.requests = []
-    
-    def wait_if_needed(self):
-        """Wait if rate limit would be exceeded"""
-        now = time.time()
-        
-        # Remove old requests
-        self.requests = [req_time for req_time in self.requests if now - req_time < 1.0]
-        
-        if len(self.requests) >= self.max_rps:
-            sleep_time = 1.0 - (now - self.requests[0])
-            if sleep_time > 0:
-                time.sleep(sleep_time)
-        
-        self.requests.append(now)
-
-class TreasuryRateService:
-    """Get real risk-free rates from Federal Reserve"""
-    
-    @staticmethod
-    def get_current_rate() -> float:
-        """
-        Get current 1-month Treasury rate for Black-Scholes
-        Falls back to reasonable default if API unavailable
-        """
-        try:
-            # Treasury API call would go here
-            # For now, return reasonable default
-            return 0.045  # 4.5% current rate
-        except:
-            return 0.045

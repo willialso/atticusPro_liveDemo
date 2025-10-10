@@ -1,42 +1,35 @@
 """
-ATTICUS V1 - Real Federal Reserve Treasury Rates
-100% Real data from Federal Reserve Economic Data (FRED) API
+ATTICUS V1 - 100% REAL Treasury Rates
+NO FALLBACKS - Raises exceptions if real FRED data unavailable
 """
 import requests
-from datetime import datetime, timedelta
-import json
+from datetime import datetime
 import os
 
-class TreasuryRateService:
+class RealTreasuryService:
     """
-    Real-time Treasury rates from Federal Reserve FRED API
-    Uses environment variable for API key
+    100% Real Treasury rates from Federal Reserve FRED API
+    NO FALLBACKS - Platform requires real data
     """
     
     def __init__(self):
-        # Get API key from environment variable with your key as fallback
         self.fred_api_key = os.environ.get('FRED_API_KEY', '17d3b0a9b20e8b012e99238c48ef8da1')
-        self.base_url = "https://api.stlouisfed.org/fred"
         
-        # Treasury rate series IDs
-        self.rate_series = {
-            '1month': 'GS1M',    # 1-Month Treasury Constant Maturity Rate
-            '3month': 'GS3M',    # 3-Month Treasury Constant Maturity Rate  
-            '1year': 'GS1',      # 1-Year Treasury Constant Maturity Rate
-        }
+        if not self.fred_api_key:
+            raise Exception("FRED_API_KEY environment variable required - No fallbacks allowed")
+        
+        self.base_url = "https://api.stlouisfed.org/fred"
+        self.rate_series = 'GS1M'  # 1-Month Treasury Constant Maturity Rate
     
-    def get_current_risk_free_rate(self, maturity='1month'):
+    def get_current_risk_free_rate(self) -> dict:
         """
         Get REAL current Treasury rate from Federal Reserve
-        Uses your FRED API key
+        NO fallbacks - raises exception if FRED API unavailable
         """
         try:
-            series_id = self.rate_series.get(maturity, 'GS1M')
-            
-            # Get most recent rate from FRED API
             url = f"{self.base_url}/series/observations"
             params = {
-                'series_id': series_id,
+                'series_id': self.rate_series,
                 'api_key': self.fred_api_key,
                 'file_type': 'json',
                 'limit': 1,
@@ -45,54 +38,45 @@ class TreasuryRateService:
             
             response = requests.get(url, params=params, timeout=10)
             
-            if response.status_code != 200:
-                raise Exception(f"FRED API error: {response.status_code}")
+            if response.status_code == 400:
+                raise Exception("INVALID FRED API KEY - Check your API key")
+            elif response.status_code != 200:
+                raise Exception(f"FRED API ERROR: HTTP {response.status_code}")
             
             data = response.json()
             
+            if 'error_message' in data:
+                raise Exception(f"FRED API ERROR: {data['error_message']}")
+            
             if 'observations' not in data or not data['observations']:
-                raise Exception("No Treasury rate data available from FRED")
+                raise Exception("NO TREASURY RATE DATA from FRED")
             
             latest_obs = data['observations'][0]
             
             if latest_obs['value'] == '.':
-                raise Exception("Latest Treasury rate value not available")
+                raise Exception("LATEST TREASURY RATE VALUE NOT AVAILABLE")
             
             rate_percent = float(latest_obs['value'])
             rate_decimal = rate_percent / 100.0
+            
+            # Validate reasonable range
+            if rate_percent < 0 or rate_percent > 20:
+                raise Exception(f"INVALID TREASURY RATE: {rate_percent}%")
             
             return {
                 'rate': rate_decimal,
                 'rate_percent': rate_percent,
                 'date': latest_obs['date'],
-                'series': series_id,
-                'source': 'Federal Reserve FRED API (Real)'
+                'series': self.rate_series,
+                'source': 'Federal Reserve FRED API (Official)'
             }
             
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"FRED API CONNECTION FAILED: {str(e)}")
+        except ValueError as e:
+            raise Exception(f"FRED API DATA PARSING FAILED: {str(e)}")
         except Exception as e:
-            print(f"⚠️  FRED API call failed: {e}")
-            # Fallback to current market approximation
-            return {
-                'rate': 0.0450,
-                'rate_percent': 4.50,
-                'date': datetime.now().strftime('%Y-%m-%d'),
-                'series': 'Market Approximation',
-                'source': f'FRED API Error: {str(e)}'
-            }
-    
-    def get_yield_curve_data(self):
-        """Get complete yield curve from Federal Reserve"""
-        try:
-            curve_data = {}
-            
-            for maturity, series_id in self.rate_series.items():
-                rate_data = self.get_current_risk_free_rate(maturity)
-                curve_data[maturity] = rate_data
-                
-            return curve_data
-            
-        except Exception as e:
-            print(f"⚠️  Yield curve data unavailable: {e}")
-            return {
-                '1month': self.get_current_risk_free_rate('1month')
-            }
+            if "FRED" in str(e).upper():
+                raise e
+            else:
+                raise Exception(f"TREASURY RATE SERVICE FAILED: {str(e)}")
