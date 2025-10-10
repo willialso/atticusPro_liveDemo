@@ -1,10 +1,10 @@
 """
-ATTICUS PROFESSIONAL - STREAMLIT-NATIVE PROFESSIONAL VERSION
-✅ Pure Streamlit components for consistent rendering
-✅ Professional design using Streamlit's native capabilities
-✅ Working logo, progress indicators, and formatting
+ATTICUS PROFESSIONAL - POLISHED INSTITUTIONAL DEMO
+✅ Consistent professional typography and styling
+✅ Uniform font sizes and visual hierarchy throughout
+✅ Professional execution without animations
+✅ Clean, polished institutional presentation
 ✅ Maintains all real-time pricing functionality
-✅ Clean, uniform, professional presentation
 """
 import streamlit as st
 import requests
@@ -444,12 +444,14 @@ def generate_dynamic_strategies(net_btc, current_price):
     
     return strategies
 
-# MINIMAL CSS - ONLY ESSENTIAL STYLING
+# PROFESSIONAL CSS - CONSISTENT TYPOGRAPHY AND STYLING
 st.markdown("""
 <style>
+    /* Base app styling */
     .stApp {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: #f8fafc !important;
+        font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
     }
     
     /* Hide Streamlit branding */
@@ -458,41 +460,276 @@ st.markdown("""
     header {visibility: hidden;}
     .stDeployButton {display: none;}
     
-    /* Text color overrides */
-    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+    /* CONSISTENT TYPOGRAPHY HIERARCHY */
+    
+    /* Main titles */
+    .stMarkdown h1 {
         color: #fbbf24 !important;
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1.5rem !important;
     }
     
-    .stMarkdown p, .stText {
+    /* Section headers */
+    .stMarkdown h2 {
+        color: #fbbf24 !important;
+        font-size: 2rem !important;
+        font-weight: 600 !important;
+        line-height: 1.3 !important;
+        margin-bottom: 1.2rem !important;
+        margin-top: 2rem !important;
+    }
+    
+    /* Subsection headers */
+    .stMarkdown h3 {
+        color: #fbbf24 !important;
+        font-size: 1.6rem !important;
+        font-weight: 600 !important;
+        line-height: 1.3 !important;
+        margin-bottom: 1rem !important;
+        margin-top: 1.5rem !important;
+    }
+    
+    /* Card headers */
+    .stMarkdown h4 {
+        color: #fbbf24 !important;
+        font-size: 1.3rem !important;
+        font-weight: 600 !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.8rem !important;
+        margin-top: 1rem !important;
+    }
+    
+    /* Subheadings */
+    .stMarkdown h5 {
         color: #f8fafc !important;
-        font-size: 1.1rem;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.6rem !important;
     }
     
-    /* Ensure button visibility */
+    /* Body text - LARGER AND MORE READABLE */
+    .stMarkdown p {
+        color: #f8fafc !important;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Strong text */
+    .stMarkdown strong {
+        color: #fbbf24 !important;
+        font-weight: 700 !important;
+    }
+    
+    /* List items */
+    .stMarkdown li {
+        color: #f8fafc !important;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Captions */
+    .stMarkdown .caption, [data-testid="caption"] {
+        color: #cbd5e1 !important;
+        font-size: 1rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* CONSISTENT ALERT STYLING */
+    .stAlert {
+        font-size: 1.1rem !important;
+        line-height: 1.5 !important;
+        padding: 1rem 1.5rem !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Success alerts */
+    .stAlert[data-baseweb-kind="success"] {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        border: 1px solid rgba(16, 185, 129, 0.5) !important;
+        color: #f0fdf4 !important;
+    }
+    
+    /* Error alerts */
+    .stAlert[data-baseweb-kind="error"] {
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        border: 1px solid rgba(239, 68, 68, 0.5) !important;
+        color: #fef2f2 !important;
+    }
+    
+    /* Warning alerts */
+    .stAlert[data-baseweb-kind="warning"] {
+        background-color: rgba(251, 191, 36, 0.15) !important;
+        border: 1px solid rgba(251, 191, 36, 0.5) !important;
+        color: #fffbeb !important;
+    }
+    
+    /* Info alerts */
+    .stAlert[data-baseweb-kind="info"] {
+        background-color: rgba(59, 130, 246, 0.15) !important;
+        border: 1px solid rgba(59, 130, 246, 0.5) !important;
+        color: #eff6ff !important;
+    }
+    
+    /* METRIC CONTAINERS - CONSISTENT STYLING */
+    [data-testid="metric-container"] {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border: 1px solid rgba(71, 85, 105, 0.8) !important;
+        border-radius: 10px !important;
+        padding: 1.2rem !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-value"] {
+        color: #fbbf24 !important;
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-label"] {
+        color: #cbd5e1 !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.025em !important;
+    }
+    
+    [data-testid="metric-container"] [data-testid="metric-delta"] {
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+    }
+    
+    /* BUTTON STYLING - PROFESSIONAL AND CONSISTENT */
     .stButton > button {
-        font-weight: 600;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        padding: 0.75rem 1.5rem !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+        text-transform: none !important;
+    }
+    
+    .stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+        color: #1e293b !important;
+        box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3) !important;
+    }
+    
+    .stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(251, 191, 36, 0.4) !important;
+    }
+    
+    .stButton > button[kind="secondary"] {
+        background: rgba(71, 85, 105, 0.8) !important;
+        color: #f8fafc !important;
+        border: 1px solid rgba(100, 116, 139, 0.8) !important;
+    }
+    
+    .stButton > button[kind="secondary"]:hover {
+        background: rgba(100, 116, 139, 0.9) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    /* FORM ELEMENTS */
+    .stSelectbox > div > div {
+        background-color: rgba(30, 41, 59, 0.8) !important;
+        border: 1px solid rgba(71, 85, 105, 0.8) !important;
+        color: #f8fafc !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .stNumberInput > div > div > input {
+        background-color: rgba(30, 41, 59, 0.8) !important;
+        border: 1px solid rgba(71, 85, 105, 0.8) !important;
+        color: #f8fafc !important;
+        font-size: 1.1rem !important;
+    }
+    
+    /* PROGRESS BAR */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+    }
+    
+    /* EXPANDER */
+    .stExpander {
+        background-color: rgba(30, 41, 59, 0.6) !important;
+        border: 1px solid rgba(71, 85, 105, 0.8) !important;
+        border-radius: 8px !important;
+    }
+    
+    .stExpander > div > div {
+        color: #f8fafc !important;
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+    }
+    
+    /* LINK BUTTON */
+    .stLinkButton > a {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        padding: 0.75rem 1.5rem !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        display: inline-block !important;
+        text-align: center !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .stLinkButton > a:hover {
+        background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+        transform: translateY(-1px) !important;
+    }
+    
+    /* RADIO BUTTONS */
+    .stRadio > div {
+        gap: 1.5rem !important;
+    }
+    
+    .stRadio label {
+        font-size: 1.1rem !important;
+        color: #f8fafc !important;
+        font-weight: 500 !important;
+    }
+    
+    /* SPINNER */
+    .stSpinner > div {
+        border-top-color: #fbbf24 !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 def show_header():
-    """Professional header with logo"""
+    """Professional header with consistent styling"""
+    # Create centered header layout
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
-        # LOGO DISPLAY
+        # Logo with proper sizing
         try:
             st.image("https://i.ibb.co/qFNCZsWG/attpro.png", width=400, use_column_width=False)
         except:
-            st.title("🏛️ Atticus Professional")
+            st.markdown("# 🏛️ Atticus Professional")
         
-        st.markdown("### Professional Portfolio Protection Demo")
+        # Consistent header styling
+        st.markdown("## Professional Portfolio Protection Demo")
         st.caption("Live market data • Real-time options pricing • Institutional strategies")
 
 def show_progress_indicator(current_step):
-    """STREAMLIT-NATIVE progress indicator"""
+    """Professional progress indicator with consistent styling"""
     st.markdown("---")
     
+    # Progress steps
     progress_cols = st.columns(3)
     
     with progress_cols[0]:
@@ -519,7 +756,7 @@ def show_progress_indicator(current_step):
         else:
             st.write("⚪ **Step 3:** Protection Results")
     
-    # Progress bar
+    # Progress bar with consistent styling
     progress_value = current_step / 3.0
     st.progress(progress_value)
     st.caption(f"Step {current_step} of 3 completed")
@@ -527,7 +764,7 @@ def show_progress_indicator(current_step):
     st.markdown("---")
 
 def show_intro_walkthrough():
-    """STREAMLIT-NATIVE intro walkthrough"""
+    """Professional intro with consistent typography"""
     if st.session_state.show_intro:
         live_btc_price = get_live_btc_price()
         
@@ -535,44 +772,56 @@ def show_intro_walkthrough():
             st.error("⚠️ Unable to fetch live BTC price. Please refresh the page.")
             return True
         
-        # CLEAR PROBLEM STATEMENT
-        st.error("🚨 **The Challenge:** Bitcoin's volatility creates massive institutional risk exposure")
+        # Professional problem statement
+        st.error("🚨 **The Institutional Challenge:** Bitcoin's volatility creates massive risk exposure")
         
         st.markdown("""
-        **Industry Reality:** Recent market events demonstrate that 30-50% Bitcoin price declines can occur within days, 
-        creating significant losses for unprotected institutional positions.
+        Recent market events demonstrate that 30-50% Bitcoin price declines can occur within days, 
+        creating significant losses for unprotected institutional positions. Traditional hedging solutions 
+        are often expensive, inflexible, and inadequate for digital asset volatility.
         """)
         
-        # CLEAR SOLUTION STATEMENT  
-        st.success("✅ **The Solution:** Professional options strategies provide institutional-grade protection")
+        # Professional solution statement
+        st.success("✅ **The Professional Solution:** Institutional-grade options strategies")
         
         st.markdown("""
-        **Atticus Approach:** Use sophisticated options strategies to limit downside risk while preserving unlimited upside potential, 
-        exactly like traditional institutional risk management.
+        Atticus provides sophisticated options strategies that limit downside risk while preserving unlimited 
+        upside potential, using the same professional risk management principles employed by traditional 
+        institutional asset managers.
         """)
         
-        # LIVE EXAMPLE
-        st.info(f"📊 **Live Example:** Protecting a $50M Bitcoin position (Live BTC: ${live_btc_price:,.2f})")
+        # Live market example
+        st.info(f"📊 **Live Market Example:** ${50000000/1000000:.0f}M Bitcoin Position Protection (Live BTC: ${live_btc_price:,.2f})")
         
-        # COMPARISON USING STREAMLIT COLUMNS
-        col1, col2 = st.columns(2)
+        # Professional comparison
+        col1, col2 = st.columns(2, gap="large")
         
         with col1:
-            st.error("⚠️ **Without Protection**")
+            st.error("⚠️ **Unprotected Portfolio Risk**")
             st.metric("Potential Loss", "$15M+", "30% market decline")
-            st.caption("No downside protection • Unlimited risk exposure • Full market volatility impact")
+            st.markdown("""
+            **Consequences:**
+            - No downside protection mechanism
+            - Full exposure to market volatility
+            - Unlimited loss potential during market stress
+            """)
         
         with col2:
-            st.success("✅ **With Atticus Protection**") 
-            st.metric("Protection Cost", "$1.2M", "2.4% of position")
-            st.caption("Capped downside risk • Unlimited upside preserved • Professional risk management")
+            st.success("✅ **Professional Portfolio Protection")
+            st.metric("Protection Cost", "$1.2M", "2.4% of position value")
+            st.markdown("""
+            **Benefits:**
+            - Capped maximum loss exposure
+            - Unlimited upside potential preserved
+            - Professional institutional risk management
+            """)
         
-        # CALL TO ACTION
+        # Professional call to action
         st.markdown("---")
         col1, col2, col3 = st.columns([1, 2, 1])
         
         with col2:
-            if st.button("🚀 **See Live Demo with Real Market Data**", type="primary", use_container_width=True):
+            if st.button("**Start Professional Demo with Live Market Data**", type="primary", use_container_width=True):
                 st.session_state.show_intro = False
                 st.rerun()
         
@@ -582,7 +831,7 @@ def show_intro_walkthrough():
     return False
 
 def screen_1_portfolio():
-    """STREAMLIT-NATIVE portfolio setup screen"""
+    """Professional portfolio setup screen"""
     show_header()
     
     if show_intro_walkthrough():
@@ -601,33 +850,34 @@ def screen_1_portfolio():
     
     market_conditions = get_live_market_conditions()
     
-    # LIVE MARKET DATA BANNER
-    st.success(f"🔴 **LIVE MARKET DATA:** BTC ${live_btc_price:,.2f} | Volatility: {market_conditions['implied_volatility']*100:.0f}% | 7-Day: {market_conditions['price_trend_7d']*100:+.1f}%")
+    # Professional market data display
+    st.success(f"🔴 **Live Market Data:** BTC ${live_btc_price:,.2f} • Volatility: {market_conditions['implied_volatility']*100:.0f}% • 7-Day Trend: {market_conditions['price_trend_7d']*100:+.1f}%")
     
-    st.info("💡 **Choose your portfolio setup method:** Generate a realistic institutional portfolio or build custom positions using live market pricing.")
+    st.info("💡 **Portfolio Setup:** Choose your preferred method to create a portfolio for protection analysis. Both options use live market pricing for accurate strategy generation.")
     
-    # MAIN CONTENT - SIDE BY SIDE
+    # Main content with professional spacing
     col1, col2 = st.columns(2, gap="large")
     
     with col1:
-        st.subheader("🏛️ Generate Institution Portfolio")
-        st.caption("**Recommended:** Pre-built realistic allocation with institutional context")
+        st.markdown("### 🏛️ Generate Institution Portfolio")
+        st.caption("**Recommended approach:** Pre-configured realistic institutional allocation")
         
         fund_type = st.selectbox(
-            "**Select Institution Size:**",
+            "**Institution Size Selection:**",
             ["Small Fund ($20-50M AUM)", "Mid-Cap Fund ($50-200M AUM)"],
-            key="fund_size"
+            key="fund_size",
+            help="Select institution size to generate appropriate Bitcoin allocation"
         )
         
         if "Small" in fund_type:
             btc_allocation = 2000000 / live_btc_price
-            st.info(f"📊 **Will generate:** ~{btc_allocation:.1f} BTC position (${2000000/1000000:.0f}M allocation) with realistic P&L")
+            st.info(f"📊 **Portfolio Specification:** ~{btc_allocation:.1f} BTC position (${2000000/1000000:.0f}M allocation) with realistic performance metrics and risk exposure")
         else:
             btc_allocation = 8500000 / live_btc_price
-            st.info(f"📊 **Will generate:** ~{btc_allocation:.1f} BTC position (${8500000/1000000:.1f}M allocation) with institutional scale")
+            st.info(f"📊 **Portfolio Specification:** ~{btc_allocation:.1f} BTC position (${8500000/1000000:.1f}M allocation) with institutional-scale exposure and complexity")
         
-        if st.button("🎯 **Generate Live Portfolio**", type="primary", use_container_width=True, key="gen_portfolio"):
-            with st.spinner("🔄 Generating portfolio with real-time pricing..."):
+        if st.button("**Generate Professional Portfolio**", type="primary", use_container_width=True, key="gen_portfolio"):
+            with st.spinner("🔄 Generating portfolio with real-time market pricing..."):
                 time.sleep(1)
                 if "Small" in fund_type:
                     btc_size = 2000000 / live_btc_price
@@ -654,10 +904,10 @@ def screen_1_portfolio():
                 st.session_state.portfolio_source = 'generated'
                 st.session_state.strategies = None
                 st.session_state.strategies_generated = False
-                st.success(f"✅ **Portfolio Generated:** {btc_size:.1f} BTC @ ${live_btc_price:,.2f}")
+                st.success(f"✅ **Portfolio Generated Successfully:** {btc_size:.1f} BTC @ ${live_btc_price:,.2f}")
                 st.rerun()
         
-        # Display generated portfolio
+        # Display generated portfolio with professional formatting
         if st.session_state.portfolio and st.session_state.portfolio_source == 'generated':
             portfolio = st.session_state.portfolio
             
@@ -672,67 +922,74 @@ def screen_1_portfolio():
                 st.metric("Unrealized P&L", f"${portfolio['total_pnl']/1000000:.1f}M")
             
             potential_loss = portfolio['total_current_value'] * 0.25
-            st.warning(f"⚠️ **Risk Analysis:** A 25% market decline would result in ${potential_loss/1000000:.1f}M loss without protection")
+            st.warning(f"⚠️ **Risk Assessment:** A 25% market decline would result in ${potential_loss/1000000:.1f}M institutional loss without professional protection strategies")
             
-            if st.button("📊 **Analyze Protection Strategies**", type="primary", use_container_width=True):
+            if st.button("**Analyze Professional Protection Strategies**", type="primary", use_container_width=True):
                 st.session_state.demo_step = 2
                 st.rerun()
     
     with col2:
-        st.subheader("⚡ Custom Position Builder")
-        st.caption("Build your own portfolio positions for personalized analysis")
+        st.markdown("### ⚡ Custom Position Builder")
+        st.caption("Build customized portfolio positions for specialized analysis")
         
         with st.form("position_form", clear_on_submit=True):
-            btc_amount = st.number_input("**BTC Amount**", min_value=0.1, max_value=1000.0, value=25.0, step=0.1, help="Enter the Bitcoin amount for this position")
-            position_type = st.selectbox("**Position Type**", ["Long", "Short"])
+            btc_amount = st.number_input(
+                "**Bitcoin Amount**", 
+                min_value=0.1, 
+                max_value=1000.0, 
+                value=25.0, 
+                step=0.1, 
+                help="Enter the Bitcoin amount for this position"
+            )
+            position_type = st.selectbox("**Position Direction**", ["Long", "Short"])
             
             col1a, col2a = st.columns(2)
             with col1a:
-                add_clicked = st.form_submit_button("➕ **Add Position**", type="primary", use_container_width=True)
+                add_clicked = st.form_submit_button("**Add Position**", type="primary", use_container_width=True)
             with col2a:
-                clear_clicked = st.form_submit_button("🗑️ **Clear All**", type="secondary", use_container_width=True)
+                clear_clicked = st.form_submit_button("**Clear All**", type="secondary", use_container_width=True)
         
         if add_clicked:
             position_value = btc_amount * live_btc_price
-            st.success(f"✅ **Added:** {btc_amount:.1f} BTC {position_type} position (${position_value:,.0f} value)")
+            st.success(f"✅ **Position Added:** {btc_amount:.1f} BTC {position_type} position (${position_value:,.0f} market value)")
             new_position = {'btc_amount': btc_amount, 'position_type': position_type}
             st.session_state.custom_positions.append(new_position)
             st.rerun()
         
         if clear_clicked:
             st.session_state.custom_positions = []
-            st.success("🗑️ **Cleared all positions**")
+            st.success("🗑️ **All positions cleared successfully**")
             st.rerun()
         
-        # Display current positions
+        # Display positions with professional formatting
         if st.session_state.custom_positions:
-            st.markdown("#### 📋 Current Positions")
+            st.markdown("#### 📋 Portfolio Positions")
             
             total_long = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Long')
             total_short = sum(pos['btc_amount'] for pos in st.session_state.custom_positions if pos['position_type'] == 'Short')
             net_btc = total_long - total_short
             
-            # Position list
+            # Position list with professional styling
             for i, pos in enumerate(st.session_state.custom_positions):
                 col_pos, col_btn = st.columns([4, 1])
                 with col_pos:
-                    st.write(f"**{pos['btc_amount']:.1f} BTC** • {'🟢 Long' if pos['position_type'] == 'Long' else '🔴 Short'} • ${pos['btc_amount'] * live_btc_price:,.0f}")
+                    st.markdown(f"**{pos['btc_amount']:.1f} BTC** • {'🟢 Long' if pos['position_type'] == 'Long' else '🔴 Short'} • ${pos['btc_amount'] * live_btc_price:,.0f}")
                 with col_btn:
                     if st.button("❌", key=f"remove_{i}", help="Remove this position"):
                         st.session_state.custom_positions.pop(i)
                         st.rerun()
             
-            # Portfolio summary
+            # Professional portfolio summary
             st.markdown("##### Portfolio Summary")
             col1a, col2a, col3a = st.columns(3)
             with col1a:
                 st.metric("Long BTC", f"{total_long:.1f}")
             with col2a:
-                st.metric("Short BTC", f"{total_short:.1f}")
+                st.metric("Short BTC", f"{total_short:.1f}")  
             with col3a:
                 st.metric("Net BTC", f"{net_btc:+.1f}")
             
-            if st.button("⚡ **Analyze Custom Portfolio**", type="primary", use_container_width=True):
+            if st.button("**Analyze Custom Portfolio Protection**", type="primary", use_container_width=True):
                 total_value = (total_long + total_short) * live_btc_price
                 custom_portfolio = {
                     'aum': abs(net_btc) * live_btc_price * 4,
@@ -750,13 +1007,13 @@ def screen_1_portfolio():
                 st.rerun()
 
 def screen_2_strategies():
-    """STREAMLIT-NATIVE strategy analysis screen"""
+    """Professional strategy analysis screen"""
     show_header()
     show_progress_indicator(2)
     
     if not st.session_state.portfolio:
-        st.error("❌ Please create a portfolio first")
-        if st.button("← Back to Portfolio Setup", type="secondary"):
+        st.error("❌ Portfolio data required. Please create a portfolio first.")
+        if st.button("**← Return to Portfolio Setup**", type="secondary"):
             st.session_state.demo_step = 1
             st.rerun()
         return
@@ -766,44 +1023,42 @@ def screen_2_strategies():
     current_price = portfolio.get('current_btc_price', get_live_btc_price())
     
     if not current_price:
-        st.error("❌ Unable to fetch current BTC price")
+        st.error("❌ Unable to fetch current BTC price for strategy analysis")
         return
     
     market_conditions = get_live_market_conditions()
     position_direction = "Long" if net_btc > 0 else "Short" if net_btc < 0 else "Neutral"
     
-    st.title("🛡️ Live Protection Strategies")
+    st.markdown("# 🛡️ Professional Protection Strategies")
     
-    # Portfolio summary
-    st.success(f"🎯 **Portfolio Analysis:** {abs(net_btc):.1f} BTC {position_direction} position • ${abs(net_btc) * current_price:,.0f} value • {market_conditions['market_regime'].title()} market conditions")
+    # Professional portfolio analysis summary
+    st.success(f"🎯 **Portfolio Analysis Complete:** {abs(net_btc):.1f} BTC {position_direction} position • ${abs(net_btc) * current_price:,.0f} total value • {market_conditions['market_regime'].title()} market conditions")
     
-    st.info(f"📊 **Market Context:** Current volatility at {market_conditions['implied_volatility']*100:.0f}% with {market_conditions['price_trend_7d']*100:+.1f}% weekly trend - generating optimal strategies using live institutional pricing")
+    st.info(f"📊 **Market Context Analysis:** Current volatility environment at {market_conditions['implied_volatility']*100:.0f}% with {market_conditions['price_trend_7d']*100:+.1f}% weekly trend. Generating optimal institutional strategies using live market pricing from multiple exchanges.")
     
-    # Generate strategies
+    # Strategy generation with professional progress tracking
     if not st.session_state.strategies_generated:
-        with st.spinner("🔄 Analyzing live market conditions and generating optimal strategies... (30-45 seconds)"):
+        with st.spinner("🔄 Analyzing live market conditions and generating institutional-grade strategies..."):
             progress_bar = st.progress(0)
             for i in range(100):
-                time.sleep(0.02)
+                time.sleep(0.03)  # 3-second generation time
                 progress_bar.progress(i + 1)
             
             st.session_state.strategies = generate_dynamic_strategies(net_btc, current_price)
             st.session_state.strategies_generated = True
-            st.success("✅ Strategy analysis complete!")
+            st.success("✅ **Strategy Analysis Complete:** Institutional strategies generated with live pricing")
     
-    # Display strategies
+    # Professional strategy display
     if (st.session_state.strategies and 
         not st.session_state.strategy_selected and 
         not st.session_state.selected_strategy):
         
-        st.info("💡 **Strategy Selection:** Each strategy uses live market pricing optimized for current conditions. Protection strategies limit downside while income strategies generate returns from holdings.")
+        st.info("💡 **Strategy Selection Guide:** Each strategy below uses live institutional market pricing and is optimized for current market conditions. Protection strategies limit downside risk while income strategies generate returns from existing holdings.")
         
-        for i, strategy in enumerate(st.session_state.strategies):
-            priority_emoji = "🔥" if strategy['priority'] == 'high' else "⭐" if strategy['priority'] == 'medium' else "💡"
-            
+        for i, strategy in enumerate(st.session_state.strategies):            
             strategy_display = strategy['strategy_name'].replace('_', ' ').title()
             if 'covered_call' in strategy['strategy_name'] or 'cash_secured_put' in strategy['strategy_name']:
-                strategy_display += " (Income Generator)"
+                strategy_display += " (Income Generation)"
             elif 'protective' in strategy['strategy_name']:
                 strategy_display += " (Downside Protection)"
             elif 'spread' in strategy['strategy_name']:
@@ -811,7 +1066,7 @@ def screen_2_strategies():
             
             pricing = strategy['pricing']['live_pricing']
             
-            # Strategy container
+            # Professional strategy container with priority styling
             with st.container():
                 if strategy['priority'] == 'high':
                     st.error(f"🔥 **HIGH PRIORITY:** {strategy_display}")
@@ -820,15 +1075,16 @@ def screen_2_strategies():
                 else:
                     st.info(f"💡 **ALTERNATIVE:** {strategy_display}")
                 
+                # Professional strategy details layout
                 col1, col2 = st.columns([2, 1])
                 
                 with col1:
-                    st.write(f"**Coverage:** {strategy['target_exposure']:.1f} BTC")
-                    st.write(f"**Strategy:** {strategy['rationale']}")
-                    st.write(f"**Duration:** {pricing['days_to_expiry']} days • **Expiry:** {pricing['expiry_date']}")
+                    st.markdown(f"**Coverage:** {strategy['target_exposure']:.1f} BTC position")
+                    st.markdown(f"**Strategy:** {strategy['rationale']}")
+                    st.markdown(f"**Duration:** {pricing['days_to_expiry']} days • **Expiry:** {pricing['expiry_date']}")
                 
                 with col2:
-                    # Key metrics
+                    # Professional metrics display
                     col2a, col2b, col2c = st.columns(3)
                     with col2a:
                         if pricing['total_premium'] < 0:
@@ -837,13 +1093,13 @@ def screen_2_strategies():
                             st.metric("Cost", f"${abs(pricing['total_premium']):,.0f}")
                     with col2b:
                         cost_pct = pricing['cost_as_pct']
-                        color = "🟢" if cost_pct < 3 else "🟡" if cost_pct < 5 else "🔴"
-                        st.metric("Rate", f"{cost_pct:.1f}%", delta=f"{color}")
+                        color_indicator = "🟢" if cost_pct < 3 else "🟡" if cost_pct < 5 else "🔴"
+                        st.metric("Rate", f"{cost_pct:.1f}%", delta=f"{color_indicator}")
                     with col2c:
                         st.metric("Contracts", f"{pricing['contracts_needed']}")
                 
-                # Execute button
-                if st.button(f"⚡ **Execute {strategy_display}**", key=f"exec_{i}", type="primary", use_container_width=True):
+                # Professional execution button
+                if st.button(f"**Execute {strategy_display}**", key=f"exec_{i}", type="primary", use_container_width=True):
                     st.session_state.selected_strategy = strategy
                     st.session_state.strategy_selected = True
                     st.session_state.execution_data = {
@@ -857,13 +1113,13 @@ def screen_2_strategies():
                 st.markdown("---")
     
     elif st.session_state.strategy_selected:
-        st.success("✅ **Strategy selected!** Executing with live institutional pricing...")
+        st.success("✅ **Strategy Selected Successfully** - Executing with live institutional pricing...")
         time.sleep(1)
         st.session_state.demo_step = 3
         st.rerun()
     
-    # Back button
-    if st.button("← **Back to Portfolio Setup**", type="secondary"):
+    # Professional navigation
+    if st.button("**← Return to Portfolio Setup**", type="secondary"):
         st.session_state.demo_step = 1
         st.session_state.strategies = None
         st.session_state.selected_strategy = None
@@ -872,13 +1128,13 @@ def screen_2_strategies():
         st.rerun()
 
 def screen_3_execution():
-    """STREAMLIT-NATIVE execution results screen"""
+    """Professional execution results screen - NO BALLOONS"""
     show_header()
     show_progress_indicator(3)
     
     if not st.session_state.selected_strategy:
-        st.error("❌ Strategy not selected")
-        if st.button("← Back to Strategies", type="secondary"):
+        st.error("❌ Strategy selection required for execution analysis")
+        if st.button("**← Return to Strategy Selection**", type="secondary"):
             st.session_state.demo_step = 2
             st.rerun()
         return
@@ -887,54 +1143,53 @@ def screen_3_execution():
     execution_data = st.session_state.execution_data
     pricing = strategy['pricing']['live_pricing']
     
-    st.title("✅ Strategy Execution Complete")
+    st.markdown("# ✅ Strategy Execution Complete")
     
-    # Execution animation
-    with st.spinner("⚡ Executing strategy with live institutional pricing..."):
+    # Professional execution process - NO UNPROFESSIONAL ANIMATIONS
+    with st.spinner("⚡ Executing strategy with live institutional market pricing..."):
         execution_progress = st.progress(0)
         for i in range(100):
-            time.sleep(0.02)
+            time.sleep(0.03)  # 3-second professional execution time
             execution_progress.progress(i + 1)
     
-    # SUCCESS MESSAGE
-    st.balloons()
-    st.success("🎯 **INSTITUTIONAL STRATEGY EXECUTED SUCCESSFULLY**")
+    # PROFESSIONAL SUCCESS MESSAGE - NO BALLOONS
+    st.success("🎯 **Institutional Strategy Executed Successfully**")
     st.metric("⚡ Execution Time", f"{execution_data['execution_time']} seconds", "Live institutional pricing")
     
-    st.info(f"✅ **Strategy Summary:** Professional options executed for {strategy['target_exposure']:.1f} BTC position using live market pricing from institutional channels")
+    st.info(f"✅ **Execution Summary:** Professional options strategy successfully executed for {strategy['target_exposure']:.1f} BTC position using live market pricing from institutional trading channels")
     
-    # CONTRACT DETAILS
-    st.subheader("📋 Executed Contract Details")
+    # Professional contract details
+    st.markdown("## 📋 Executed Contract Specifications")
     
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="large")
     
     with col1:
-        st.markdown("##### Contract Specifications")
-        st.write(f"**Strategy Type:** {pricing['option_type']}")
-        st.write(f"**Contracts Executed:** {pricing['contracts_needed']} contracts")
-        st.write(f"**Strike Price:** ${pricing.get('strike_price', pricing.get('long_strike', 0)):,.2f}")
-        st.write(f"**Expiry Date:** {pricing['expiry_date']}")
-        st.write(f"**Total Premium:** ${abs(pricing['total_premium']):,.2f}")
-        st.write(f"**Premium per Contract:** ${abs(pricing['total_premium'])/pricing['contracts_needed']:,.2f}")
+        st.markdown("### Contract Details")
+        st.markdown(f"**Strategy Type:** {pricing['option_type']}")
+        st.markdown(f"**Contracts Executed:** {pricing['contracts_needed']} contracts")
+        st.markdown(f"**Strike Price:** ${pricing.get('strike_price', pricing.get('long_strike', 0)):,.2f}")
+        st.markdown(f"**Expiry Date:** {pricing['expiry_date']}")
+        st.markdown(f"**Total Premium:** ${abs(pricing['total_premium']):,.2f}")
+        st.markdown(f"**Premium per Contract:** ${abs(pricing['total_premium'])/pricing['contracts_needed']:,.2f}")
     
     with col2:
         outcomes = calculate_strategy_outcomes(strategy, pricing['btc_spot_price'])
         
-        st.markdown("##### Protection Summary")
-        st.write(f"**Position Protected:** {strategy['target_exposure']:.1f} BTC")
-        st.write(f"**Entry Price:** ${pricing['btc_spot_price']:,.2f}")
-        st.write(f"**Breakeven Level:** ${outcomes['breakeven_price']:,.2f}")
-        st.write(f"**Maximum Risk:** {outcomes['max_loss'] if isinstance(outcomes['max_loss'], str) else f'${outcomes['max_loss']:,.0f}'}")
-        st.write(f"**Maximum Reward:** {outcomes['max_profit']}")
-        st.write(f"**Position Impact:** {pricing['cost_as_pct']:.2f}% of portfolio value")
+        st.markdown("### Protection Summary")
+        st.markdown(f"**Position Protected:** {strategy['target_exposure']:.1f} BTC")
+        st.markdown(f"**Entry Price:** ${pricing['btc_spot_price']:,.2f}")
+        st.markdown(f"**Breakeven Level:** ${outcomes['breakeven_price']:,.2f}")
+        st.markdown(f"**Maximum Risk:** {outcomes['max_loss'] if isinstance(outcomes['max_loss'], str) else f'${outcomes['max_loss']:,.0f}'}")
+        st.markdown(f"**Maximum Reward:** {outcomes['max_profit']}")
+        st.markdown(f"**Portfolio Impact:** {pricing['cost_as_pct']:.2f}% of total value")
     
-    # SCENARIO ANALYSIS
-    st.subheader("📊 Market Scenario Analysis")
+    # Professional scenario analysis
+    st.markdown("## 📊 Professional Market Scenario Analysis")
     
     outcomes = calculate_strategy_outcomes(strategy, pricing['btc_spot_price'])
     
     if outcomes['scenarios']:
-        st.info("💡 **Understanding Your Protection:** These scenarios show exactly how your portfolio performs under different Bitcoin price movements with this protection in place")
+        st.info("💡 **Professional Risk Assessment:** These scenarios demonstrate exactly how your institutional portfolio will perform under various Bitcoin price movements with professional protection in place.")
         
         for i, scenario in enumerate(outcomes['scenarios']):
             if i == 0:
@@ -944,34 +1199,34 @@ def screen_3_execution():
             else:
                 st.error(f"**🔴 Scenario {i+1}:** {scenario['condition']}")
             
-            st.write(f"**{scenario['outcome']}:** {scenario['details']}")
+            st.markdown(f"**{scenario['outcome']}:** {scenario['details']}")
             st.markdown("---")
     
-    # EXECUTION SUCCESS
-    st.success("🎯 **PORTFOLIO PROTECTION SUCCESSFULLY DEPLOYED**")
-    st.info("✅ Your institutional portfolio now has professional-grade downside protection while maintaining unlimited upside potential")
+    # Professional execution confirmation
+    st.success("🎯 **Professional Portfolio Protection Successfully Deployed**")
+    st.info("✅ Your institutional portfolio now has professional-grade downside protection while maintaining unlimited upside potential through sophisticated options strategies")
     
-    # IMPLEMENTATION INFORMATION
-    with st.expander("🚀 **Ready for Real Implementation?**", expanded=True):
-        st.write("**This demonstration shows real institutional options strategies with live pricing and executable contracts.**")
-        st.write("**All strategies displayed are available for immediate implementation through professional trading channels.**")
-        st.write("**Contact us to discuss implementing these protection strategies for your actual institutional portfolio.**")
+    # Professional implementation information
+    with st.expander("🚀 **Ready for Live Implementation?**", expanded=True):
+        st.markdown("**This demonstration showcases real institutional options strategies with live market pricing and immediately executable contracts.**")
+        st.markdown("**All displayed strategies are available for immediate implementation through professional institutional trading channels.**")
+        st.markdown("**Contact our institutional team to discuss implementing these professional protection strategies for your actual portfolio.**")
         
         col1, col2 = st.columns(2)
         with col1:
-            st.metric("Live Pricing Source", "Multiple Exchanges")
-            st.metric("Strategy Type", "Institutional Grade")
+            st.metric("Live Pricing Sources", "Multiple Exchanges")
+            st.metric("Strategy Classification", "Institutional Grade")
         with col2:
             st.metric("Execution Speed", "12-28 seconds")
-            st.metric("Availability", "24/7 Markets")
+            st.metric("Market Access", "24/7 Global Markets")
     
-    # ACTION BUTTONS
+    # Professional action buttons
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col1:
-        if st.button("🔄 **Try New Scenario**", type="secondary", use_container_width=True):
-            # Reset all session state
+        if st.button("**🔄 Analyze New Portfolio**", type="secondary", use_container_width=True):
+            # Professional reset with confirmation
             for key in ['portfolio', 'strategies', 'selected_strategy', 'execution_data']:
                 if key in st.session_state:
                     st.session_state[key] = None
@@ -980,17 +1235,17 @@ def screen_3_execution():
             st.session_state.strategies_generated = False
             st.session_state.strategy_selected = False
             st.session_state.show_intro = True
-            st.success("🔄 Reset complete - starting new demo")
+            st.success("🔄 **Demo Reset Complete** - Starting new professional analysis")
             st.rerun()
     
     with col2:
-        st.link_button("💬 **Contact for Implementation**", "https://t.me/willialso", use_container_width=True)
+        st.link_button("**💬 Contact Institutional Team**", "https://t.me/willialso", use_container_width=True)
     
     with col3:
         pass
 
 def main():
-    """Main application controller"""
+    """Professional application controller with error handling"""
     ensure_session_state()
     current_step = st.session_state.get('demo_step', 1)
     
@@ -1005,8 +1260,8 @@ def main():
             st.session_state.demo_step = 1
             screen_1_portfolio()
     except Exception as e:
-        st.error(f"Application error: {str(e)}")
-        if st.button("🔄 Reset Application"):
+        st.error(f"**Application Error:** {str(e)}")
+        if st.button("🔄 **Reset Professional Demo**"):
             st.session_state.clear()
             st.rerun()
 
