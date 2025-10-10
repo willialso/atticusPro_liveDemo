@@ -716,3 +716,4 @@ else:
     if not success:
         print("❌ WSGI: MULTI-EXCHANGE SERVICES FAILED")
     application = app
+# FORCE REBUILD Fri Oct 10 15:52:57 EDT 2025
