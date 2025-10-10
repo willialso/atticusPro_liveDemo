@@ -1,6 +1,7 @@
 """
-ATTICUS V1 - 100% REAL Black-Scholes Pricing Engine
-NO fake Greeks, NO hardcoded values, uses REAL market data only
+ATTICUS V1 - FIXED Black-Scholes Pricing Engine
+VOLATILITY FIX: All internal calculations use decimal format (0.30 = 30%)
+Only convert to percentage at final display
 """
 import math
 from scipy.stats import norm
@@ -9,7 +10,7 @@ from typing import Dict
 class RealBlackScholesEngine:
     """
     Professional Black-Scholes implementation using ONLY real market data
-    NO hardcoded Greeks or fake calculations
+    FIXED: Standardized volatility handling throughout
     """
     
     def __init__(self, treasury_service, market_data_service):
@@ -32,7 +33,7 @@ class RealBlackScholesEngine:
                                    option_type: str = 'put') -> Dict:
         """
         Calculate option price using REAL Black-Scholes with actual market data
-        NO fake parameters - all inputs must be from real market sources
+        FIXED: real_volatility input is decimal (0.30), not percentage (30%)
         """
         if not all([spot_price > 0, strike_price > 0, time_to_expiry > 0, real_volatility > 0]):
             raise Exception("INVALID INPUTS - All parameters must be positive real values")
@@ -44,7 +45,7 @@ class RealBlackScholesEngine:
         K = float(strike_price) 
         T = float(time_to_expiry)
         r = float(self.risk_free_rate)
-        sigma = float(real_volatility)
+        sigma = float(real_volatility)  # FIXED: Use as decimal directly
         
         try:
             # Black-Scholes calculation
@@ -96,7 +97,7 @@ class RealBlackScholesEngine:
                     'strike_price': K,
                     'time_to_expiry_years': T,
                     'risk_free_rate': r,
-                    'volatility': sigma,
+                    'volatility': sigma,  # FIXED: Stored as decimal
                     'option_type': option_type
                 },
                 'calculation_method': 'Real Black-Scholes with live market data'
@@ -109,7 +110,7 @@ class RealBlackScholesEngine:
                                        spot_price: float, real_volatility: float) -> Dict:
         """
         Calculate strategy pricing using ONLY real market parameters
-        NO hardcoded premiums or fake calculations
+        FIXED: real_volatility is decimal (0.30), return decimal format internally
         """
         if position_size <= 0:
             raise Exception("INVALID POSITION SIZE - Must be positive")
@@ -126,7 +127,7 @@ class RealBlackScholesEngine:
                     spot_price=spot_price,
                     strike_price=strike_price,
                     time_to_expiry=time_to_expiry,
-                    real_volatility=real_volatility,
+                    real_volatility=real_volatility,  # Pass decimal directly
                     option_type='put'
                 )
                 
@@ -137,7 +138,7 @@ class RealBlackScholesEngine:
                     'premium_per_contract': put_pricing['platform_price'],
                     'total_premium': contracts_needed * put_pricing['platform_price'],
                     'cost_as_pct': (put_pricing['platform_price'] / spot_price) * 100,
-                    'implied_volatility': real_volatility * 100,  # Convert to percentage
+                    'implied_volatility': real_volatility,  # FIXED: Return as decimal
                     'days_to_expiry': 45,
                     'expiry_date': None,  # Will be set by calling function
                     'greeks': put_pricing['greeks'],
@@ -168,7 +169,7 @@ class RealBlackScholesEngine:
                     'short_strike': short_strike,
                     'total_premium': contracts_needed * net_premium,
                     'cost_as_pct': (net_premium / spot_price) * 100,
-                    'implied_volatility': real_volatility * 100,
+                    'implied_volatility': real_volatility,  # FIXED: Return as decimal
                     'days_to_expiry': 30,
                     'max_protection': (long_strike - short_strike) * contracts_needed,
                     'calculation_source': 'Real Black-Scholes spread pricing'
