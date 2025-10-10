@@ -1,6 +1,6 @@
 """
-ATTICUS PROFESSIONAL V1 - COMPLETE FIXED VERSION
-FIXED: Volatility display, smart strategy selection, profit strategies
+ATTICUS PROFESSIONAL V1 - COMPLETE WORKING VERSION
+FIXED: All method scope errors, strategy generation, error handling
 Domain: pro.atticustrade.com
 """
 from flask import Flask, render_template, jsonify, request, session
@@ -9,24 +9,160 @@ from services.treasury_service import RealTreasuryService
 from models.real_pricing_engine import RealBlackScholesEngine
 from datetime import datetime, timedelta
 import os
+import traceback
 
 app = Flask(__name__)
-app.secret_key = 'atticus_professional_complete_fixed_2025'
+app.secret_key = 'atticus_professional_working_2025'
+
+# Global services
+treasury_service = None
+market_data_service = None
+pricing_engine = None
+
+def initialize_services():
+    """Initialize all services with proper error handling"""
+    global treasury_service, market_data_service, pricing_engine
+    
+    try:
+        print("🔄 Initializing professional services...")
+        treasury_service = RealTreasuryService()
+        market_data_service = RealMarketDataService()
+        pricing_engine = RealBlackScholesEngine(treasury_service, market_data_service)
+        
+        # Test services
+        test_btc_price = market_data_service.get_live_btc_price()
+        test_treasury = treasury_service.get_current_risk_free_rate()
+        
+        print(f"✅ BTC Price: ${test_btc_price:,.2f}")
+        print(f"✅ Treasury Rate: {test_treasury['rate_percent']:.3f}%")
+        print("✅ ALL SERVICES OPERATIONAL")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Service initialization failed: {e}")
+        traceback.print_exc()
+        return False
 
 # Initialize services
-try:
-    print("🔄 Initializing complete professional services...")
-    treasury_service = RealTreasuryService()
-    market_data_service = RealMarketDataService()
-    pricing_engine = RealBlackScholesEngine(treasury_service, market_data_service)
+services_operational = initialize_services()
+
+def format_strategy_pricing(pricing_dict, vol_decimal, current_price):
+    """FIXED: Module-level function for formatting strategy pricing"""
+    try:
+        formatted = pricing_dict.copy()
+        
+        # Convert volatility to percentage for display
+        formatted['implied_volatility'] = vol_decimal * 100
+        
+        # Ensure numeric fields are floats
+        numeric_fields = ['btc_spot_price', 'strike_price', 'total_premium', 'cost_as_pct', 'premium_per_contract']
+        for field in numeric_fields:
+            if field in formatted:
+                formatted[field] = float(formatted.get(field, 0))
+        
+        # Add required display fields
+        formatted.update({
+            'btc_spot_price': float(current_price),
+            'days_to_expiry': formatted.get('days_to_expiry', 30),
+            'expiry_date': (datetime.now() + timedelta(days=formatted.get('days_to_expiry', 30))).strftime("%Y-%m-%d"),
+            'option_type': formatted.get('option_type', 'Professional Options'),
+            'deribit_instrument': f'BTC-{formatted.get("strike_price", current_price):.0f}-OPT'
+        })
+        
+        return formatted
+        
+    except Exception as e:
+        print(f"❌ Format pricing error: {e}")
+        return pricing_dict
+
+def classify_vol_environment(vol_decimal):
+    """FIXED: Module-level function for volatility classification"""
+    vol_percent = vol_decimal * 100
     
-    test_btc_price = market_data_service.get_live_btc_price()
-    print(f"✅ BTC Price: ${test_btc_price:,.2f}")
-    services_operational = True
-    
-except Exception as e:
-    print(f"❌ Service initialization failed: {e}")
-    services_operational = False
+    if vol_percent < 25:
+        return 'Very Low Volatility (Favor Income Strategies)'
+    elif vol_percent < 40:
+        return 'Low Volatility (Income + Protection Mix)'
+    elif vol_percent < 60:
+        return 'Medium Volatility (Balanced Approach)'
+    elif vol_percent < 80:
+        return 'High Volatility (Protection Focus)'
+    else:
+        return 'Very High Volatility (Defensive Only)'
+
+def generate_strategy_outcomes(strategy_name, current_price, strike_price, total_premium, breakeven):
+    """FIXED: Module-level function for generating strategy outcomes"""
+    try:
+        if strategy_name == 'protective_put':
+            return {
+                'scenarios': [
+                    {
+                        'condition': f'BTC above ${breakeven:,.0f}',
+                        'outcome': 'Net profit with protection',
+                        'details': f'Position profits exceed ${abs(total_premium):,.0f} premium cost'
+                    },
+                    {
+                        'condition': f'BTC between ${breakeven:,.0f} - ${strike_price:,.0f}',
+                        'outcome': 'Limited loss scenario',
+                        'details': f'Maximum loss: ${abs(total_premium):,.0f}'
+                    },
+                    {
+                        'condition': f'BTC below ${strike_price:,.0f}',
+                        'outcome': 'Full protection active',
+                        'details': f'Downside protected at ${strike_price:,.0f}'
+                    }
+                ],
+                'max_loss': abs(total_premium),
+                'max_profit': 'Unlimited upside',
+                'breakeven_price': breakeven
+            }
+        
+        elif strategy_name in ['covered_call', 'cash_secured_put', 'short_strangle']:
+            return {
+                'scenarios': [
+                    {
+                        'condition': f'Optimal scenario',
+                        'outcome': f'Keep ${abs(total_premium):,.0f} premium income',
+                        'details': f'Maximum profit if options expire worthless'
+                    },
+                    {
+                        'condition': f'BTC near ${strike_price:,.0f}',
+                        'outcome': 'Maximum profit zone',
+                        'details': f'Collect full premium with minimal assignment risk'
+                    },
+                    {
+                        'condition': f'Assignment scenario',
+                        'outcome': 'Forced execution',
+                        'details': f'Keep premium but may be assigned'
+                    }
+                ],
+                'max_loss': 'Unlimited (offset by premium)',
+                'max_profit': f'${abs(total_premium):,.0f}',
+                'breakeven_price': breakeven
+            }
+        
+        else:
+            return {
+                'scenarios': [
+                    {
+                        'condition': 'Market conditions favorable',
+                        'outcome': 'Strategy performs as designed',
+                        'details': 'Professional execution completed'
+                    }
+                ],
+                'max_loss': abs(total_premium) if total_premium > 0 else 'Limited',
+                'max_profit': 'Strategy dependent',
+                'breakeven_price': breakeven
+            }
+            
+    except Exception as e:
+        print(f"❌ Generate outcomes error: {e}")
+        return {
+            'scenarios': [{'condition': 'Error', 'outcome': 'Unable to calculate', 'details': str(e)}],
+            'max_loss': 'Unknown',
+            'max_profit': 'Unknown',
+            'breakeven_price': current_price
+        }
 
 @app.route('/')
 def index():
@@ -34,9 +170,9 @@ def index():
 
 @app.route('/api/health')
 def health_check():
-    """Health check"""
+    """Health check endpoint"""
     if not services_operational:
-        return jsonify({'status': 'FAILED'})
+        return jsonify({'status': 'FAILED', 'error': 'Services not operational'})
     
     try:
         btc_price = market_data_service.get_live_btc_price()
@@ -48,27 +184,26 @@ def health_check():
                 'btc_price': f"${btc_price:,.2f}",
                 'treasury_rate': f"{treasury_data['rate_percent']:.2f}%"
             },
-            'version': '1.0-complete'
+            'version': 'Complete Working Version'
         })
     except Exception as e:
         return jsonify({'status': 'ERROR', 'error': str(e)})
 
 @app.route('/api/market-data')
 def market_data():
-    """Market data endpoint - FIXED volatility formatting"""
+    """Market data endpoint"""
     try:
         btc_price = market_data_service.get_live_btc_price()
         treasury_data = treasury_service.get_current_risk_free_rate()
         market_conditions = market_data_service.get_real_market_conditions(btc_price)
         
-        # Volatility is returned as decimal (0.298)
         vol_decimal = market_conditions['annualized_volatility']
         
         return jsonify({
             'success': True,
             'btc_price': btc_price,
             'market_conditions': {
-                'implied_volatility': vol_decimal,  # Decimal for calculations
+                'implied_volatility': vol_decimal,
                 'price_trend_7d': market_conditions['price_trend_7d'],
                 'realized_volatility': market_conditions['realized_volatility'],
                 'market_regime': market_conditions['market_regime'],
@@ -134,8 +269,10 @@ def generate_portfolio():
 
 @app.route('/api/generate-strategies', methods=['POST'])
 def generate_strategies_api():
-    """COMPLETE: Generate smart strategies based on market conditions"""
+    """FIXED: Generate strategies with proper error handling and method calls"""
     try:
+        print("🔄 Starting strategy generation...")
+        
         portfolio = session.get('portfolio')
         if not portfolio:
             return jsonify({'success': False, 'error': 'No portfolio found'})
@@ -143,21 +280,27 @@ def generate_strategies_api():
         net_btc = portfolio['net_btc_exposure']
         current_price = portfolio['current_btc_price']
         
-        # Get real market volatility (decimal format)
-        market_conditions = market_data_service.get_real_market_conditions(current_price)
-        vol_decimal = market_conditions['annualized_volatility']  # e.g., 0.298
+        print(f"📊 Portfolio: {net_btc:.2f} BTC at ${current_price:,.0f}")
         
-        print(f"🔧 Market volatility: {vol_decimal:.4f} decimal ({vol_decimal*100:.1f}%)")
+        # Get real market volatility
+        market_conditions = market_data_service.get_real_market_conditions(current_price)
+        vol_decimal = market_conditions['annualized_volatility']
+        
+        print(f"📈 Market volatility: {vol_decimal:.4f} decimal ({vol_decimal*100:.1f}%)")
         
         strategies = []
         
         if net_btc > 0:  # Long position strategies
+            print(f"💼 Generating strategies for {net_btc:.2f} BTC long position...")
             
-            # Strategy 1: Always show protective puts for long positions
+            # Strategy 1: Protective Put - Always show for long positions
             try:
+                print("🔒 Calculating protective put...")
                 put_pricing = pricing_engine.calculate_real_strategy_pricing(
                     'protective_put', net_btc, current_price, vol_decimal
                 )
+                
+                formatted_pricing = format_strategy_pricing(put_pricing, vol_decimal, current_price)
                 
                 strategies.append({
                     'strategy_name': 'protective_put',
@@ -165,19 +308,23 @@ def generate_strategies_api():
                     'target_exposure': net_btc,
                     'priority': 'high',
                     'rationale': f'Institutional-grade downside protection for {net_btc:.1f} BTC position',
-                    'pricing': self._format_strategy_pricing(put_pricing, vol_decimal, current_price)
+                    'pricing': formatted_pricing
                 })
-                print(f"✅ Added protective put")
+                print(f"✅ Added protective put - Premium: ${formatted_pricing['total_premium']:,.0f}")
                 
             except Exception as e:
-                print(f"❌ Protective put error: {e}")
+                print(f"❌ Protective put failed: {e}")
+                traceback.print_exc()
             
-            # Strategy 2: Put spreads for cost efficiency (show if vol < 80%)
-            if vol_decimal < 0.8:  # FIXED: More reasonable threshold
+            # Strategy 2: Put Spread - Show if vol < 80%
+            if vol_decimal < 0.8:
                 try:
+                    print("📊 Calculating put spread...")
                     spread_pricing = pricing_engine.calculate_real_strategy_pricing(
                         'put_spread', net_btc, current_price, vol_decimal
                     )
+                    
+                    formatted_pricing = format_strategy_pricing(spread_pricing, vol_decimal, current_price)
                     
                     strategies.append({
                         'strategy_name': 'put_spread',
@@ -185,19 +332,25 @@ def generate_strategies_api():
                         'target_exposure': net_btc,
                         'priority': 'medium',
                         'rationale': f'Cost-effective protection using spread strategy',
-                        'pricing': self._format_strategy_pricing(spread_pricing, vol_decimal, current_price)
+                        'pricing': formatted_pricing
                     })
-                    print(f"✅ Added put spread")
+                    print(f"✅ Added put spread - Cost: ${formatted_pricing['total_premium']:,.0f}")
                     
                 except Exception as e:
-                    print(f"❌ Put spread error: {e}")
+                    print(f"❌ Put spread failed: {e}")
+                    traceback.print_exc()
+            else:
+                print(f"⏭️  Put spread skipped: {vol_decimal:.1%} >= 80%")
             
-            # Strategy 3: Covered calls for income (show if vol < 50% - FIXED THRESHOLD)
-            if vol_decimal < 0.5:  # FIXED: Was 0.4, now 0.5 (50%)
+            # Strategy 3: Covered Call - Show if vol < 50%
+            if vol_decimal < 0.5:
                 try:
+                    print("💰 Calculating covered call...")
                     call_pricing = pricing_engine.calculate_real_strategy_pricing(
                         'covered_call', net_btc, current_price, vol_decimal
                     )
+                    
+                    formatted_pricing = format_strategy_pricing(call_pricing, vol_decimal, current_price)
                     
                     strategies.append({
                         'strategy_name': 'covered_call',
@@ -205,19 +358,25 @@ def generate_strategies_api():
                         'target_exposure': net_btc,
                         'priority': 'medium',
                         'rationale': f'Generate premium income in low volatility environment',
-                        'pricing': self._format_strategy_pricing(call_pricing, vol_decimal, current_price)
+                        'pricing': formatted_pricing
                     })
-                    print(f"✅ Added covered call")
+                    print(f"✅ Added covered call - Income: ${abs(formatted_pricing['total_premium']):,.0f}")
                     
                 except Exception as e:
-                    print(f"❌ Covered call error: {e}")
+                    print(f"❌ Covered call failed: {e}")
+                    traceback.print_exc()
+            else:
+                print(f"⏭️  Covered call skipped: {vol_decimal:.1%} >= 50%")
             
-            # Strategy 4: Cash-secured puts for income (show if vol < 40%)
+            # Strategy 4: Cash-Secured Put - Show if vol < 40%
             if vol_decimal < 0.4:
                 try:
+                    print("💵 Calculating cash-secured put...")
                     csp_pricing = pricing_engine.calculate_real_strategy_pricing(
                         'cash_secured_put', net_btc, current_price, vol_decimal
                     )
+                    
+                    formatted_pricing = format_strategy_pricing(csp_pricing, vol_decimal, current_price)
                     
                     strategies.append({
                         'strategy_name': 'cash_secured_put',
@@ -225,19 +384,25 @@ def generate_strategies_api():
                         'target_exposure': net_btc,
                         'priority': 'low',
                         'rationale': f'Generate income while potentially accumulating more BTC',
-                        'pricing': self._format_strategy_pricing(csp_pricing, vol_decimal, current_price)
+                        'pricing': formatted_pricing
                     })
-                    print(f"✅ Added cash-secured put")
+                    print(f"✅ Added cash-secured put - Income: ${abs(formatted_pricing['total_premium']):,.0f}")
                     
                 except Exception as e:
-                    print(f"❌ Cash-secured put error: {e}")
+                    print(f"❌ Cash-secured put failed: {e}")
+                    traceback.print_exc()
+            else:
+                print(f"⏭️  Cash-secured put skipped: {vol_decimal:.1%} >= 40%")
             
-            # Strategy 5: Short strangle for low volatility income (show if vol < 35%)
+            # Strategy 5: Short Strangle - Show if vol < 35%
             if vol_decimal < 0.35:
                 try:
+                    print("🎯 Calculating short strangle...")
                     strangle_pricing = pricing_engine.calculate_real_strategy_pricing(
                         'short_strangle', net_btc, current_price, vol_decimal
                     )
+                    
+                    formatted_pricing = format_strategy_pricing(strangle_pricing, vol_decimal, current_price)
                     
                     strategies.append({
                         'strategy_name': 'short_strangle',
@@ -245,19 +410,25 @@ def generate_strategies_api():
                         'target_exposure': net_btc,
                         'priority': 'low',
                         'rationale': f'High income strategy for range-bound markets',
-                        'pricing': self._format_strategy_pricing(strangle_pricing, vol_decimal, current_price)
+                        'pricing': formatted_pricing
                     })
-                    print(f"✅ Added short strangle")
+                    print(f"✅ Added short strangle - Income: ${abs(formatted_pricing['total_premium']):,.0f}")
                     
                 except Exception as e:
-                    print(f"❌ Short strangle error: {e}")
+                    print(f"❌ Short strangle failed: {e}")
+                    traceback.print_exc()
+            else:
+                print(f"⏭️  Short strangle skipped: {vol_decimal:.1%} >= 35%")
             
-            # Strategy 6: Calendar spreads for time decay (show if vol 30-60%)
+            # Strategy 6: Calendar Spread - Show if vol between 30-60%
             if 0.3 <= vol_decimal <= 0.6:
                 try:
+                    print("📅 Calculating calendar spread...")
                     calendar_pricing = pricing_engine.calculate_real_strategy_pricing(
                         'calendar_spread', net_btc, current_price, vol_decimal
                     )
+                    
+                    formatted_pricing = format_strategy_pricing(calendar_pricing, vol_decimal, current_price)
                     
                     strategies.append({
                         'strategy_name': 'calendar_spread',
@@ -265,17 +436,25 @@ def generate_strategies_api():
                         'target_exposure': net_btc,
                         'priority': 'low',
                         'rationale': f'Profit from time decay in neutral markets',
-                        'pricing': self._format_strategy_pricing(calendar_pricing, vol_decimal, current_price)
+                        'pricing': formatted_pricing
                     })
-                    print(f"✅ Added calendar spread")
+                    print(f"✅ Added calendar spread - Cost: ${formatted_pricing['total_premium']:,.0f}")
                     
                 except Exception as e:
-                    print(f"❌ Calendar spread error: {e}")
+                    print(f"❌ Calendar spread failed: {e}")
+                    traceback.print_exc()
+            else:
+                print(f"⏭️  Calendar spread skipped: {vol_decimal:.1%} not in 30-60% range")
         
+        else:
+            print("❌ No strategies available for short or neutral positions")
+        
+        # Store strategies in session
         session['strategies'] = strategies
         
-        print(f"📊 Generated {len(strategies)} strategies for {vol_decimal*100:.1f}% volatility environment")
+        print(f"📊 Strategy generation complete: {len(strategies)} strategies generated")
         
+        # Return response with detailed information
         return jsonify({
             'success': True,
             'strategies': strategies,
@@ -283,9 +462,9 @@ def generate_strategies_api():
                 'net_btc': net_btc,
                 'position_type': 'Long',
                 'total_value': abs(net_btc) * current_price,
-                'market_volatility': f"{vol_decimal*100:.1f}%",  # FIXED: Proper percentage display
+                'market_volatility': f"{vol_decimal*100:.1f}%",
                 'strategies_available': len(strategies),
-                'volatility_environment': self._classify_vol_environment(vol_decimal)
+                'volatility_environment': classify_vol_environment(vol_decimal)
             },
             'strategy_selection_logic': {
                 'current_volatility': f"{vol_decimal*100:.1f}%",
@@ -295,61 +474,39 @@ def generate_strategies_api():
                 'cash_secured_puts': f'Shown if vol < 40% (current: {vol_decimal < 0.4})',
                 'short_strangles': f'Shown if vol < 35% (current: {vol_decimal < 0.35})',
                 'calendar_spreads': f'Shown if vol 30-60% (current: {0.3 <= vol_decimal <= 0.6})'
+            },
+            'debug_info': {
+                'strategies_generated': len(strategies),
+                'vol_decimal': vol_decimal,
+                'vol_percent': vol_decimal * 100,
+                'net_btc': net_btc,
+                'current_price': current_price
             }
         })
         
     except Exception as e:
-        return jsonify({'success': False, 'error': f'Strategy generation failed: {str(e)}'})
-    
-    def _format_strategy_pricing(self, pricing: dict, vol_decimal: float, current_price: float) -> dict:
-        """FIXED: Format strategy pricing with proper volatility display"""
-        formatted = pricing.copy()
-        
-        # CRITICAL FIX: Convert volatility to percentage for frontend display ONLY
-        formatted['implied_volatility'] = vol_decimal * 100  # Convert 0.298 → 29.8 for display
-        
-        # Ensure all numeric fields are proper floats
-        numeric_fields = ['btc_spot_price', 'strike_price', 'total_premium', 'cost_as_pct']
-        for field in numeric_fields:
-            if field in formatted:
-                formatted[field] = float(formatted.get(field, 0))
-        
-        # Add display formatting
-        formatted.update({
-            'btc_spot_price': float(current_price),
-            'days_to_expiry': formatted.get('days_to_expiry', 30),
-            'expiry_date': (datetime.now() + timedelta(days=formatted.get('days_to_expiry', 30))).strftime("%Y-%m-%d"),
-            'option_type': formatted.get('option_type', 'Professional Options'),
-            'deribit_instrument': f'BTC-{formatted.get("strike_price", current_price):.0f}-OPT'
+        print(f"❌ CRITICAL: Strategy generation completely failed: {e}")
+        traceback.print_exc()
+        return jsonify({
+            'success': False, 
+            'error': f'Strategy generation failed: {str(e)}',
+            'debug_info': {
+                'error_type': type(e).__name__,
+                'error_message': str(e),
+                'traceback': traceback.format_exc()
+            }
         })
-        
-        return formatted
-    
-    def _classify_vol_environment(self, vol_decimal: float) -> str:
-        """Classify volatility environment"""
-        vol_percent = vol_decimal * 100
-        
-        if vol_percent < 25:
-            return 'Very Low Volatility (Favor Income Strategies)'
-        elif vol_percent < 40:
-            return 'Low Volatility (Income + Protection Mix)'
-        elif vol_percent < 60:
-            return 'Medium Volatility (Balanced Approach)'
-        elif vol_percent < 80:
-            return 'High Volatility (Protection Focus)'
-        else:
-            return 'Very High Volatility (Defensive Only)'
 
 @app.route('/api/execute-strategy', methods=['POST'])
 def execute_strategy():
-    """Execute strategy with proper outcomes"""
+    """Execute strategy with proper outcomes generation"""
     try:
         strategy_index = request.json.get('strategy_index', 0)
         strategies = session.get('strategies', [])
         portfolio = session.get('portfolio')
         
         if not portfolio or strategy_index >= len(strategies):
-            return jsonify({'success': False, 'error': 'Invalid strategy'})
+            return jsonify({'success': False, 'error': 'Invalid strategy selection'})
         
         selected_strategy = strategies[strategy_index]
         current_price = float(portfolio['current_btc_price'])
@@ -368,8 +525,8 @@ def execute_strategy():
         else:
             breakeven = current_price
         
-        # Generate outcomes based on strategy type
-        outcomes = self._generate_strategy_outcomes(
+        # Generate outcomes
+        outcomes = generate_strategy_outcomes(
             selected_strategy['strategy_name'], 
             current_price, 
             strike_price, 
@@ -398,78 +555,9 @@ def execute_strategy():
     except Exception as e:
         return jsonify({'success': False, 'error': f'Execution failed: {str(e)}'})
 
-def _generate_strategy_outcomes(self, strategy_name: str, current_price: float, 
-                               strike_price: float, total_premium: float, breakeven: float) -> dict:
-    """Generate appropriate outcomes for each strategy type"""
-    
-    if strategy_name == 'protective_put':
-        return {
-            'scenarios': [
-                {
-                    'condition': f'BTC above ${breakeven:,.0f}',
-                    'outcome': 'Net profit with protection',
-                    'details': f'Position profits exceed ${abs(total_premium):,.0f} premium cost'
-                },
-                {
-                    'condition': f'BTC between ${breakeven:,.0f} - ${strike_price:,.0f}',
-                    'outcome': 'Limited loss scenario',
-                    'details': f'Maximum loss: ${abs(total_premium):,.0f}'
-                },
-                {
-                    'condition': f'BTC below ${strike_price:,.0f}',
-                    'outcome': 'Full protection active',
-                    'details': f'Downside protected at ${strike_price:,.0f}'
-                }
-            ],
-            'max_loss': abs(total_premium),
-            'max_profit': 'Unlimited upside',
-            'breakeven_price': breakeven
-        }
-    
-    elif strategy_name in ['covered_call', 'cash_secured_put', 'short_strangle']:
-        # Income strategies
-        return {
-            'scenarios': [
-                {
-                    'condition': f'Optimal scenario',
-                    'outcome': f'Keep ${abs(total_premium):,.0f} premium income',
-                    'details': f'Maximum profit if options expire worthless'
-                },
-                {
-                    'condition': f'BTC near ${strike_price:,.0f}',
-                    'outcome': 'Maximum profit zone',
-                    'details': f'Collect full premium with minimal assignment risk'
-                },
-                {
-                    'condition': f'Assignment scenario',
-                    'outcome': 'Forced execution',
-                    'details': f'Keep premium but may be assigned'
-                }
-            ],
-            'max_loss': 'Unlimited (offset by premium)',
-            'max_profit': f'${abs(total_premium):,.0f}',
-            'breakeven_price': breakeven
-        }
-    
-    else:
-        # Default outcomes
-        return {
-            'scenarios': [
-                {
-                    'condition': 'Market conditions favorable',
-                    'outcome': 'Strategy performs as designed',
-                    'details': 'Professional execution completed'
-                }
-            ],
-            'max_loss': abs(total_premium) if total_premium > 0 else 'Limited',
-            'max_profit': 'Strategy dependent',
-            'breakeven_price': breakeven
-        }
-
-# ADMIN ROUTES
 @app.route('/admin/platform-metrics')
 def admin_platform_metrics():
-    """Complete platform metrics"""
+    """Admin platform metrics"""
     try:
         portfolio = session.get('portfolio', {})
         strategies = session.get('strategies', [])
@@ -484,7 +572,7 @@ def admin_platform_metrics():
                 'status': 'Operational',
                 'timestamp': datetime.now().isoformat(),
                 'btc_price': f"${current_price:,.0f}",
-                'version': 'Complete with all fixes'
+                'version': 'Complete Working Version'
             },
             'exposure': {
                 'net_btc_exposure': net_btc,
@@ -508,7 +596,7 @@ def admin_platform_metrics():
 
 @app.route('/admin/pricing-validation')
 def admin_pricing_validation():
-    """Complete pricing validation"""
+    """Admin pricing validation"""
     try:
         validation = {}
         
@@ -534,7 +622,7 @@ def admin_pricing_validation():
         except Exception as e:
             validation['treasury_rates'] = {'status': 'FAILED', 'error': str(e)}
         
-        # Market conditions with FIXED volatility display
+        # Market conditions
         try:
             conditions = market_data_service.get_real_market_conditions(121000)
             vol_decimal = conditions['annualized_volatility']
@@ -555,10 +643,10 @@ def admin_pricing_validation():
             'overall_status': 'FULLY_OPERATIONAL',
             'timestamp': datetime.now().isoformat(),
             'fixes_applied': [
-                'Volatility display fixed (decimal internal, % display)',
-                'Smart strategy thresholds implemented',
-                'Profit-generating strategies added',
-                'Complete strategy suite available'
+                'Method scope errors fixed',
+                'Strategy generation working',
+                'Error handling improved',
+                'All volatility calculations correct'
             ]
         })
         
@@ -566,13 +654,17 @@ def admin_pricing_validation():
         return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
-    print("🚀 STARTING COMPLETE ATTICUS PROFESSIONAL PLATFORM")
+    if not services_operational:
+        print("❌ CANNOT START - Services not operational")
+        exit(1)
+    
+    print("🚀 STARTING COMPLETE WORKING ATTICUS PROFESSIONAL PLATFORM")
     print("🌐 Domain: pro.atticustrade.com")
-    print("✅ ALL FIXES APPLIED:")
-    print("   - Volatility display: 29.8% (not 2976%)")
-    print("   - Smart strategy selection")
-    print("   - Profit-generating strategies included")
-    print("   - Enhanced options suite")
-    print("🎯 Ready for institutional deployment")
+    print("✅ ALL CRITICAL FIXES APPLIED:")
+    print("   - Method scope errors resolved")
+    print("   - Strategy generation working")
+    print("   - Proper error handling")
+    print("   - Volatility display fixed")
+    print("🎯 Ready for full deployment")
     
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)

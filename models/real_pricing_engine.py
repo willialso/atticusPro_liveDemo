@@ -1,16 +1,13 @@
 """
-ATTICUS V1 - ENHANCED Black-Scholes Pricing Engine
-ADDED: Cash-secured puts, short strangles, calendar spreads
-FIXED: All volatility handling uses decimal internally
+ATTICUS V1 - COMPLETE Black-Scholes Pricing Engine
+FIXED: All missing methods, complete strategy implementations
 """
 import math
 from scipy.stats import norm
 from typing import Dict
 
 class RealBlackScholesEngine:
-    """
-    Professional Black-Scholes with expanded strategy support
-    """
+    """Complete Black-Scholes implementation with all strategies"""
     
     def __init__(self, treasury_service, market_data_service):
         self.treasury_service = treasury_service
@@ -30,9 +27,9 @@ class RealBlackScholesEngine:
     def calculate_real_option_price(self, spot_price: float, strike_price: float, 
                                    time_to_expiry: float, real_volatility: float, 
                                    option_type: str = 'put') -> Dict:
-        """Calculate option price - volatility input is DECIMAL"""
+        """Calculate option price using real Black-Scholes"""
         if not all([spot_price > 0, strike_price > 0, time_to_expiry > 0, real_volatility > 0]):
-            raise Exception("INVALID INPUTS - All parameters must be positive real values")
+            raise Exception("INVALID INPUTS - All parameters must be positive")
         
         if not self.risk_free_rate:
             raise Exception("NO REAL RISK-FREE RATE AVAILABLE")
@@ -69,7 +66,7 @@ class RealBlackScholesEngine:
                   norm.cdf(d2 if option_type.lower() == 'call' else -d2)) / 100
             
             if theoretical_price < 0:
-                raise Exception("NEGATIVE OPTION PRICE - Calculation error")
+                raise Exception("NEGATIVE OPTION PRICE")
             
             platform_markup = theoretical_price * 0.025
             platform_price = theoretical_price + platform_markup
@@ -93,8 +90,7 @@ class RealBlackScholesEngine:
                     'risk_free_rate': r,
                     'volatility': sigma,
                     'option_type': option_type
-                },
-                'calculation_method': 'Real Black-Scholes'
+                }
             }
             
         except Exception as e:
@@ -102,41 +98,31 @@ class RealBlackScholesEngine:
     
     def calculate_real_strategy_pricing(self, strategy_name: str, position_size: float,
                                        spot_price: float, real_volatility: float) -> Dict:
-        """ENHANCED: Calculate pricing for expanded strategy set"""
+        """Calculate pricing for all supported strategies"""
         if position_size <= 0:
             raise Exception("INVALID POSITION SIZE")
         
-        try:
-            contracts_needed = int(abs(position_size))
-            
-            if strategy_name == 'protective_put':
-                return self._price_protective_put(contracts_needed, spot_price, real_volatility)
-            
-            elif strategy_name == 'put_spread':
-                return self._price_put_spread(contracts_needed, spot_price, real_volatility)
-            
-            elif strategy_name == 'covered_call':
-                return self._price_covered_call(contracts_needed, spot_price, real_volatility)
-            
-            elif strategy_name == 'cash_secured_put':
-                return self._price_cash_secured_put(contracts_needed, spot_price, real_volatility)
-            
-            elif strategy_name == 'short_strangle':
-                return self._price_short_strangle(contracts_needed, spot_price, real_volatility)
-            
-            elif strategy_name == 'calendar_spread':
-                return self._price_calendar_spread(contracts_needed, spot_price, real_volatility)
-            
-            else:
-                raise Exception(f"UNSUPPORTED STRATEGY: {strategy_name}")
-                
-        except Exception as e:
-            raise Exception(f"STRATEGY PRICING FAILED: {str(e)}")
+        contracts_needed = int(abs(position_size))
+        
+        if strategy_name == 'protective_put':
+            return self._price_protective_put(contracts_needed, spot_price, real_volatility)
+        elif strategy_name == 'put_spread':
+            return self._price_put_spread(contracts_needed, spot_price, real_volatility)
+        elif strategy_name == 'covered_call':
+            return self._price_covered_call(contracts_needed, spot_price, real_volatility)
+        elif strategy_name == 'cash_secured_put':
+            return self._price_cash_secured_put(contracts_needed, spot_price, real_volatility)
+        elif strategy_name == 'short_strangle':
+            return self._price_short_strangle(contracts_needed, spot_price, real_volatility)
+        elif strategy_name == 'calendar_spread':
+            return self._price_calendar_spread(contracts_needed, spot_price, real_volatility)
+        else:
+            raise Exception(f"UNSUPPORTED STRATEGY: {strategy_name}")
     
     def _price_protective_put(self, contracts: int, spot: float, vol: float) -> Dict:
         """Price protective put strategy"""
-        strike_price = spot * 0.90
-        time_to_expiry = 45 / 365.0
+        strike_price = spot * 0.90  # 10% OTM protection
+        time_to_expiry = 45 / 365.0  # 45 days
         
         put_pricing = self.calculate_real_option_price(
             spot, strike_price, time_to_expiry, vol, 'put'
@@ -149,7 +135,7 @@ class RealBlackScholesEngine:
             'premium_per_contract': put_pricing['platform_price'],
             'total_premium': contracts * put_pricing['platform_price'],
             'cost_as_pct': (put_pricing['platform_price'] / spot) * 100,
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,  # Decimal format
             'days_to_expiry': 45,
             'greeks': put_pricing['greeks'],
             'option_type': 'Professional Put Options'
@@ -157,8 +143,8 @@ class RealBlackScholesEngine:
     
     def _price_put_spread(self, contracts: int, spot: float, vol: float) -> Dict:
         """Price put spread strategy"""
-        long_strike = spot * 0.92
-        short_strike = spot * 0.82
+        long_strike = spot * 0.92   # 8% OTM
+        short_strike = spot * 0.82  # 18% OTM
         time_to_expiry = 30 / 365.0
         
         long_put = self.calculate_real_option_price(spot, long_strike, time_to_expiry, vol, 'put')
@@ -171,16 +157,18 @@ class RealBlackScholesEngine:
             'contracts_needed': contracts,
             'long_strike': long_strike,
             'short_strike': short_strike,
+            'strike_price': long_strike,  # For frontend compatibility
             'total_premium': contracts * net_premium,
             'cost_as_pct': (net_premium / spot) * 100,
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,
             'days_to_expiry': 30,
-            'max_protection': (long_strike - short_strike) * contracts
+            'max_protection': (long_strike - short_strike) * contracts,
+            'option_type': 'Put Spread Strategy'
         }
     
     def _price_covered_call(self, contracts: int, spot: float, vol: float) -> Dict:
         """Price covered call strategy"""
-        strike_price = spot * 1.10
+        strike_price = spot * 1.10  # 10% OTM call
         time_to_expiry = 35 / 365.0
         
         call_pricing = self.calculate_real_option_price(
@@ -194,15 +182,16 @@ class RealBlackScholesEngine:
             'premium_per_contract': call_pricing['platform_price'],
             'total_premium': -contracts * call_pricing['platform_price'],  # Income (negative)
             'cost_as_pct': -(call_pricing['platform_price'] / spot) * 100,  # Income
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,
             'days_to_expiry': 35,
             'greeks': {k: -v for k, v in call_pricing['greeks'].items()},  # Short position
-            'upside_cap': strike_price
+            'upside_cap': strike_price,
+            'option_type': 'Covered Call Strategy'
         }
     
     def _price_cash_secured_put(self, contracts: int, spot: float, vol: float) -> Dict:
-        """NEW: Price cash-secured put strategy"""
-        strike_price = spot * 0.95  # 5% OTM
+        """Price cash-secured put strategy"""
+        strike_price = spot * 0.95  # 5% OTM put
         time_to_expiry = 30 / 365.0
         
         put_pricing = self.calculate_real_option_price(
@@ -216,15 +205,16 @@ class RealBlackScholesEngine:
             'premium_per_contract': put_pricing['platform_price'],
             'total_premium': -contracts * put_pricing['platform_price'],  # Income
             'cost_as_pct': -(put_pricing['platform_price'] / spot) * 100,
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,
             'days_to_expiry': 30,
             'greeks': {k: -v for k, v in put_pricing['greeks'].items()},
-            'cash_required': contracts * strike_price
+            'cash_required': contracts * strike_price,
+            'option_type': 'Cash-Secured Put Strategy'
         }
     
     def _price_short_strangle(self, contracts: int, spot: float, vol: float) -> Dict:
-        """NEW: Price short strangle strategy"""
-        put_strike = spot * 0.90  # 10% OTM put
+        """Price short strangle strategy"""
+        put_strike = spot * 0.90   # 10% OTM put
         call_strike = spot * 1.10  # 10% OTM call
         time_to_expiry = 30 / 365.0
         
@@ -238,32 +228,38 @@ class RealBlackScholesEngine:
             'contracts_needed': contracts,
             'put_strike': put_strike,
             'call_strike': call_strike,
+            'strike_price': (put_strike + call_strike) / 2,  # Average for display
             'premium_per_contract': total_income,
             'total_premium': -contracts * total_income,  # Income
             'cost_as_pct': -(total_income / spot) * 100,
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,
             'days_to_expiry': 30,
-            'profit_range': f'${put_strike:,.0f} - ${call_strike:,.0f}'
+            'profit_range': f'${put_strike:,.0f} - ${call_strike:,.0f}',
+            'option_type': 'Short Strangle Strategy'
         }
     
     def _price_calendar_spread(self, contracts: int, spot: float, vol: float) -> Dict:
-        """NEW: Price calendar spread strategy"""
+        """Price calendar spread strategy"""
         strike_price = spot  # ATM
-        near_expiry = 15 / 365.0  # 15 days
-        far_expiry = 45 / 365.0   # 45 days
+        near_expiry = 15 / 365.0   # 15 days (sell)
+        far_expiry = 45 / 365.0    # 45 days (buy)
         
         near_call = self.calculate_real_option_price(spot, strike_price, near_expiry, vol, 'call')
         far_call = self.calculate_real_option_price(spot, strike_price, far_expiry, vol, 'call')
         
+        # Buy far, sell near = net cost
         net_cost = far_call['platform_price'] - near_call['platform_price']
         
         return {
             'strategy_name': 'calendar_spread',
             'contracts_needed': contracts,
             'strike_price': strike_price,
+            'premium_per_contract': net_cost,
             'total_premium': contracts * net_cost,
             'cost_as_pct': (net_cost / spot) * 100,
-            'implied_volatility': vol,  # DECIMAL
+            'implied_volatility': vol,
             'near_expiry_days': 15,
-            'far_expiry_days': 45
+            'far_expiry_days': 45,
+            'days_to_expiry': 45,  # Use far expiry for display
+            'option_type': 'Calendar Spread Strategy'
         }
