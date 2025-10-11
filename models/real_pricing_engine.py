@@ -1,6 +1,5 @@
 """
-Real Black-Scholes Pricing Engine - Live Demo
-Repository: https://github.com/willialso/atticusPro_liveDemo
+Real Black-Scholes Pricing Engine - Render Deployment
 """
 import numpy as np
 from scipy.stats import norm
@@ -18,11 +17,10 @@ class RealBlackScholesEngine:
             treasury_data = self.treasury_service.get_current_risk_free_rate()
             risk_free_rate = treasury_data['rate_decimal']
             
-            # Default parameters
-            time_to_expiry = 45 / 365.0  # 45 days in years
+            time_to_expiry = 45 / 365.0
             
             if strategy_type == 'protective_put':
-                strike_price = current_price * 0.90  # 10% OTM put
+                strike_price = current_price * 0.90
                 put_price = self._black_scholes_put(current_price, strike_price, time_to_expiry, risk_free_rate, volatility)
                 
                 total_premium = put_price * position_size
@@ -51,7 +49,6 @@ class RealBlackScholesEngine:
                 straddle_price = call_price + put_price
                 total_premium = straddle_price * position_size
                 
-                # Combined Greeks for straddle
                 call_greeks = self._calculate_greeks(current_price, current_price, time_to_expiry, risk_free_rate, volatility, 'call')
                 put_greeks = self._calculate_greeks(current_price, current_price, time_to_expiry, risk_free_rate, volatility, 'put')
                 
@@ -78,19 +75,18 @@ class RealBlackScholesEngine:
                 }
             
             elif strategy_type == 'collar':
-                put_strike = current_price * 0.90  # Protective put
-                call_strike = current_price * 1.10  # Covered call
+                put_strike = current_price * 0.90
+                call_strike = current_price * 1.10
                 
                 put_price = self._black_scholes_put(current_price, put_strike, time_to_expiry, risk_free_rate, volatility)
                 call_price = self._black_scholes_call(current_price, call_strike, time_to_expiry, risk_free_rate, volatility)
                 
-                # Net premium (put cost - call premium received)
                 net_premium = (put_price - call_price) * position_size
                 
                 return {
                     'strategy_name': strategy_type,
                     'btc_spot_price': current_price,
-                    'strike_price': put_strike,  # Primary strike (put)
+                    'strike_price': put_strike,
                     'call_strike_price': call_strike,
                     'total_premium': net_premium,
                     'premium_per_contract': put_price - call_price,
@@ -101,8 +97,7 @@ class RealBlackScholesEngine:
                 }
             
             else:
-                # Generic strategy fallback
-                estimated_premium = position_size * current_price * 0.015  # 1.5% of notional
+                estimated_premium = position_size * current_price * 0.015
                 
                 return {
                     'strategy_name': strategy_type,
@@ -118,7 +113,6 @@ class RealBlackScholesEngine:
         except Exception as e:
             print(f"Pricing engine error: {e}")
             
-            # Fallback pricing
             estimated_premium = position_size * current_price * 0.015
             
             return {
@@ -128,7 +122,7 @@ class RealBlackScholesEngine:
                 'total_premium': estimated_premium,
                 'contracts_needed': position_size,
                 'pricing_error': str(e),
-                'fallback_pricing': True
+                'render_fallback': True
             }
     
     def _black_scholes_call(self, S, K, T, r, sigma):
@@ -153,7 +147,6 @@ class RealBlackScholesEngine:
             d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
             d2 = d1 - sigma * np.sqrt(T)
             
-            # Common calculations
             nd1 = norm.cdf(d1)
             nd2 = norm.cdf(d2)
             pdf_d1 = norm.pdf(d1)
@@ -161,7 +154,7 @@ class RealBlackScholesEngine:
             if option_type == 'call':
                 delta = nd1
                 rho = K * T * np.exp(-r * T) * nd2
-            else:  # put
+            else:
                 delta = nd1 - 1
                 rho = -K * T * np.exp(-r * T) * norm.cdf(-d2)
             
@@ -175,9 +168,9 @@ class RealBlackScholesEngine:
             return {
                 'delta': float(delta),
                 'gamma': float(gamma),
-                'vega': float(vega / 100),  # Vega per 1% vol change
-                'theta': float(theta / 365),  # Theta per day
-                'rho': float(rho / 100)  # Rho per 1% rate change
+                'vega': float(vega / 100),
+                'theta': float(theta / 365),
+                'rho': float(rho / 100)
             }
             
         except Exception as e:

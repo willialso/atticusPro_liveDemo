@@ -1,6 +1,5 @@
 """
-Real Treasury Service - Live Demo
-Repository: https://github.com/willialso/atticusPro_liveDemo
+Real Treasury Service - Render Deployment
 """
 import requests
 from datetime import datetime
@@ -10,13 +9,12 @@ class RealTreasuryService:
         self.session = requests.Session()
     
     def get_current_risk_free_rate(self):
-        """Get current risk-free rate (10-Year Treasury)"""
+        """Get current risk-free rate"""
         try:
-            # Try FRED API
             url = "https://api.stlouisfed.org/fred/series/observations"
             params = {
                 'series_id': 'DGS10',
-                'api_key': 'demo',  # Use demo key
+                'api_key': 'demo',
                 'limit': 1,
                 'sort_order': 'desc',
                 'file_type': 'json'
@@ -36,10 +34,9 @@ class RealTreasuryService:
         except Exception as e:
             print(f"Treasury rate error: {e}")
         
-        # Fallback rate
         return {
             'rate_percent': 4.25,
             'rate_decimal': 0.0425,
             'date': datetime.now().strftime('%Y-%m-%d'),
-            'source': 'FALLBACK_ESTIMATE'
+            'source': 'RENDER_FALLBACK'
         }

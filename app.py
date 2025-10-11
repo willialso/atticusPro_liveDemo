@@ -95,40 +95,40 @@ def classify_vol_environment(vol_decimal):
         return {
             'environment': 'Very Low Volatility',
             'regime': 'SELL_PREMIUM',
-            'recommended_strategies': ['covered_call', 'cash_secured_put', 'short_strangle', 'iron_condor'],
-            'description': 'Premium selling environment - high probability income strategies'
+            'recommended_strategies': ['covered_call', 'cash_secured_put'],
+            'description': 'Premium selling environment'
         }
     elif vol_percent < 30:
         return {
             'environment': 'Low Volatility', 
             'regime': 'INCOME_FOCUSED',
-            'recommended_strategies': ['covered_call', 'cash_secured_put', 'protective_put', 'collar'],
-            'description': 'Income generation with selective protection'
+            'recommended_strategies': ['covered_call', 'cash_secured_put', 'protective_put'],
+            'description': 'Income generation with protection'
         }
     elif vol_percent < 45:
         return {
             'environment': 'Medium Volatility',
             'regime': 'BALANCED',
-            'recommended_strategies': ['protective_put', 'collar', 'put_spread', 'straddle'],
-            'description': 'Balanced approach - protection and opportunity'
+            'recommended_strategies': ['protective_put', 'collar', 'put_spread'],
+            'description': 'Balanced approach'
         }
     elif vol_percent < 65:
         return {
             'environment': 'High Volatility',
             'regime': 'PROTECTION_FOCUSED',
-            'recommended_strategies': ['protective_put', 'long_straddle', 'long_strangle', 'collar'],
+            'recommended_strategies': ['protective_put', 'long_straddle', 'collar'],
             'description': 'Protection focus with volatility plays'
         }
     else:
         return {
             'environment': 'Very High Volatility',
             'regime': 'DEFENSIVE_ONLY',
-            'recommended_strategies': ['protective_put', 'long_straddle', 'cash'],
-            'description': 'Maximum protection - defensive positioning only'
+            'recommended_strategies': ['protective_put', 'long_straddle'],
+            'description': 'Maximum protection'
         }
 
 def calculate_real_greeks_for_position(strategy_type, position_size_btc, current_price, volatility):
-    """Calculate REAL Greeks - ZERO HARDCODED VALUES"""
+    """Calculate REAL Greeks"""
     try:
         pricing_result = pricing_engine.calculate_real_strategy_pricing(
             strategy_type, position_size_btc, current_price, volatility
@@ -152,8 +152,7 @@ def calculate_real_greeks_for_position(strategy_type, position_size_btc, current
             'gamma': 0,
             'vega': 0,
             'theta': 0,
-            'error': str(e),
-            'source': 'CALCULATION_FAILED'
+            'error': str(e)
         }
 
 def generate_strategy_outcomes_for_execution(strategy_name, current_price, strike_price, total_premium, breakeven):
@@ -218,13 +217,7 @@ def generate_strategy_outcomes_for_execution(strategy_name, current_price, strik
             'max_loss': 'Unknown',
             'max_profit': 'Unknown',
             'breakeven_price': current_price,
-            'scenarios': [
-                {
-                    'condition': 'Error in calculation',
-                    'outcome': 'Unable to calculate outcomes',
-                    'details': str(e)
-                }
-            ]
+            'scenarios': [{'condition': 'Error', 'outcome': 'Unable to calculate', 'details': str(e)}]
         }
 
 def extract_flexible_position_data(request_data):
@@ -233,7 +226,6 @@ def extract_flexible_position_data(request_data):
     strategy_type = None
     strike_offset = -10
     
-    # Check positions array first
     if 'positions' in request_data:
         positions = request_data['positions']
         if isinstance(positions, list) and len(positions) > 0:
@@ -242,13 +234,11 @@ def extract_flexible_position_data(request_data):
             strategy_type = (pos.get('strategy_type') or pos.get('strategy') or 'protective_put')
             strike_offset = (pos.get('strike_offset_percent') or pos.get('strike') or -10)
     
-    # Direct field access fallback
     if not position_size:
         position_size = (request_data.get('position_size') or request_data.get('size') or request_data.get('amount'))
         strategy_type = (request_data.get('strategy_type') or request_data.get('strategy') or 'protective_put')
         strike_offset = (request_data.get('strike_offset_percent') or request_data.get('strike') or -10)
     
-    # Type conversion
     try:
         position_size = float(position_size) if position_size else None
     except (ValueError, TypeError):
@@ -268,7 +258,7 @@ def index():
 
 @app.route('/api/health')
 def health_check():
-    """Health check - Render Deployment"""
+    """Health check - Render Deployment v8.0"""
     if not services_operational:
         return jsonify({'status': 'FAILED', 'error': 'SERVICES NOT OPERATIONAL'}), 503
     
@@ -282,15 +272,16 @@ def health_check():
                 'btc_price': f"${btc_price:,.2f}",
                 'treasury_rate': f"{treasury_data['rate_percent']:.2f}%",
                 'multi_exchange_hedging': 'Coinbase + Kraken + Gemini' if real_hedging_service else 'Professional hedging ready',
-                'custom_position_builder': 'RENDER AUTO-DEPLOY - All routes active',
+                'custom_position_builder': 'RENDER AUTO-DEPLOY v8.0 - All routes active',
                 'strategy_execution': 'FIXED - Correct outcomes format'
             },
-            'version': 'RENDER AUTO-DEPLOYMENT - Complete Professional Platform v8.0',
+            'version': 'RENDER AUTO-DEPLOYMENT v8.0 - Complete Professional Platform',
             'deployment': {
                 'platform': 'Render',
                 'auto_deploy': True,
                 'repository': 'https://github.com/willialso/atticusPro_liveDemo',
-                'domain': 'https://atticuspro-livedemo.onrender.com'
+                'domain': 'https://atticuspro-livedemo.onrender.com',
+                'timestamp': datetime.now().isoformat()
             }
         })
     except Exception as e:
@@ -391,10 +382,9 @@ def generate_portfolio():
             'net_btc_exposure': 17.65,
             'total_current_value': 2000000,
             'total_pnl': 100000,
-            'current_btc_price': 113000,
+            'current_btc_price': 111000,
             'fund_type': 'Institutional Fund (Render Fallback)',
-            'real_performance_30d': 5.0,
-            'render_fallback': True
+            'real_performance_30d': 5.0
         }
         
         session['portfolio'] = fallback_portfolio
@@ -409,7 +399,7 @@ def generate_strategies_api():
     try:
         portfolio = session.get('portfolio')
         if not portfolio:
-            return jsonify({'success': False, 'error': 'No portfolio found - generate portfolio first'}), 400
+            return jsonify({'success': False, 'error': 'No portfolio found'}), 400
         
         net_btc = portfolio['net_btc_exposure']
         current_price = portfolio['current_btc_price']
@@ -437,8 +427,7 @@ def generate_strategies_api():
                     'target_exposure': net_btc,
                     'priority': 'high',
                     'rationale': f'Essential downside protection for {net_btc:.1f} BTC position',
-                    'pricing': formatted_pricing,
-                    'volatility_suitability': 'All market conditions'
+                    'pricing': formatted_pricing
                 })
                 
             except Exception:
@@ -452,12 +441,10 @@ def generate_strategies_api():
                         'btc_spot_price': current_price,
                         'strike_price': current_price * 0.90,
                         'total_premium': net_btc * 1750,
-                        'contracts_needed': net_btc,
-                        'render_fallback': True
+                        'contracts_needed': net_btc
                     }
                 })
             
-            # High volatility strategy
             if vol_decimal > 0.35:
                 try:
                     straddle_pricing = pricing_engine.calculate_real_strategy_pricing(
@@ -476,7 +463,6 @@ def generate_strategies_api():
                 except:
                     pass
             
-            # Collar strategy
             if vol_decimal > 0.25:
                 try:
                     collar_pricing = pricing_engine.calculate_real_strategy_pricing(
@@ -500,11 +486,7 @@ def generate_strategies_api():
                 'strategy_name': 'protective_put',
                 'display_name': 'Render Fallback Strategy',
                 'target_exposure': net_btc,
-                'pricing': {
-                    'btc_spot_price': current_price,
-                    'total_premium': net_btc * 1500,
-                    'render_fallback': True
-                }
+                'pricing': {'btc_spot_price': current_price, 'total_premium': net_btc * 1500}
             })
         
         session['strategies'] = strategies
@@ -517,8 +499,7 @@ def generate_strategies_api():
                 'position_type': 'Long',
                 'total_value': abs(net_btc) * current_price,
                 'market_volatility': f"{vol_decimal*100:.1f}%"
-            },
-            'render_deployment': True
+            }
         })
         
     except Exception as e:
@@ -526,7 +507,7 @@ def generate_strategies_api():
             'strategy_name': 'protective_put',
             'display_name': 'Render Ultimate Fallback',
             'target_exposure': 17.65,
-            'pricing': {'btc_spot_price': 113000, 'total_premium': 26475}
+            'pricing': {'btc_spot_price': 111000, 'total_premium': 26475}
         }]
         
         session['strategies'] = fallback_strategies
@@ -555,7 +536,6 @@ def execute_strategy():
         position_size = float(selected_strategy.get('target_exposure', 1))
         strategy_name = selected_strategy.get('strategy_name', 'protective_put')
         
-        # Calculate breakeven
         if position_size > 0 and total_premium != 0:
             if total_premium > 0:
                 breakeven = current_price - (total_premium / position_size)
@@ -564,7 +544,6 @@ def execute_strategy():
         else:
             breakeven = current_price
         
-        # Generate outcomes in correct format
         outcomes = generate_strategy_outcomes_for_execution(
             strategy_name, current_price, strike_price, total_premium, breakeven
         )
@@ -578,23 +557,21 @@ def execute_strategy():
             'timestamp': datetime.now().isoformat(),
             'status': 'executed',
             'strategy': selected_strategy,
-            'outcomes': outcomes,  # Frontend expects this
+            'outcomes': outcomes,
             'execution_details': {
-                'platform': 'Atticus Professional - Render Auto-Deploy',
+                'platform': 'Atticus Professional - Render Auto-Deploy v8.0',
                 'venue': 'Institutional Channel',
-                'fill_rate': '100%',
-                'deployment': 'Render Auto-Deploy from GitHub'
+                'fill_rate': '100%'
             }
         }
         
         return jsonify({'success': True, 'execution': execution_data})
         
     except Exception as e:
-        # Fallback execution
         fallback_outcomes = {
             'max_loss': 1500,
             'max_profit': 'Strategy dependent',
-            'breakeven_price': 113000,
+            'breakeven_price': 111000,
             'scenarios': [{'condition': 'Render Fallback', 'outcome': 'Strategy executed', 'details': 'Auto-deploy fallback'}]
         }
         
@@ -603,7 +580,7 @@ def execute_strategy():
             'timestamp': datetime.now().isoformat(),
             'status': 'executed',
             'outcomes': fallback_outcomes,
-            'execution_details': {'platform': 'Atticus Render - Fallback'}
+            'execution_details': {'platform': 'Atticus Render v8.0 - Fallback'}
         }
         
         return jsonify({'success': True, 'execution': fallback_execution})
@@ -648,8 +625,7 @@ def custom_position_builder():
                 'btc_spot_price': current_price,
                 'strike_price': custom_strike,
                 'total_premium': position_size * 1750,
-                'contracts_needed': position_size,
-                'render_fallback': True
+                'contracts_needed': position_size
             }
         
         total_premium = float(formatted_pricing.get('total_premium', 0))
@@ -668,8 +644,7 @@ def custom_position_builder():
                 'delta': position_size * -0.5,
                 'gamma': 0.0001,
                 'vega': position_size * 100,
-                'theta': -10,
-                'render_fallback': True
+                'theta': -10
             }
         
         custom_strategy_result = {
@@ -677,7 +652,7 @@ def custom_position_builder():
             'display_name': f'Custom {strategy_type.replace("_", " ").title()}',
             'target_exposure': position_size,
             'priority': 'custom',
-            'rationale': f'Render auto-deploy: Custom {strategy_type} for {position_size} BTC',
+            'rationale': f'Render v8.0: Custom {strategy_type} for {position_size} BTC',
             'pricing': formatted_pricing,
             'outcomes': outcomes,
             'real_greeks': real_greeks,
@@ -710,9 +685,9 @@ def custom_position_builder():
             'success': True,
             'custom_strategy': {
                 'strategy_name': 'protective_put',
-                'display_name': 'Render Fallback',
+                'display_name': 'Render v8.0 Fallback',
                 'target_exposure': 1.0,
-                'pricing': {'total_premium': 1500, 'render_fallback': True}
+                'pricing': {'total_premium': 1500}
             }
         })
 
@@ -743,7 +718,7 @@ def available_custom_strategies():
                 'description': 'Protected downside with capped upside'
             }
         ],
-        'render_deployment': True,
+        'render_deployment': 'v8.0',
         'repository': 'https://github.com/willialso/atticusPro_liveDemo'
     })
 
@@ -751,10 +726,10 @@ def available_custom_strategies():
 if __name__ == '__main__':
     success = initialize_services()
     if not success:
-        print("❌ RENDER AUTO-DEPLOYMENT FAILED")
+        print("❌ RENDER AUTO-DEPLOYMENT v8.0 FAILED")
         sys.exit(1)
     
-    print("🚀 RENDER AUTO-DEPLOYMENT SUCCESSFUL")
+    print("🚀 RENDER AUTO-DEPLOYMENT v8.0 SUCCESSFUL")
     print("📁 Repository: https://github.com/willialso/atticusPro_liveDemo")
     print("🌐 Domain: https://atticuspro-livedemo.onrender.com")
     print("✅ Auto-Deploy: Active from GitHub")
@@ -764,3 +739,5 @@ if __name__ == '__main__':
 else:
     success = initialize_services()
     application = app
+
+# RENDER FORCE DEPLOY 1728611403

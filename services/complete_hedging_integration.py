@@ -1,6 +1,5 @@
 """
-Complete Hedging Integration - Live Demo
-Repository: https://github.com/willialso/atticusPro_liveDemo
+Complete Hedging Integration - Render Deployment
 """
 
 class CompleteHedgingIntegration:
@@ -21,5 +20,5 @@ class CompleteHedgingIntegration:
                 'kraken': 'Derivatives hedging',
                 'gemini': 'Large order execution'
             },
-            'live_demo': True
+            'render_deployment': 'v8.0'
         }
