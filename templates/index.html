@@ -8,11 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -41,13 +37,6 @@
             padding: 1.5rem;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .metric-card:hover {
-            border-color: #fbbf24;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .metric-value {
@@ -63,7 +52,6 @@
             font-weight: 600;
             color: #cbd5e1;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         input, select {
@@ -87,7 +75,6 @@
             padding: 2rem;
             margin: 1.5rem 0;
             transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
         }
 
         .strategy-card:hover {
@@ -96,26 +83,9 @@
             box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
         }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-slide-up {
-            animation: slideInUp 0.6s ease-out;
-        }
-
         .btn {
             transition: all 0.3s ease;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .btn:hover {
@@ -125,14 +95,12 @@
         .step-circle {
             transition: all 0.4s ease;
             border: 3px solid transparent;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .step-circle.active {
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             color: #1e293b;
             border-color: #fbbf24;
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.5);
             transform: scale(1.1);
         }
 
@@ -140,13 +108,21 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border-color: #10b981;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
         }
 
         .step-circle.inactive {
             background: #475569;
             color: #cbd5e1;
             border-color: #64748b;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideInUp 0.6s ease-out;
         }
     </style>
 </head>
@@ -169,7 +145,7 @@
         <section class="py-20 px-4">
             <div class="max-w-7xl mx-auto text-center">
                 <h1 class="text-6xl font-black text-yellow-400 mb-6">
-                    Institutional Bitcoin Options Platform
+                    Professional Bitcoin Options Platform
                 </h1>
                 <p class="text-2xl text-slate-300 mb-12 max-w-4xl mx-auto">
                     Professional-grade portfolio protection with real-time market data and institutional Black-Scholes pricing
@@ -208,12 +184,12 @@
 
             <!-- Step 1: Portfolio Generation -->
             <section id="portfolio-section" class="mb-16">
-                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🏛️ Institutional Portfolio Analysis</h2>
+                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🏛️ Professional Portfolio Analysis</h2>
                 
                 <div class="grid lg:grid-cols-2 gap-8">
-                    <!-- Institutional Fund Selection -->
+                    <!-- Professional Fund Selection -->
                     <div class="bg-slate-800 rounded-xl p-8 border-2 border-slate-600 shadow-xl">
-                        <h3 class="text-3xl font-bold text-yellow-400 mb-4">⚖️ Institutional Fund Configuration</h3>
+                        <h3 class="text-3xl font-bold text-yellow-400 mb-4">⚖️ Professional Fund Configuration</h3>
                         <p class="text-slate-300 text-lg mb-8">Select institutional fund parameters for professional analysis</p>
                         
                         <div class="space-y-6">
@@ -223,7 +199,7 @@
                             </select>
                             
                             <button id="generate-portfolio" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold py-4 px-6 rounded-xl text-xl transition-all duration-300">
-                                Generate Institutional Portfolio Analysis
+                                Generate Professional Portfolio Analysis
                             </button>
                         </div>
                     </div>
@@ -234,12 +210,12 @@
                         <p class="text-slate-300 text-lg mb-8">Build customized institutional positions for specialized analysis</p>
                         
                         <div class="space-y-6">
-                            <input type="number" id="btc-amount" placeholder="Bitcoin Amount (BTC)" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg" min="0.1" max="10000" step="0.01" value="25">
+                            <input type="number" id="btc-amount" placeholder="Bitcoin Amount (BTC)" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg" min="0.01" max="10000" step="0.01" value="25">
                             
                             <select id="strategy-type" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg">
-                                <option value="protective_put">Institutional Protective Put</option>
-                                <option value="long_straddle">Institutional Long Straddle</option>
-                                <option value="collar">Institutional Collar Strategy</option>
+                                <option value="protective_put">Professional Protective Put</option>
+                                <option value="long_straddle">Professional Long Straddle</option>
+                                <option value="collar">Professional Collar Strategy</option>
                             </select>
 
                             <input type="number" id="strike-offset" placeholder="Strike Offset (%)" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg" value="-10" min="-50" max="50" step="1">
@@ -253,7 +229,7 @@
 
                 <!-- Portfolio Results -->
                 <div id="portfolio-results" class="hidden mt-12 bg-slate-800 rounded-xl p-8 border-2 border-slate-600 shadow-xl">
-                    <h3 class="text-3xl font-bold text-green-400 mb-8 text-center">📊 Institutional Portfolio Analysis</h3>
+                    <h3 class="text-3xl font-bold text-green-400 mb-8 text-center">📊 Professional Portfolio Analysis</h3>
                     
                     <div id="portfolio-banner" class="bg-blue-600 rounded-xl p-6 mb-8 text-center">
                         <p class="text-white text-xl font-semibold" id="portfolio-banner-text"></p>
@@ -279,7 +255,7 @@
                 
                 <div class="text-center mb-8">
                     <button id="analyze-strategies" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
-                        🧠 Analyze Institutional Protection Strategies
+                        🧠 Analyze Professional Protection Strategies
                     </button>
                 </div>
                 
@@ -301,7 +277,7 @@
                 
                 <div class="text-center mb-8">
                     <button id="execute-strategy" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
-                        🚀 Execute Institutional Strategy
+                        🚀 Execute Professional Strategy
                     </button>
                 </div>
                 
@@ -313,7 +289,7 @@
         <footer class="bg-slate-800 border-t-2 border-yellow-400 py-8">
             <div class="max-w-7xl mx-auto px-4 text-center text-slate-400">
                 <p>© 2025 Atticus Professional • Institutional-Grade Bitcoin Options Platform</p>
-                <p class="mt-2">Real Black-Scholes Pricing • Live Market Data • Professional Hedging Services</p>
+                <p class="mt-2">Real Black-Scholes Pricing • Live Market Data • Zero Hardcoded Values</p>
             </div>
         </footer>
     </div>
@@ -358,7 +334,7 @@
 
             async generatePortfolio() {
                 try {
-                    this.showLoading('Generating institutional portfolio...');
+                    this.showLoading('Generating professional portfolio...');
                     
                     const fundType = document.getElementById('fund-type').value;
                     const response = await fetch('/api/generate-portfolio', {
@@ -374,7 +350,7 @@
                         this.displayPortfolio(data.portfolio);
                         this.hideLoading();
                     } else {
-                        this.showError(data.error || 'Institutional portfolio generation failed');
+                        this.showError(data.error || 'Professional portfolio generation failed');
                     }
                 } catch (error) {
                     this.showError('Portfolio generation failed: ' + error.message);
@@ -400,7 +376,7 @@
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            size: btcAmount,  // 🚨 DIRECT INPUT
+                            size: btcAmount,
                             strategy_type: strategyType,
                             strike_offset_percent: strikeOffset
                         })
@@ -428,7 +404,7 @@
 
                 if (bannerElement) {
                     bannerElement.innerHTML = 
-                        `📊 <strong>Institutional Portfolio:</strong> ${portfolio.total_btc_size.toFixed(2)} BTC position • $${(portfolio.total_current_value/1000000).toFixed(1)}M value • ${portfolio.fund_type}`;
+                        `📊 <strong>Professional Portfolio:</strong> ${portfolio.total_btc_size.toFixed(2)} BTC position • $${(portfolio.total_current_value/1000000).toFixed(1)}M value • ${portfolio.fund_type}`;
                 }
 
                 if (metricsElement) {
@@ -645,13 +621,13 @@
                     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-8 text-center text-white mb-8">
                         <div class="text-6xl mb-4">✅</div>
                         <h3 class="text-4xl font-bold mb-4">Professional Strategy Successfully Executed</h3>
-                        <p class="text-xl">Institutional-grade options strategy executed with live Black-Scholes pricing</p>
+                        <p class="text-xl">Professional-grade options strategy executed with live Black-Scholes pricing</p>
                         <div class="mt-4 text-2xl font-bold">⚡ Professional Execution Time: ${execution.execution_time} seconds</div>
                     </div>
 
                     <div class="bg-blue-600 rounded-xl p-6 mb-8">
                         <p class="text-white text-xl font-semibold text-center">
-                            ✅ <strong>Institutional Execution:</strong> ${strategy.target_exposure} BTC position protected using professional market channels
+                            ✅ <strong>Professional Execution:</strong> ${strategy.target_exposure} BTC position protected using professional market channels
                         </p>
                     </div>
 
@@ -666,7 +642,7 @@
                         </div>
                         
                         <div class="bg-slate-800 rounded-xl p-6 border-2 border-slate-600">
-                            <h4 class="text-green-400 text-xl font-bold mb-4">Institutional Protection Summary</h4>
+                            <h4 class="text-green-400 text-xl font-bold mb-4">Professional Protection Summary</h4>
                             <p><strong>Position:</strong> ${strategy.target_exposure} BTC</p>
                             <p><strong>Entry Price:</strong> $${(strategy.pricing?.btc_spot_price || 0).toLocaleString()}</p>
                             <p><strong>Max Risk:</strong> $${(outcomes.max_loss || 0).toLocaleString()}</p>
