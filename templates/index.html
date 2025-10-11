@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atticus Professional - Portfolio Protection Demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Atticus Professional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* COMPLETE PROFESSIONAL STYLING */
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            line-height: 1.6;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* Professional Typography */
-        h1, h2, h3, h4, h5, h6 {
-            color: #fbbf24;
-            font-weight: 700;
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: #f8fafc;
+            min-height: 100vh;
             line-height: 1.3;
             margin-bottom: 1rem;
         }
@@ -67,27 +67,27 @@
         button {
             transition: all 0.3s ease;
             font-weight: 600;
-            cursor: pointer;
-            border: none;
-            outline: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
             transform: translateY(-2px);
         }
 
-        /* Professional Cards */
-        .strategy-card {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 3px solid #475569;
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 1.5rem 0;
-            transition: all 0.4s ease;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        button:active {
+            transform: translateY(0);
         }
 
-        .strategy-card:hover {
+        /* Gradient Cards */
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .gradient-card:hover {
             border-color: #fbbf24;
             transform: translateY(-4px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
@@ -130,25 +130,30 @@
 
         .metric-label {
             font-size: 0.875rem;
+            font-weight: 600;
             color: #cbd5e1;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            animation: pulse 2s infinite;
+        /* Strategy Cards */
+        .strategy-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(71, 85, 105, 0.9) 100%);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
+        .strategy-card:hover {
+            border-color: #fbbf24;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
         }
 
-        /* Professional Animations */
+        /* Animations */
         @keyframes slideInUp {
             from {
                 opacity: 0;
@@ -187,26 +192,33 @@
             color: white;
             text-align: center;
             margin: 2rem 0;
-            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.3);
         }
 
+        /* Contract Detail Cards */
         .contract-detail-card {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border: 3px solid #10b981;
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 1rem 0;
-            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(71, 85, 105, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
         }
 
+        .contract-detail-card h4 {
+            margin-bottom: 1rem;
+        }
+
+        .contract-detail-card p {
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Scenario Cards */
         .scenario-card {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border: 2px solid #64748b;
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid rgba(71, 85, 105, 0.8);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             margin: 1rem 0;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
         .scenario-card:hover {
@@ -230,111 +242,79 @@
     <div id="app" class="min-h-screen">
         <!-- Professional Header -->
         <header class="bg-slate-800 border-b-2 border-yellow-400 py-6">
-            <div class="max-w-6xl mx-auto px-6 text-center">
-                <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="mx-auto mb-4" style="max-width: 450px; height: auto;">
-                <h1 class="text-3xl font-bold text-yellow-400 mb-3">Professional Portfolio Protection Demo</h1>
-                <p class="text-slate-300 text-lg">Live market data • Real-time options pricing • Institutional strategies</p>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl font-black text-yellow-400">ATTICUS</div>
+                        <div class="text-slate-400 text-lg">Professional Options Platform</div>
+                    </div>
+                    <div id="market-data" class="text-slate-300 text-sm"></div>
+                </div>
             </div>
         </header>
 
-        <!-- Professional Progress Indicator - HIDDEN ON FIRST PAGE -->
-        <div id="progress-container" class="bg-slate-800 py-6 border-b border-slate-700 hidden">
-            <div class="max-w-5xl mx-auto px-6">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="step-item flex flex-col items-center">
-                        <div id="step-1" class="step-circle w-16 h-16 rounded-full bg-yellow-400 text-slate-900 flex items-center justify-center font-bold text-xl mb-2">1</div>
-                        <span class="text-white font-semibold text-lg">Portfolio Setup</span>
+        <!-- Hero Section -->
+        <section class="py-20 px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-6xl font-black text-yellow-400 mb-6">
+                    Institutional Bitcoin Options
+                </h1>
+                <p class="text-2xl text-slate-300 mb-12 max-w-4xl mx-auto">
+                    Professional-grade portfolio protection with real-time market data and institutional pricing
+                </p>
+
+                <!-- Three-Column Value Proposition -->
+                <div class="grid md:grid-cols-3 gap-8 mb-16">
+                    <!-- Problem -->
+                    <div class="gradient-card rounded-2xl p-8 text-center">
+                        <div class="text-6xl mb-6">⚠️</div>
+                        <h2 class="text-2xl font-bold text-red-400 mb-4">Institutional Challenge: Bitcoin Volatility Exposure</h2>
                     </div>
-                    <div class="flex-1 h-2 bg-slate-600 mx-8 rounded-full"></div>
-                    <div class="step-item flex flex-col items-center">
-                        <div id="step-2" class="step-circle w-16 h-16 rounded-full bg-slate-600 text-slate-300 flex items-center justify-center font-bold text-xl mb-2">2</div>
-                        <span class="text-slate-300 font-semibold text-lg">Strategy Analysis</span>
+
+                    <!-- Solution -->
+                    <div class="gradient-card rounded-2xl p-8 text-center">
+                        <div class="text-6xl mb-6">⚡</div>
+                        <h2 class="text-2xl font-bold text-green-400 mb-4">Atticus Solution: Instant Portfolio Protection</h2>
                     </div>
-                    <div class="flex-1 h-2 bg-slate-600 mx-8 rounded-full"></div>
-                    <div class="step-item flex flex-col items-center">
-                        <div id="step-3" class="step-circle w-16 h-16 rounded-full bg-slate-600 text-slate-300 flex items-center justify-center font-bold text-xl mb-2">3</div>
-                        <span class="text-slate-300 font-semibold text-lg">Protection Results</span>
+
+                    <!-- Demo -->
+                    <div class="gradient-card rounded-2xl p-8 text-center">
+                        <div class="text-6xl mb-6">🚀</div>
+                        <h2 class="text-2xl font-bold text-blue-400 mb-4">Live Demo: Test Real Portfolio Protection</h2>
                     </div>
-                </div>
-                <div class="w-full bg-slate-600 rounded-full h-3">
-                    <div id="progress-bar" class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-3 rounded-full transition-all duration-500" style="width: 33%"></div>
-                </div>
-                <div class="text-center mt-3">
-                    <p class="text-slate-300 font-medium">Step <span id="current-step-text">1</span> of 3 completed</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-6 py-10">
-            
-            <!-- REFINED PROFESSIONAL INTRO SECTION -->
-            <div id="intro-section" class="mb-16">
-                <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-xl p-8 mb-8 shadow-xl">
-                    <h2 class="text-3xl font-bold text-white mb-4">🚨 The Institutional Challenge</h2>
-                    <p class="text-red-100 text-xl leading-relaxed">Bitcoin's volatility creates massive risk exposure for institutional portfolios. Recent market events demonstrate that 30-50% Bitcoin price declines can occur within days, creating significant losses for unprotected institutional positions.</p>
-                </div>
-
-                <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-8 mb-8 shadow-xl">
-                    <h2 class="text-3xl font-bold text-white mb-4">✅ The Professional Solution</h2>
-                    <p class="text-green-100 text-xl leading-relaxed">Atticus provides sophisticated options strategies that limit downside risk while preserving unlimited upside potential, using the same professional risk management principles employed by traditional institutional asset managers.</p>
-                </div>
-
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-8 mb-10 shadow-xl">
-                    <h2 class="text-3xl font-bold text-white mb-4">📊 Live Professional Demo</h2>
-                    <p class="text-blue-100 text-xl leading-relaxed">Experience institutional-grade portfolio protection with real market data</p>
-                </div>
-
-                <div class="text-center">
-                    <button id="start-demo" class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-2xl px-12 py-6 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-xl">
-                        🚀 Start Professional Demo
-                    </button>
-                    <p class="text-slate-400 mt-4 text-lg">Generate portfolio • Analyze strategies • Execute protection</p>
-                </div>
+        <!-- Main Platform -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            <!-- Professional Progress Indicator -->
+            <div class="flex justify-center items-center space-x-8 mb-16">
+                <div class="step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold active" id="step-1">1</div>
+                <div class="w-16 h-1 bg-slate-600 rounded"></div>
+                <div class="step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold inactive" id="step-2">2</div>
+                <div class="w-16 h-1 bg-slate-600 rounded"></div>
+                <div class="step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold inactive" id="step-3">3</div>
             </div>
 
-            <!-- Portfolio Setup Section -->
-            <div id="portfolio-section" class="hidden mb-16">
-                <div id="market-banner" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 mb-8 text-center shadow-xl">
-                    <p class="text-white font-bold text-2xl">🔴 LIVE MARKET DATA: <span id="market-data">Loading...</span></p>
-                </div>
-
-                <div class="bg-blue-600 rounded-xl p-6 mb-8 shadow-xl">
-                    <p class="text-white text-xl font-semibold">💡 <strong>Portfolio Setup:</strong> Choose your method to create a portfolio for professional protection analysis using live market pricing.</p>
-                </div>
-
-                <div class="grid lg:grid-cols-2 gap-10">
-                    <!-- Generate Institution Portfolio -->
-                    <div class="bg-slate-800 rounded-xl p-8 border-4 border-yellow-400 shadow-xl relative">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-slate-900 px-4 py-2 rounded-full font-bold text-sm">
-                            RECOMMENDED
-                        </div>
-                        <h3 class="text-3xl font-bold text-yellow-400 mb-4 mt-2">🏛️ Generate Institution Portfolio</h3>
-                        <p class="text-slate-300 text-lg mb-8">Pre-configured realistic institutional allocation with professional context</p>
+            <!-- Step 1: Portfolio Generation -->
+            <section id="portfolio-section" class="mb-16">
+                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🏛️ Generate Institutional Portfolio</h2>
+                
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Fund Selection -->
+                    <div class="bg-slate-800 rounded-xl p-8 border-2 border-slate-600 shadow-xl">
+                        <h3 class="text-3xl font-bold text-yellow-400 mb-4">⚖️ Fund Configuration</h3>
+                        <p class="text-slate-300 text-lg mb-8">Select institutional fund parameters for analysis</p>
                         
-                        <select id="fund-type" class="w-full bg-slate-700 text-white p-4 rounded-xl mb-6 text-lg font-medium">
-                            <option value="Small Fund ($20-50M AUM)">Small Fund ($20-50M AUM)</option>
-                            <option value="Mid-Cap Fund ($50-200M AUM)">Mid-Cap Fund ($50-200M AUM)</option>
-                        </select>
-
-                        <div id="portfolio-info" class="bg-blue-600 rounded-xl p-6 mb-6 shadow-lg">
-                            <p class="text-white font-semibold text-lg">📊 Portfolio specifications will appear here...</p>
-                        </div>
-
-                        <button id="generate-portfolio" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl transition-all duration-300 shadow-lg">
-                            Generate Professional Portfolio
-                        </button>
-
-                        <div id="portfolio-results" class="hidden mt-8">
-                            <h4 class="text-2xl font-bold text-yellow-400 mb-6">📈 Portfolio Summary</h4>
-                            <div class="grid grid-cols-2 gap-4 mb-6" id="portfolio-metrics">
-                                <!-- Metrics populated by JavaScript -->
-                            </div>
-                            <div id="risk-analysis" class="bg-orange-600 rounded-xl p-6 mb-6">
-                                <p class="text-white font-bold text-lg">⚠️ <span id="risk-text">Risk analysis will appear here</span></p>
-                            </div>
-                            <button id="analyze-strategies" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl transition-all duration-300">
-                                Analyze Professional Protection Strategies
+                        <div class="space-y-6">
+                            <select id="fund-type" class="w-full bg-slate-700 text-white p-4 rounded-xl text-lg">
+                                <option value="Small Fund">Small Fund: $38M AUM • $2M BTC Allocation</option>
+                                <option value="Large Fund">Large Fund: $128M AUM • $8.5M BTC Allocation</option>
+                            </select>
+                            
+                            <button id="generate-portfolio" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold py-4 px-6 rounded-xl text-xl transition-all duration-300">
+                                Generate Portfolio Analysis
                             </button>
                         </div>
                     </div>
@@ -358,66 +338,112 @@
                                     Clear All
                                 </button>
                             </div>
-                        </div>
-
-                        <div id="positions-list" class="mt-8">
-                            <!-- Custom positions will be displayed here -->
+                            
+                            <!-- Position List -->
+                            <div id="positions-list" class="space-y-2"></div>
+                            
+                            <button id="analyze-custom-portfolio" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl text-xl transition-all duration-300">
+                                🔍 Analyze Custom Portfolio
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Strategy Analysis Section -->
-            <div id="strategy-section" class="hidden mb-16">
-                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🛡️ Professional Protection Strategies</h2>
+                <!-- Portfolio Results -->
+                <div id="portfolio-results" class="hidden mt-12 bg-slate-800 rounded-xl p-8 border-2 border-slate-600 shadow-xl">
+                    <h3 class="text-3xl font-bold text-green-400 mb-8 text-center">📊 Portfolio Analysis</h3>
+                    
+                    <div id="portfolio-banner" class="bg-blue-600 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-white text-xl font-semibold" id="portfolio-banner-text"></p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6" id="portfolio-metrics"></div>
+                    
+                    <div class="mt-8 text-center">
+                        <p id="risk-assessment" class="text-red-300 text-lg font-semibold"></p>
+                    </div>
+                    
+                    <div class="mt-8 text-center">
+                        <button id="proceed-to-strategies" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
+                            Proceed to Strategy Analysis →
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Strategy Analysis -->
+            <section id="strategy-section" class="hidden mb-16">
+                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">🎯 Professional Strategy Analysis</h2>
                 
-                <div id="strategy-analysis-banner" class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 mb-8 text-center shadow-xl">
-                    <p class="text-white font-bold text-xl">🎯 <span id="strategy-portfolio-summary">Portfolio analysis in progress...</span></p>
-                </div>
-
-                <div class="bg-blue-600 rounded-xl p-6 mb-8 shadow-xl">
-                    <p class="text-white text-lg font-semibold">💡 <strong>Strategy Selection:</strong> Each strategy uses live institutional pricing optimized for current market conditions. Protection strategies limit downside while income strategies generate returns.</p>
-                </div>
-                
-                <div id="strategy-list">
-                    <!-- Strategies will be populated by JavaScript -->
-                </div>
-
-                <div class="text-center mt-8">
-                    <button id="back-to-portfolio" class="bg-slate-600 hover:bg-slate-700 text-white font-bold text-lg py-3 px-8 rounded-xl transition-all duration-300">
-                        ← Return to Portfolio Setup
+                <div class="text-center mb-8">
+                    <button id="analyze-strategies" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
+                        🧠 Analyze Protection Strategies
                     </button>
                 </div>
-            </div>
-
-            <!-- Execution Results Section -->
-            <div id="execution-section" class="hidden mb-16">
-                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">✅ Strategy Execution Complete</h2>
-                <div id="execution-results">
-                    <!-- Execution results will be populated by JavaScript -->
+                
+                <div id="strategy-results" class="hidden">
+                    <h3 class="text-3xl font-bold text-yellow-400 mb-8 text-center">💡 Recommended Strategies</h3>
+                    <div id="strategies-list"></div>
+                    
+                    <div class="mt-8 text-center">
+                        <button id="proceed-to-execution" class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
+                            Proceed to Execution →
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-        </main>
+            <!-- Step 3: Strategy Execution -->
+            <section id="execution-section" class="hidden mb-16">
+                <h2 class="text-4xl font-bold text-yellow-400 mb-8 text-center">⚡ Strategy Execution</h2>
+                
+                <div class="text-center mb-8">
+                    <button id="execute-strategy" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300">
+                        🚀 Execute Professional Strategy
+                    </button>
+                </div>
+                
+                <div id="execution-results" class="hidden"></div>
+            </section>
+        </div>
+
+        <!-- Professional Footer -->
+        <footer class="bg-slate-800 border-t-2 border-yellow-400 py-8">
+            <div class="max-w-7xl mx-auto px-4 text-center text-slate-400">
+                <p>© 2025 Atticus Professional • Institutional-Grade Options Platform</p>
+            </div>
+        </footer>
     </div>
 
     <script>
-        // COMPLETE PROFESSIONAL JAVASCRIPT IMPLEMENTATION
         class AtticusDemo {
             constructor() {
-                this.currentStep = 1;
                 this.portfolio = null;
                 this.strategies = [];
-                this.customPositions = [];
                 this.selectedStrategy = null;
-                this.executionData = null;
-                this.init();
+                this.currentStep = 1;
+                this.customPositions = [];
+                
+                this.initializeEventListeners();
+                this.loadMarketData();
             }
 
-            init() {
-                this.loadMarketData();
-                this.bindEvents();
-                this.updateStepIndicator();
+            initializeEventListeners() {
+                // Portfolio Generation
+                document.getElementById('generate-portfolio').addEventListener('click', () => this.generatePortfolio());
+                
+                // Strategy Analysis
+                document.getElementById('proceed-to-strategies').addEventListener('click', () => this.proceedToStrategies());
+                document.getElementById('analyze-strategies').addEventListener('click', () => this.analyzeStrategies());
+                
+                // Strategy Execution
+                document.getElementById('proceed-to-execution').addEventListener('click', () => this.proceedToExecution());
+                document.getElementById('execute-strategy').addEventListener('click', () => this.executeStrategy());
+                
+                // Custom Position Builder
+                document.getElementById('add-position').addEventListener('click', () => this.addCustomPosition());
+                document.getElementById('clear-positions').addEventListener('click', () => this.clearPositions());
+                document.getElementById('analyze-custom-portfolio').addEventListener('click', () => this.analyzeCustomPortfolio());
             }
 
             async loadMarketData() {
@@ -426,71 +452,22 @@
                     const data = await response.json();
                     
                     if (data.success) {
-                        const priceElement = document.getElementById('live-btc-price');
-                        const marketElement = document.getElementById('market-data');
-                        
-                        if (priceElement) {
-                            priceElement.textContent = `$${data.btc_price.toLocaleString()}`;
-                        }
-                        
-                        if (marketElement) {
-                            marketElement.textContent = 
+                        const marketDataElement = document.getElementById('market-data');
+                        if (marketDataElement) {
+                            marketDataElement.innerHTML = 
                                 `BTC $${data.btc_price.toLocaleString()} • Volatility: ${(data.market_conditions.implied_volatility * 100).toFixed(0)}% • 7-Day: ${(data.market_conditions.price_trend_7d * 100).toFixed(1)}%`;
                         }
                     }
                 } catch (error) {
-                    console.error('Failed to load market data:', error);
-                }
-            }
-
-            bindEvents() {
-                // All event binding - comprehensive
-                document.getElementById('start-demo')?.addEventListener('click', () => this.startDemo());
-                document.getElementById('generate-portfolio')?.addEventListener('click', () => this.generatePortfolio());
-                document.getElementById('fund-type')?.addEventListener('change', (e) => this.updatePortfolioInfo(e.target.value));
-                document.getElementById('add-position')?.addEventListener('click', () => this.addCustomPosition());
-                document.getElementById('clear-positions')?.addEventListener('click', () => this.clearPositions());
-                document.getElementById('analyze-strategies')?.addEventListener('click', () => this.analyzeStrategies());
-                document.getElementById('back-to-portfolio')?.addEventListener('click', () => this.backToPortfolio());
-                
-                // Initial portfolio info
-                if (document.getElementById('fund-type')) {
-                    this.updatePortfolioInfo(document.getElementById('fund-type').value);
-                }
-            }
-
-            startDemo() {
-                this.hideElement('intro-section');
-                this.showElement('portfolio-section');
-                this.showElement('progress-container'); // Show progress on subsequent pages
-                this.currentStep = 1;
-                this.updateStepIndicator();
-            }
-
-            updatePortfolioInfo(fundType) {
-                const livePriceElement = document.getElementById('live-btc-price');
-                const livePriceText = livePriceElement ? livePriceElement.textContent : '$65,000';
-                const livePrice = parseFloat(livePriceText.replace(/[$,]/g, '')) || 65000;
-                
-                const infoElement = document.getElementById('portfolio-info');
-                if (!infoElement) return;
-                
-                if (fundType.includes('Small')) {
-                    const btcAllocation = 2000000 / livePrice;
-                    infoElement.innerHTML = 
-                        `<p class="text-white font-semibold text-lg">📊 <strong>Portfolio Specification:</strong> ~${btcAllocation.toFixed(1)} BTC position ($2M allocation) with realistic institutional performance metrics</p>`;
-                } else {
-                    const btcAllocation = 8500000 / livePrice;
-                    infoElement.innerHTML = 
-                        `<p class="text-white font-semibold text-lg">📊 <strong>Portfolio Specification:</strong> ~${btcAllocation.toFixed(1)} BTC position ($8.5M allocation) with institutional-scale complexity</p>`;
+                    console.error('Market data loading failed:', error);
                 }
             }
 
             async generatePortfolio() {
                 try {
+                    this.showLoading('Generating institutional portfolio...');
+                    
                     const fundType = document.getElementById('fund-type').value;
-                    this.showLoading('generate-portfolio', 'Generating with live pricing...');
-
                     const response = await fetch('/api/generate-portfolio', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -501,48 +478,76 @@
                     
                     if (data.success) {
                         this.portfolio = data.portfolio;
-                        this.displayPortfolioResults();
-                        this.hideLoading('generate-portfolio', 'Generate Professional Portfolio');
+                        this.displayPortfolio(data.portfolio);
+                        this.hideLoading();
+                    } else {
+                        this.showError(data.error || 'Portfolio generation failed');
                     }
                 } catch (error) {
-                    console.error('Portfolio generation failed:', error);
-                    this.hideLoading('generate-portfolio', 'Generate Professional Portfolio');
+                    this.showError('Portfolio generation failed: ' + error.message);
                 }
             }
 
-            displayPortfolioResults() {
-                const portfolio = this.portfolio;
-                const metricsElement = document.getElementById('portfolio-metrics');
+            displayPortfolio(portfolio) {
                 const resultsElement = document.getElementById('portfolio-results');
-                const riskElement = document.getElementById('risk-text');
-                
-                if (!metricsElement || !resultsElement) return;
+                const bannerElement = document.getElementById('portfolio-banner-text');
+                const metricsElement = document.getElementById('portfolio-metrics');
+                const riskElement = document.getElementById('risk-assessment');
 
-                metricsElement.innerHTML = `
-                    <div class="metric-card">
-                        <div class="metric-value">$${(portfolio.aum / 1000000).toFixed(0)}M</div>
-                        <div class="metric-label">Total AUM</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">${portfolio.total_btc_size.toFixed(1)} BTC</div>
-                        <div class="metric-label">BTC Position</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">$${(portfolio.total_current_value / 1000000).toFixed(1)}M</div>
-                        <div class="metric-label">Current Value</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value">$${(portfolio.total_pnl / 1000000).toFixed(1)}M</div>
-                        <div class="metric-label">Unrealized P&L</div>
-                    </div>
-                `;
+                // Calculate display values
+                const btcAllocation = portfolio.btc_allocation / portfolio.current_btc_price;
                 
-                const potentialLoss = portfolio.total_current_value * 0.25;
-                if (riskElement) {
-                    riskElement.textContent = `Risk Assessment: 25% decline = $${(potentialLoss / 1000000).toFixed(1)}M loss without protection`;
+                if (bannerElement) {
+                    if (portfolio.fund_type.includes('Small')) {
+                        bannerElement.innerHTML = 
+                            `<p class="text-white font-semibold text-lg">📊 <strong>Portfolio Specification:</strong> ~${btcAllocation.toFixed(1)} BTC position ($2M allocation) with realistic institutional performance metrics</p>`;
+                    } else {
+                        bannerElement.innerHTML = 
+                            `<p class="text-white font-semibold text-lg">📊 <strong>Portfolio Specification:</strong> ~${btcAllocation.toFixed(1)} BTC position ($8.5M allocation) with institutional-scale complexity</p>`;
+                    }
                 }
-                
-                resultsElement.classList.remove('hidden');
+
+                if (metricsElement) {
+                    metricsElement.innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-value">$${(portfolio.aum / 1000000).toFixed(0)}M</div>
+                            <div class="metric-label">AUM</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${portfolio.total_btc_size.toFixed(1)} BTC</div>
+                            <div class="metric-label">BTC Position</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$${(portfolio.total_current_value / 1000000).toFixed(1)}M</div>
+                            <div class="metric-label">Current Value</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$${(portfolio.total_pnl / 1000000).toFixed(1)}M</div>
+                            <div class="metric-label">Unrealized P&L</div>
+                        </div>
+                    `;
+                    
+                    const potentialLoss = portfolio.total_current_value * 0.25;
+                    if (riskElement) {
+                        riskElement.textContent = `Risk Assessment: 25% decline = $${(potentialLoss / 1000000).toFixed(1)}M loss without protection`;
+                    }
+                    
+                    resultsElement.classList.remove('hidden');
+                }
+
+                // Update position display
+                this.updatePositionBanner();
+            }
+
+            updatePositionBanner() {
+                if (this.portfolio) {
+                    const bannerElement = document.getElementById('portfolio-banner-text');
+                    if (bannerElement) {
+                        const netBtc = this.portfolio.net_btc_exposure;
+                        const positionDirection = netBtc >= 0 ? 'Long' : 'Short';
+                        bannerElement.textContent = `${Math.abs(netBtc).toFixed(1)} BTC ${positionDirection} • $${(Math.abs(netBtc) * this.portfolio.current_btc_price / 1000000).toFixed(1)}M value`;
+                    }
+                }
             }
 
             async analyzeStrategies() {
@@ -552,53 +557,47 @@
                     this.hideElement('portfolio-section');
                     this.showElement('strategy-section');
 
-                    const bannerElement = document.getElementById('strategy-portfolio-summary');
-                    if (bannerElement && this.portfolio) {
-                        const netBtc = this.portfolio.net_btc_exposure;
-                        const positionDirection = netBtc > 0 ? "Long" : netBtc < 0 ? "Short" : "Neutral";
-                        bannerElement.textContent = `${Math.abs(netBtc).toFixed(1)} BTC ${positionDirection} • $${(Math.abs(netBtc) * this.portfolio.current_btc_price / 1000000).toFixed(1)}M value`;
-                    }
-
-                    document.getElementById('strategy-list').innerHTML = `
-                        <div class="text-center py-12">
-                            <div class="loading text-4xl mb-6">🔄</div>
-                            <p class="text-3xl font-bold text-yellow-400 mb-4">Analyzing Live Market Conditions</p>
-                            <p class="text-xl text-slate-300">Generating professional institutional strategies...</p>
-                        </div>
-                    `;
-
-                    await new Promise(resolve => setTimeout(resolve, 3500));
-
+                    this.showLoading('Analyzing professional strategies...');
+                    
                     const response = await fetch('/api/generate-strategies', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({})
                     });
 
                     const data = await response.json();
                     
                     if (data.success) {
                         this.strategies = data.strategies;
-                        this.displayStrategies();
+                        this.displayStrategies(data.strategies);
+                        this.hideLoading();
+                    } else {
+                        this.showError(data.error || 'Strategy analysis failed');
                     }
                 } catch (error) {
                     console.error('Strategy analysis failed:', error);
+                    this.showError('Strategy analysis failed: ' + error.message);
                 }
             }
 
-            displayStrategies() {
+            displayStrategies(strategies) {
+                const strategiesElement = document.getElementById('strategies-list');
+                const strategyResultsElement = document.getElementById('strategy-results');
+                
                 let strategiesHtml = '';
                 
-                this.strategies.forEach((strategy, index) => {
+                strategies.forEach((strategy, index) => {
                     const priorityClass = strategy.priority === 'high' ? 'high-priority' : 
-                                         strategy.priority === 'medium' ? 'medium-priority' : 'low-priority';
-                    const priorityIcon = strategy.priority === 'high' ? '🔥' : 
-                                        strategy.priority === 'medium' ? '⭐' : '💡';
-                    const priorityText = strategy.priority === 'high' ? 'HIGH PRIORITY' : 
-                                        strategy.priority === 'medium' ? 'RECOMMENDED' : 'ALTERNATIVE';
+                                        strategy.priority === 'medium' ? 'medium-priority' : '';
+                    
+                    const priorityIcon = strategy.priority === 'high' ? '🔴' : 
+                                       strategy.priority === 'medium' ? '🟡' : '🟢';
+                    
+                    const priorityText = strategy.priority === 'high' ? 'URGENT' : 
+                                       strategy.priority === 'medium' ? 'RECOMMENDED' : 'OPTIONAL';
 
-                    const isIncome = strategy.pricing.total_premium < 0;
-                    const costColor = isIncome ? 'text-green-400' : 'text-blue-400';
-                    const costLabel = isIncome ? 'Income' : 'Cost';
+                    const costColor = strategy.pricing.total_premium > 0 ? 'text-red-400' : 'text-green-400';
+                    const costLabel = strategy.pricing.total_premium > 0 ? 'Premium Cost' : 'Premium Received';
 
                     strategiesHtml += `
                         <div class="strategy-card ${priorityClass} animate-slide-up">
@@ -627,38 +626,58 @@
                                     <div class="metric-label">Contracts</div>
                                 </div>
                                 <div class="metric-card">
-                                    <div class="metric-value">${(strategy.pricing.implied_volatility * 100).toFixed(0)}%</div>
-                                    <div class="metric-label">Volatility</div>
+                                    <div class="metric-value">$${strategy.pricing.strike_price.toLocaleString()}</div>
+                                    <div class="metric-label">Strike Price</div>
                                 </div>
                             </div>
-                            
-                            <button onclick="demo.executeStrategy(${index})" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl transition-all duration-300">
-                                Execute ${strategy.display_name}
+
+                            <button class="select-strategy-btn w-full bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold py-3 px-4 rounded-xl text-lg transition-all duration-300" 
+                                    data-index="${index}">
+                                Select This Strategy
                             </button>
                         </div>
                     `;
                 });
+                
+                strategiesElement.innerHTML = strategiesHtml;
+                strategyResultsElement.classList.remove('hidden');
 
-                document.getElementById('strategy-list').innerHTML = strategiesHtml;
+                // Add event listeners to strategy selection buttons
+                document.querySelectorAll('.select-strategy-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.getAttribute('data-index'));
+                        this.selectStrategy(index);
+                    });
+                });
             }
 
-            async executeStrategy(strategyIndex) {
+            selectStrategy(index) {
+                this.selectedStrategy = this.strategies[index];
+                
+                // Visual feedback
+                document.querySelectorAll('.select-strategy-btn').forEach((btn, i) => {
+                    if (i === index) {
+                        btn.textContent = '✅ Strategy Selected';
+                        btn.classList.add('bg-green-500');
+                        btn.classList.remove('bg-yellow-400');
+                    } else {
+                        btn.textContent = 'Select This Strategy';
+                        btn.classList.add('bg-yellow-400');
+                        btn.classList.remove('bg-green-500');
+                    }
+                });
+            }
+
+            async executeStrategy() {
+                if (!this.selectedStrategy) {
+                    this.showError('Please select a strategy first');
+                    return;
+                }
+
                 try {
-                    this.currentStep = 3;
-                    this.updateStepIndicator();
-                    this.hideElement('strategy-section');
-                    this.showElement('execution-section');
-
-                    document.getElementById('execution-results').innerHTML = `
-                        <div class="text-center py-12">
-                            <div class="loading text-4xl mb-6">⚡</div>
-                            <h3 class="text-3xl font-bold text-yellow-400 mb-4">Executing Professional Strategy</h3>
-                            <p class="text-xl text-slate-300">Live institutional pricing execution in progress...</p>
-                        </div>
-                    `;
-
-                    await new Promise(resolve => setTimeout(resolve, 3000));
-
+                    this.showLoading('Executing professional strategy...');
+                    
+                    const strategyIndex = this.strategies.indexOf(this.selectedStrategy);
                     const response = await fetch('/api/execute-strategy', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -668,23 +687,25 @@
                     const data = await response.json();
                     
                     if (data.success) {
-                        this.selectedStrategy = this.strategies[strategyIndex];
-                        this.executionData = data.execution;
-                        this.displayExecutionResults();
+                        this.displayExecution(data.execution);
+                        this.hideLoading();
+                    } else {
+                        this.showError(data.error || 'Strategy execution failed');
                     }
                 } catch (error) {
-                    console.error('Strategy execution failed:', error);
+                    this.showError('Strategy execution failed: ' + error.message);
                 }
             }
 
-            displayExecutionResults() {
-                const strategy = this.selectedStrategy;
-                const execution = this.executionData;
+            displayExecution(execution) {
+                const executionElement = document.getElementById('execution-results');
+                const strategy = execution.strategy;
                 const outcomes = execution.outcomes;
-
-                const resultsHtml = `
+                
+                const executionHtml = `
                     <div class="execution-success animate-slide-up">
-                        <h3>🎯 Institutional Strategy Executed Successfully</h3>
+                        <div class="text-6xl mb-4">✅</div>
+                        <h3 class="text-4xl font-bold mb-4">Strategy Successfully Executed</h3>
                         <p>Professional options strategy executed with live institutional pricing</p>
                         <div class="mt-4 text-2xl font-bold">⚡ Execution Time: ${execution.execution_time} seconds</div>
                     </div>
@@ -729,23 +750,95 @@
                             `;
                         }).join('')}
                     </div>
-
-                    <div class="execution-success">
-                        <h3>✅ Professional Portfolio Protection Deployed</h3>
-                        <p>Institutional-grade downside protection active while preserving unlimited upside potential</p>
-                    </div>
-
-                    <div class="text-center space-x-6 mt-8">
-                        <button onclick="demo.resetDemo()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold text-lg py-4 px-8 rounded-xl transition-all duration-300">
-                            🔄 Analyze New Portfolio
-                        </button>
-                        <a href="https://t.me/willialso" target="_blank" class="inline-block bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-lg py-4 px-8 rounded-xl transition-all duration-300">
-                            💬 Contact Professional Team
-                        </a>
-                    </div>
                 `;
+                
+                executionElement.innerHTML = executionHtml;
+                executionElement.classList.remove('hidden');
+            }
 
-                document.getElementById('execution-results').innerHTML = resultsHtml;
+            // 🚨 FIXED: Custom portfolio analysis - uses input value directly, not accumulated positions
+            async analyzeCustomPortfolio() {
+                try {
+                    this.showLoading('Analyzing custom portfolio position...');
+                    
+                    // ✅ FIXED: Get current input value directly, don't accumulate positions
+                    const btcAmount = parseFloat(document.getElementById('btc-amount').value) || 25;
+                    
+                    console.log("🔧 ANALYZING SINGLE POSITION:", btcAmount, "BTC (not accumulated total)");
+                    
+                    const response = await fetch('/api/custom-position-builder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            positions: [{
+                                size: btcAmount,  // ✅ Use input value directly
+                                strategy_type: 'protective_put',
+                                strike_offset_percent: -10
+                            }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        console.log("✅ CORRECT: Analyzing", data.custom_strategy.target_exposure, "BTC");
+                        this.displayCustomStrategy(data.custom_strategy);
+                        this.hideLoading();
+                    } else {
+                        this.showError(data.error || 'Custom analysis failed');
+                    }
+                } catch (error) {
+                    console.error('Custom portfolio analysis failed:', error);
+                    this.showError('Custom analysis failed: ' + error.message);
+                }
+            }
+
+            displayCustomStrategy(strategy) {
+                const resultsElement = document.getElementById('portfolio-results');
+                const metricsElement = document.getElementById('portfolio-metrics');
+                const bannerElement = document.getElementById('portfolio-banner-text');
+                
+                if (bannerElement) {
+                    bannerElement.innerHTML = `
+                        <p class="text-white text-xl font-semibold">🔍 <strong>Custom Analysis:</strong> ${strategy.target_exposure.toFixed(1)} BTC ${strategy.display_name} • Real-time institutional pricing</p>
+                    `;
+                }
+                
+                if (metricsElement) {
+                    const pricing = strategy.pricing;
+                    const outcomes = strategy.outcomes;
+                    
+                    metricsElement.innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-value">${strategy.target_exposure.toFixed(2)} BTC</div>
+                            <div class="metric-label">Position Size</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$${pricing.total_premium.toLocaleString()}</div>
+                            <div class="metric-label">Total Premium</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">$${pricing.strike_price.toLocaleString()}</div>
+                            <div class="metric-label">Strike Price</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">${pricing.cost_as_pct.toFixed(2)}%</div>
+                            <div class="metric-label">Cost Ratio</div>
+                        </div>
+                    `;
+                }
+                
+                resultsElement.classList.remove('hidden');
+                
+                // Show strategy section with custom results
+                this.currentStep = 2;
+                this.updateStepIndicator();
+                this.hideElement('portfolio-section');
+                this.showElement('strategy-section');
+                
+                // Display as a strategy
+                this.strategies = [strategy];
+                this.displayStrategies([strategy]);
             }
 
             // Utility functions
@@ -767,53 +860,16 @@
                     return;
                 }
 
-                let html = '<h4 class="text-2xl font-bold text-yellow-400 mb-6 mt-8">📋 Portfolio Positions</h4>';
-                
-                this.customPositions.forEach((pos, index) => {
-                    html += `
-                        <div class="bg-slate-700 rounded-xl p-4 mb-3 flex justify-between items-center">
-                            <span class="text-white text-lg font-semibold">
-                                ${pos.btc_amount.toFixed(1)} BTC • ${pos.position_type === 'Long' ? '🟢' : '🔴'} ${pos.position_type}
-                            </span>
-                            <button onclick="demo.removePosition(${index})" class="text-red-400 hover:text-red-300 font-bold px-3 py-1 rounded">❌</button>
-                        </div>
-                    `;
-                });
-
-                const totalLong = this.customPositions.filter(p => p.position_type === 'Long').reduce((sum, p) => sum + p.btc_amount, 0);
-                const totalShort = this.customPositions.filter(p => p.position_type === 'Short').reduce((sum, p) => sum + p.btc_amount, 0);
-                const netBtc = totalLong - totalShort;
-
-                html += `
-                    <div class="grid grid-cols-3 gap-4 mt-6">
-                        <div class="metric-card"><div class="metric-value">${totalLong.toFixed(1)}</div><div class="metric-label">Long</div></div>
-                        <div class="metric-card"><div class="metric-value">${totalShort.toFixed(1)}</div><div class="metric-label">Short</div></div>
-                        <div class="metric-card"><div class="metric-value">${netBtc >= 0 ? '+' : ''}${netBtc.toFixed(1)}</div><div class="metric-label">Net</div></div>
+                listElement.innerHTML = this.customPositions.map((pos, index) => `
+                    <div class="bg-slate-700 rounded-lg p-3 flex justify-between items-center">
+                        <span class="text-white">
+                            ${pos.btc_amount.toFixed(1)} BTC • ${pos.position_type === 'Long' ? '🟢' : '🔴'} ${pos.position_type}
+                        </span>
+                        <button onclick="demo.removePosition(${index})" class="text-red-400 hover:text-red-300">
+                            🗑️
+                        </button>
                     </div>
-                    <button onclick="demo.analyzeCustomPortfolio()" class="w-full mt-6 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-slate-900 font-bold text-xl py-4 px-6 rounded-xl">
-                        Analyze Custom Portfolio
-                    </button>
-                `;
-
-                listElement.innerHTML = html;
-            }
-
-            async analyzeCustomPortfolio() {
-                try {
-                    const response = await fetch('/api/create-custom-portfolio', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ positions: this.customPositions })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        this.portfolio = data.portfolio;
-                        await this.analyzeStrategies();
-                    }
-                } catch (error) {
-                    console.error('Custom portfolio analysis failed:', error);
-                }
+                `).join('');
             }
 
             removePosition(index) {
@@ -826,88 +882,61 @@
                 this.updatePositionsList();
             }
 
-            backToPortfolio() {
-                this.currentStep = 1;
+            proceedToStrategies() {
+                this.currentStep = 2;
+                this.updateStepIndicator();
+                this.hideElement('portfolio-section');
+                this.showElement('strategy-section');
+            }
+
+            proceedToExecution() {
+                this.currentStep = 3;
                 this.updateStepIndicator();
                 this.hideElement('strategy-section');
-                this.showElement('portfolio-section');
+                this.showElement('execution-section');
             }
 
             updateStepIndicator() {
                 for (let i = 1; i <= 3; i++) {
                     const stepElement = document.getElementById(`step-${i}`);
-                    if (!stepElement) continue;
-                    
-                    stepElement.classList.remove('active', 'completed', 'inactive');
-                    
                     if (i < this.currentStep) {
-                        stepElement.classList.add('completed');
+                        stepElement.className = 'step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold completed';
                     } else if (i === this.currentStep) {
-                        stepElement.classList.add('active');
+                        stepElement.className = 'step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold active';
                     } else {
-                        stepElement.classList.add('inactive');
+                        stepElement.className = 'step-circle w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold inactive';
                     }
                 }
-
-                const progressBar = document.getElementById('progress-bar');
-                const currentStepText = document.getElementById('current-step-text');
-                if (progressBar) {
-                    progressBar.style.width = `${(this.currentStep / 3) * 100}%`;
-                }
-                if (currentStepText) {
-                    currentStepText.textContent = this.currentStep;
-                }
-            }
-
-            resetDemo() {
-                this.currentStep = 1;
-                this.portfolio = null;
-                this.strategies = [];
-                this.customPositions = [];
-                
-                this.showElement('intro-section');
-                this.hideElement('portfolio-section');
-                this.hideElement('strategy-section');
-                this.hideElement('execution-section');
-                this.hideElement('progress-container'); // Hide progress on intro
-                
-                document.getElementById('portfolio-results')?.classList.add('hidden');
-                document.getElementById('positions-list').innerHTML = '';
-                
-                this.updateStepIndicator();
-                this.loadMarketData();
-            }
-
-            // Utility functions
-            hideElement(elementId) {
-                document.getElementById(elementId)?.classList.add('hidden');
             }
 
             showElement(elementId) {
-                document.getElementById(elementId)?.classList.remove('hidden');
+                document.getElementById(elementId).classList.remove('hidden');
             }
 
-            showLoading(buttonId, text) {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    button.disabled = true;
-                    button.innerHTML = `<span class="loading">🔄</span> ${text}`;
-                }
+            hideElement(elementId) {
+                document.getElementById(elementId).classList.add('hidden');
             }
 
-            hideLoading(buttonId, originalText) {
-                const button = document.getElementById(buttonId);
-                if (button) {
-                    button.disabled = false;
-                    button.innerHTML = originalText;
-                }
+            showLoading(message) {
+                // Simple loading implementation
+                console.log('Loading:', message);
+            }
+
+            hideLoading() {
+                console.log('Loading complete');
+            }
+
+            showError(message) {
+                console.error('Error:', message);
+                alert('Error: ' + message);
             }
         }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            window.demo = new AtticusDemo();
-        });
+        // Initialize the demo
+        const demo = new AtticusDemo();
+
+        // Make demo available globally for button callbacks
+        window.demo = demo;
     </script>
 </body>
 </html>
