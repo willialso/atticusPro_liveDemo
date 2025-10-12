@@ -1,4 +1,4 @@
-/* Atticus Professional - Refined Professional Styling */
+/* Atticus Professional - Fixed Container Overflow Issues */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -38,13 +38,16 @@ body {
     line-height: 1.6;
     font-size: 16px;
     padding-bottom: 140px; /* Increased space for fixed dashboard */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-/* WIDER CONTAINER FOR BETTER CONTENT DISPLAY */
+/* FIXED CONTAINER - PREVENT OVERFLOW */
 .container {
-    max-width: 1500px; /* Increased further */
+    max-width: 1400px; /* Slightly reduced to ensure content fits */
     margin: 0 auto;
-    padding: 0 40px; /* Increased padding */
+    padding: 0 32px; /* Reduced padding to give more room */
+    width: 100%; /* Ensure full width utilization */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 /* Enhanced Header */
@@ -168,11 +171,14 @@ body {
 /* Main Content */
 .main-content {
     min-height: calc(100vh - 180px); /* Adjusted */
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .demo-section {
     display: none;
     padding: 100px 0; /* Increased */
+    width: 100%;
 }
 
 .demo-section.active {
@@ -210,15 +216,16 @@ body {
 .challenge-stats-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 40px; /* Increased */
+    gap: 32px; /* Slightly reduced to fit better */
     margin-bottom: 80px;
+    width: 100%;
 }
 
 .stat-card {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(245, 158, 11, 0.5); /* Changed to warning orange */
     border-radius: 24px; /* Increased */
-    padding: 56px; /* Increased */
+    padding: 48px; /* Reduced slightly to fit */
     text-align: center;
     backdrop-filter: blur(12px);
     transition: transform 0.3s ease, border-color 0.3s ease;
@@ -248,15 +255,16 @@ body {
 .problem-points-single-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px; /* Increased */
+    gap: 32px; /* Slightly reduced */
     margin-bottom: 100px;
+    width: 100%;
 }
 
 .problem-card {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(245, 158, 11, 0.4); /* Changed to warning orange */
     border-radius: 24px;
-    padding: 48px; /* Increased */
+    padding: 40px; /* Reduced slightly */
     backdrop-filter: blur(12px);
     transition: transform 0.3s ease, border-color 0.3s ease;
 }
@@ -283,15 +291,16 @@ body {
 .solution-features-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 40px; /* Increased */
+    gap: 32px; /* Slightly reduced */
     margin-bottom: 100px;
+    width: 100%;
 }
 
 .feature-card {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(37, 99, 235, 0.4);
     border-radius: 24px;
-    padding: 48px; /* Increased */
+    padding: 40px; /* Reduced slightly */
     text-align: center;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
@@ -327,9 +336,10 @@ body {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(5, 150, 105, 0.5);
     border-radius: 24px;
-    padding: 56px; /* Increased */
+    padding: 48px; /* Reduced slightly */
     margin-bottom: 100px;
     backdrop-filter: blur(12px);
+    width: 100%;
 }
 
 .pricing-transparency h3 {
@@ -342,8 +352,9 @@ body {
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Slightly increased min width */
+    gap: 24px;
+    width: 100%;
 }
 
 .pricing-item {
@@ -373,14 +384,15 @@ body {
     background: var(--bg-dark);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
-    padding: 40px; /* Increased */
+    padding: 32px; /* Reduced slightly */
     margin-bottom: 60px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     flex-wrap: wrap;
-    gap: 40px; /* Increased */
+    gap: 32px; /* Reduced slightly */
     backdrop-filter: blur(8px);
+    width: 100%;
 }
 
 .market-item .label {
@@ -397,19 +409,25 @@ body {
     color: var(--text-bright);
 }
 
-/* Enhanced Workflow Steps */
+/* FIXED WORKFLOW CONTAINER - PREVENT OVERFLOW */
 .demo-workflow {
     background: rgba(255, 255, 255, 0.08);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 28px;
-    padding: 60px; /* Increased */
+    padding: 48px; /* Reduced to fit better */
     backdrop-filter: blur(12px);
     margin-bottom: 60px; /* Space above dashboard */
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    box-sizing: border-box;
 }
 
 .workflow-step {
     display: none;
     padding-bottom: 80px; /* Add space between steps */
+    width: 100%;
+    max-width: 100%;
 }
 
 .workflow-step.active {
@@ -430,9 +448,10 @@ body {
 .portfolio-selection {
     display: grid;
     grid-template-columns: 2.5fr auto 1.5fr;
-    gap: 60px; /* Increased */
+    gap: 48px; /* Reduced slightly */
     align-items: start;
     margin-bottom: 60px; /* Space before button */
+    width: 100%;
 }
 
 .portfolio-options h4,
@@ -446,14 +465,15 @@ body {
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px; /* Increased */
+    gap: 24px; /* Reduced slightly */
+    width: 100%;
 }
 
 .portfolio-card {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
-    padding: 40px; /* Increased */
+    padding: 32px; /* Reduced slightly */
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -492,7 +512,8 @@ body {
 /* Enhanced Form Elements */
 .custom-inputs {
     display: grid;
-    gap: 28px; /* Increased */
+    gap: 24px; /* Reduced slightly */
+    width: 100%;
 }
 
 .input-group label {
@@ -505,7 +526,7 @@ body {
 
 .input-group input,
 .input-group select {
-    padding: 22px 26px; /* Increased */
+    padding: 20px 24px; /* Reduced slightly */
     border: 2px solid rgba(255, 255, 255, 0.25);
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
@@ -521,6 +542,7 @@ body {
     margin-top: 60px; /* Increased spacing */
     padding-top: 40px;
     border-top: 2px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
 }
 
 .final-actions {
@@ -531,6 +553,7 @@ body {
     display: flex;
     justify-content: center;
     gap: 32px;
+    width: 100%;
 }
 
 /* Enhanced Buttons */
@@ -608,22 +631,29 @@ body {
     box-shadow: 0 10px 30px rgba(0, 136, 204, 0.5);
 }
 
-/* Strategies Grid - 3 in a row */
+/* FIXED STRATEGIES GRID - PREVENT OVERFLOW */
 .strategies-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns */
-    gap: 40px; /* Increased */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Changed to auto-fit with min width */
+    gap: 24px; /* Reduced gap to fit better */
     margin-top: 40px;
+    width: 100%;
+    max-width: 100%;
+    padding: 0; /* Remove any padding */
 }
 
+/* Ensure strategy options don't overflow */
 .strategy-option {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
-    padding: 40px; /* Increased */
+    padding: 32px; /* Reduced padding to fit better */
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .strategy-option:hover {
@@ -656,12 +686,16 @@ body {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 24px;
+    width: 100%;
 }
 
 .strategy-name {
-    font-size: 26px; /* Increased */
+    font-size: 24px; /* Slightly reduced to fit better */
     font-weight: 700;
     color: var(--text-bright);
+    flex: 1;
+    margin-right: 16px;
+    line-height: 1.2;
 }
 
 .strategy-cost {
@@ -671,11 +705,12 @@ body {
     border-radius: 24px;
     font-size: 16px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .strategy-description {
     color: var(--text-light);
-    font-size: 19px; /* Increased */
+    font-size: 17px; /* Slightly reduced */
     line-height: 1.6;
     margin-bottom: 28px;
 }
@@ -683,42 +718,47 @@ body {
 .strategy-metrics {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
     margin-bottom: 28px;
+    width: 100%;
 }
 
 .strategy-metric {
     text-align: center;
-    padding: 20px;
+    padding: 16px;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 12px;
 }
 
 .strategy-metric .metric-label {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-light);
     margin-bottom: 8px;
     display: block;
+    line-height: 1.3;
 }
 
 .strategy-metric .metric-value {
-    font-size: 20px; /* Increased */
+    font-size: 18px; /* Slightly reduced */
     font-weight: 700;
     color: var(--text-bright);
+    line-height: 1.2;
 }
 
 /* Enhanced Analysis Results */
 .analysis-content {
     display: grid;
-    gap: 40px; /* Increased */
+    gap: 32px; /* Reduced slightly */
+    width: 100%;
 }
 
 .analysis-card {
     background: rgba(255, 255, 255, 0.1);
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 24px;
-    padding: 48px; /* Increased */
+    padding: 40px; /* Reduced slightly */
     backdrop-filter: blur(8px);
+    width: 100%;
 }
 
 .analysis-card h4 {
@@ -730,15 +770,16 @@ body {
 
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Slightly reduced min width */
+    gap: 20px;
+    width: 100%;
 }
 
 .metric-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 22px 28px; /* Increased */
+    padding: 20px 24px; /* Reduced slightly */
     background: rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -746,29 +787,30 @@ body {
 
 .metric-label {
     color: var(--text-light);
-    font-size: 19px; /* Increased */
+    font-size: 17px; /* Reduced slightly */
     font-weight: 500;
 }
 
 .metric-value {
     font-weight: 700;
     color: var(--text-bright);
-    font-size: 19px; /* Increased */
+    font-size: 17px; /* Reduced slightly */
 }
 
 /* Enhanced Scenario Analysis */
 .risk-scenarios {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Reduced min width */
+    gap: 16px;
     margin-top: 24px;
+    width: 100%;
 }
 
 .scenario-card {
     background: rgba(245, 158, 11, 0.12); /* Changed to warning orange */
     border: 2px solid rgba(245, 158, 11, 0.5);
     border-radius: 16px;
-    padding: 28px; /* Increased */
+    padding: 24px; /* Reduced slightly */
     text-align: center;
     transition: transform 0.3s ease;
 }
@@ -778,14 +820,14 @@ body {
 }
 
 .scenario-card h5 {
-    font-size: 18px; /* Increased significantly */
+    font-size: 16px; /* Reduced slightly */
     color: var(--warning-light);
     margin-bottom: 16px;
     font-weight: 700;
 }
 
 .scenario-value {
-    font-size: 24px; /* Increased significantly */
+    font-size: 22px; /* Reduced slightly */
     font-weight: 800;
     color: var(--warning);
 }
@@ -818,7 +860,8 @@ body {
     justify-content: space-around;
     align-items: center;
     flex-wrap: nowrap; /* Prevent wrapping */
-    gap: 32px;
+    gap: 24px;
+    width: 100%;
 }
 
 .exposure-metrics .metric {
@@ -888,44 +931,67 @@ body {
     50% { opacity: 0.7; transform: translateY(-50%) scale(1.2); }
 }
 
-/* Responsive Design */
+/* RESPONSIVE DESIGN - FIXED OVERFLOW ISSUES */
+@media (max-width: 1500px) {
+    .container {
+        max-width: 1300px;
+        padding: 0 24px;
+    }
+    
+    .strategies-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+    }
+}
+
 @media (max-width: 1400px) {
     .container {
         max-width: 1200px;
+        padding: 0 20px;
     }
     
     .challenge-stats-single-row,
     .solution-features-single-row {
         grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
+        gap: 24px;
     }
     
     .strategies-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .nav-steps {
+        gap: 80px;
     }
 }
 
 @media (max-width: 1000px) {
     .problem-points-single-row {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 20px;
     }
     
     .portfolio-selection {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 32px;
+    }
+    
+    .strategies-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 0 20px;
+        padding: 0 16px;
     }
     
     .challenge-stats-single-row,
-    .solution-features-single-row,
-    .strategies-grid {
+    .solution-features-single-row {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     .header-content {
@@ -946,7 +1012,7 @@ body {
     }
     
     .nav-steps {
-        gap: 40px;
+        gap: 32px;
     }
     
     .final-actions {
@@ -961,7 +1027,20 @@ body {
     
     .exposure-metrics {
         flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .demo-workflow {
+        padding: 32px;
+    }
+    
+    .strategies-grid {
+        grid-template-columns: 1fr;
         gap: 16px;
+    }
+    
+    .strategy-option {
+        padding: 24px;
     }
 }
 
@@ -970,15 +1049,23 @@ body {
         padding: 60px 0;
     }
     
-    .demo-workflow {
-        padding: 40px;
-    }
-    
     .section-header h2 {
         font-size: 32px;
     }
     
     .logo {
         height: 60px;
+    }
+    
+    .demo-workflow {
+        padding: 20px;
+    }
+    
+    .strategy-option {
+        padding: 20px;
+    }
+    
+    .strategy-name {
+        font-size: 20px;
     }
 }
