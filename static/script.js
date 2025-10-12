@@ -1,4 +1,4 @@
-// Atticus Professional v17.2 - Multi-Strategy Demo
+// Atticus Professional v17.2 - Enhanced Multi-Strategy Demo
 class AttticusProfessionalDemo {
     constructor() {
         this.currentStep = 1;
@@ -23,16 +23,9 @@ class AttticusProfessionalDemo {
     }
     
     setupEventListeners() {
-        // Contact form
-        document.getElementById('contact-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleContactSubmit(e);
-        });
-        
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                this.hideContact();
                 this.hideLoading();
             }
         });
@@ -269,7 +262,7 @@ class AttticusProfessionalDemo {
         `;
         
         container.innerHTML = html;
-        document.getElementById('generate-strategy-btn').style.display = 'block';
+        document.getElementById('generate-strategy-btn').style.display = 'inline-block';
     }
     
     async generateStrategies() {
@@ -302,9 +295,9 @@ class AttticusProfessionalDemo {
         const container = document.getElementById('strategy-results');
         
         let html = `
-            <div style="text-align: center; margin-bottom: 32px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px;">
-                <h4 style="color: var(--text-bright); margin-bottom: 12px;">Smart Strategy Recommendations for ${context.institution}</h4>
-                <p style="color: var(--text-light); font-size: 16px;">Based on ${context.risk_tolerance} risk tolerance and ${context.position_size.toFixed(2)} BTC position</p>
+            <div style="text-align: center; margin-bottom: 48px; padding: 32px; background: rgba(255,255,255,0.08); border-radius: 20px; border: 2px solid rgba(255,255,255,0.15);">
+                <h4 style="color: var(--text-bright); margin-bottom: 16px; font-size: 26px;">Smart Strategy Recommendations for ${context.institution}</h4>
+                <p style="color: var(--text-light); font-size: 20px;">Based on ${context.risk_tolerance} risk tolerance and ${context.position_size.toFixed(2)} BTC position</p>
             </div>
             
             <div class="strategies-grid">
@@ -341,15 +334,15 @@ class AttticusProfessionalDemo {
                         </div>
                     </div>
                     
-                    <div style="margin-top: 20px;">
-                        <h6 style="color: var(--success); margin-bottom: 8px; font-size: 14px;">Key Benefits:</h6>
-                        <ul style="color: var(--text-light); font-size: 14px; margin-left: 16px;">
-                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 4px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
+                    <div style="margin-top: 24px;">
+                        <h6 style="color: var(--success); margin-bottom: 12px; font-size: 16px; font-weight: 700;">Key Benefits:</h6>
+                        <ul style="color: var(--text-light); font-size: 16px; margin-left: 20px; line-height: 1.5;">
+                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 8px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
                         </ul>
                     </div>
                     
-                    <div style="margin-top: 20px; padding: 12px; background: rgba(37, 99, 235, 0.1); border-radius: 8px; text-align: center;">
-                        <span style="color: var(--secondary); font-weight: 600; font-size: 14px;">Click to Select Strategy</span>
+                    <div style="margin-top: 24px; padding: 16px; background: rgba(37, 99, 235, 0.15); border-radius: 12px; text-align: center; border: 2px solid rgba(37, 99, 235, 0.3);">
+                        <span style="color: var(--secondary); font-weight: 700; font-size: 16px;">Click to Select Strategy</span>
                     </div>
                 </div>
             `;
@@ -374,10 +367,10 @@ class AttticusProfessionalDemo {
             if (data.success) {
                 this.selectedStrategy = data.strategy;
                 this.displaySelectedStrategy(data.strategy);
-                // Auto-proceed to execution or show execution button
+                // Auto-proceed to execution after brief delay
                 setTimeout(() => {
                     this.executeStrategy();
-                }, 1000);
+                }, 1500);
             } else {
                 alert('Error selecting strategy: ' + data.error);
             }
@@ -390,12 +383,12 @@ class AttticusProfessionalDemo {
     }
     
     displaySelectedStrategy(strategy) {
-        // Highlight selected strategy and show brief summary
+        // Highlight selected strategy
         const container = document.getElementById('strategy-results');
         const summaryHtml = `
-            <div style="background: rgba(22, 163, 74, 0.1); border: 2px solid var(--success); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
-                <h4 style="color: var(--success); margin-bottom: 12px;">✅ ${strategy.strategy_name} Selected</h4>
-                <p style="color: var(--text-bright);">Proceeding to execution...</p>
+            <div style="background: rgba(22, 163, 74, 0.15); border: 3px solid var(--success); border-radius: 16px; padding: 32px; margin-bottom: 32px; text-align: center;">
+                <h4 style="color: var(--success); margin-bottom: 16px; font-size: 26px;">✅ ${strategy.strategy_name} Selected</h4>
+                <p style="color: var(--text-bright); font-size: 18px;">Proceeding to execution via institutional channels...</p>
             </div>
         `;
         container.innerHTML = summaryHtml + container.innerHTML;
@@ -433,7 +426,7 @@ class AttticusProfessionalDemo {
         const container = document.getElementById('execution-results');
         
         const html = `
-            <div class="analysis-card" style="background: rgba(22, 163, 74, 0.1); border-color: rgba(22, 163, 74, 0.3);">
+            <div class="analysis-card" style="background: rgba(22, 163, 74, 0.15); border-color: rgba(22, 163, 74, 0.4);">
                 <h4>✅ Execution Completed Successfully</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
@@ -442,7 +435,7 @@ class AttticusProfessionalDemo {
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Status:</span>
-                        <span class="metric-value">${execution.execution_summary.status.toUpperCase()}</span>
+                        <span class="metric-value" style="color: var(--success);">${execution.execution_summary.status.toUpperCase()}</span>
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Contracts Filled:</span>
@@ -501,11 +494,11 @@ class AttticusProfessionalDemo {
             
             <div class="analysis-card">
                 <h4>Execution Venues</h4>
-                <div style="display: grid; gap: 12px;">
+                <div style="display: grid; gap: 16px;">
                     ${execution.execution_summary.execution_venues.map(venue => `
-                        <div style="display: flex; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-                            <span style="font-weight: 600;">${venue.exchange.toUpperCase()}</span>
-                            <span>${venue.size} BTC (${venue.liquidity} liquidity)</span>
+                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
+                            <span style="font-weight: 700; font-size: 18px;">${venue.exchange.toUpperCase()}</span>
+                            <span style="font-size: 18px;">${venue.size} BTC (${venue.liquidity} liquidity)</span>
                         </div>
                     `).join('')}
                 </div>
@@ -552,14 +545,6 @@ class AttticusProfessionalDemo {
         if (targetNav) targetNav.classList.add('active');
     }
     
-    showContact() {
-        document.getElementById('contact-modal').style.display = 'block';
-    }
-    
-    hideContact() {
-        document.getElementById('contact-modal').style.display = 'none';
-    }
-    
     showLoading(message = 'Processing...') {
         const overlay = document.getElementById('loading');
         const text = document.getElementById('loading-text');
@@ -570,20 +555,6 @@ class AttticusProfessionalDemo {
     
     hideLoading() {
         document.getElementById('loading').classList.remove('active');
-    }
-    
-    handleContactSubmit(e) {
-        e.preventDefault();
-        
-        this.showLoading('Sending demo request...');
-        
-        // Simulate API call
-        setTimeout(() => {
-            this.hideLoading();
-            this.hideContact();
-            alert('Thank you! Our institutional team will contact you within 24 hours.');
-            e.target.reset();
-        }, 2000);
     }
 }
 
@@ -608,24 +579,9 @@ function resetDemo() {
     demo.resetDemo();
 }
 
-function showContact() {
-    demo.showContact();
-}
-
-function hideContact() {
-    demo.hideContact();
-}
-
 // Initialize demo
 let demo;
 
 document.addEventListener('DOMContentLoaded', function() {
     demo = new AttticusProfessionalDemo();
-    
-    // Modal click outside to close
-    document.getElementById('contact-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideContact();
-        }
-    });
 });

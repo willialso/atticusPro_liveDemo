@@ -55,26 +55,28 @@
                     <p class="subtitle">Bitcoin volatility threatens institutional portfolios</p>
                 </div>
 
-                <div class="challenge-stats">
-                    <div class="stat-card danger">
+                <!-- 4 boxes in single row -->
+                <div class="challenge-stats-single-row">
+                    <div class="stat-card">
                         <h3>$2.1T</h3>
                         <p>Institutional crypto AUM at risk</p>
                     </div>
-                    <div class="stat-card danger">
+                    <div class="stat-card">
                         <h3>65%</h3>
                         <p>BTC annualized volatility</p>
                     </div>
-                    <div class="stat-card danger">
+                    <div class="stat-card">
                         <h3>$50M</h3>
                         <p>Typical institutional position</p>
                     </div>
-                    <div class="stat-card danger">
+                    <div class="stat-card">
                         <h3>$15M</h3>
                         <p>Loss from 30% decline</p>
                     </div>
                 </div>
 
-                <div class="problem-points">
+                <!-- 3 boxes in single row underneath -->
+                <div class="problem-points-single-row">
                     <div class="problem-card">
                         <h4>❌ Traditional Hedging Fails</h4>
                         <p>Conventional derivatives take hours while Bitcoin moves in minutes</p>
@@ -103,7 +105,8 @@
                     <p class="subtitle">Real-time hedging with institutional-grade options</p>
                 </div>
 
-                <div class="solution-features">
+                <!-- All 4 feature boxes in one row -->
+                <div class="solution-features-single-row">
                     <div class="feature-card">
                         <div class="feature-icon">⚡</div>
                         <h4>Real-Time Black-Scholes Pricing</h4>
@@ -252,6 +255,12 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="step-button-container">
+                            <button class="action-btn" id="analyze-btn" style="display:none">
+                                Continue to Analysis →
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Step 2: Portfolio Analysis Results -->
@@ -260,18 +269,23 @@
                         <div id="analysis-results" class="analysis-content">
                             <!-- Populated by JavaScript -->
                         </div>
-                        <div class="step-actions">
+                        <div class="step-button-container">
                             <button class="action-btn" id="generate-strategy-btn" onclick="generateStrategy()" style="display:none">
-                                Generate Hedging Strategy →
+                                Generate Hedging Strategies →
                             </button>
                         </div>
                     </div>
 
                     <!-- Step 3: Strategy Options -->
                     <div id="step-3" class="workflow-step">
-                        <h3>Step 3: Hedging Strategy</h3>
+                        <h3>Step 3: Smart Hedging Strategies</h3>
                         <div id="strategy-results" class="strategy-content">
                             <!-- Populated by JavaScript -->
+                        </div>
+                        <div class="step-button-container">
+                            <button class="action-btn" id="execute-btn" style="display:none">
+                                Execute Selected Strategy →
+                            </button>
                         </div>
                     </div>
 
@@ -283,14 +297,16 @@
                         </div>
                         <div class="final-actions">
                             <button class="secondary-btn" onclick="resetDemo()">New Demo</button>
-                            <button class="cta-btn" onclick="showContact()">Schedule Live Demo</button>
+                            <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
+                                Contact via Telegram →
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Platform Exposure Dashboard -->
+        <!-- Platform Exposure Dashboard (Fixed Bottom) -->
         <div id="platform-exposure" class="platform-dashboard">
             <div class="container">
                 <h4>Platform Exposure Dashboard</h4>
@@ -315,22 +331,6 @@
             </div>
         </div>
     </main>
-
-    <!-- Contact Modal -->
-    <div id="contact-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="hideContact()">&times;</span>
-            <h3>Schedule Institutional Demo</h3>
-            <form id="contact-form">
-                <input type="text" placeholder="Institution Name" required>
-                <input type="email" placeholder="Email Address" required>
-                <input type="text" placeholder="Your Title" required>
-                <input type="text" placeholder="AUM Range" required>
-                <textarea placeholder="Specific Requirements" rows="3"></textarea>
-                <button type="submit">Request Live Demo</button>
-            </form>
-        </div>
-    </div>
 
     <!-- Loading Overlay -->
     <div id="loading" class="loading-overlay">
