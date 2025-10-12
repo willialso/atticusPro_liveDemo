@@ -1,8 +1,9 @@
-// Atticus Professional v17.0 - Complete Interactive Demo
+// Atticus Professional v17.2 - Multi-Strategy Demo
 class AttticusProfessionalDemo {
     constructor() {
         this.currentStep = 1;
         this.portfolioAnalysis = null;
+        this.availableStrategies = null;
         this.selectedStrategy = null;
         this.marketData = null;
         
@@ -248,11 +249,11 @@ class AttticusProfessionalDemo {
                 <h4>Hedge Recommendation</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Recommended Strategy:</span>
-                        <span class="metric-value">${analysis.hedge_recommendation.strategy.replace('_', ' ').toUpperCase()}</span>
+                        <span class="metric-label">Risk Tolerance:</span>
+                        <span class="metric-value">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Hedge Ratio:</span>
+                        <span class="metric-label">Recommended Hedge Ratio:</span>
                         <span class="metric-value">${(analysis.hedge_recommendation.hedge_ratio * 100).toFixed(0)}%</span>
                     </div>
                     <div class="metric-item">
@@ -260,8 +261,8 @@ class AttticusProfessionalDemo {
                         <span class="metric-value">${analysis.hedge_recommendation.hedge_size_btc} BTC</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Risk Tolerance:</span>
-                        <span class="metric-value">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</span>
+                        <span class="metric-label">Available Strategies:</span>
+                        <span class="metric-value">${analysis.hedge_recommendation.preferred_strategies?.length || 1} Options</span>
                     </div>
                 </div>
             </div>
@@ -271,117 +272,133 @@ class AttticusProfessionalDemo {
         document.getElementById('generate-strategy-btn').style.display = 'block';
     }
     
-    async generateStrategy() {
-        this.showLoading('Generating hedging strategy with real Black-Scholes pricing...');
+    async generateStrategies() {
+        this.showLoading('Generating multiple hedging strategies...');
         
         try {
-            const response = await fetch('/api/generate-strategy', {
+            const response = await fetch('/api/generate-strategies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.availableStrategies = data.strategies;
+                this.displayStrategies(data.strategies, data.analysis_context);
+                this.showStep(3);
+            } else {
+                alert('Error generating strategies: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Strategy generation error:', error);
+            alert('Error generating strategies. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+    
+    displayStrategies(strategies, context) {
+        const container = document.getElementById('strategy-results');
+        
+        let html = `
+            <div style="text-align: center; margin-bottom: 32px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                <h4 style="color: var(--text-bright); margin-bottom: 12px;">Smart Strategy Recommendations for ${context.institution}</h4>
+                <p style="color: var(--text-light); font-size: 16px;">Based on ${context.risk_tolerance} risk tolerance and ${context.position_size.toFixed(2)} BTC position</p>
+            </div>
+            
+            <div class="strategies-grid">
+        `;
+        
+        strategies.forEach((strategy, index) => {
+            const isRecommended = strategy.recommended || index === 0;
+            
+            html += `
+                <div class="strategy-option ${isRecommended ? 'recommended' : ''}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">${strategy.strategy_name}</div>
+                        <div class="strategy-cost">${strategy.cost_percentage || strategy.income_percentage || 0}%</div>
+                    </div>
+                    
+                    <div class="strategy-description">${strategy.strategy_description}</div>
+                    
+                    <div class="strategy-metrics">
+                        <div class="strategy-metric">
+                            <span class="metric-label">Total Cost/Income</span>
+                            <span class="metric-value">$${(strategy.total_client_cost || strategy.total_net_received || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="strategy-metric">
+                            <span class="metric-label">Max Loss/Upside</span>
+                            <span class="metric-value">$${(strategy.max_loss || strategy.max_upside || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="strategy-metric">
+                            <span class="metric-label">Protection Level</span>
+                            <span class="metric-value">$${(strategy.protection_level || strategy.strike_price || strategy.call_strike || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="strategy-metric">
+                            <span class="metric-label">Complexity</span>
+                            <span class="metric-value">${strategy.complexity || 'Low'}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h6 style="color: var(--success); margin-bottom: 8px; font-size: 14px;">Key Benefits:</h6>
+                        <ul style="color: var(--text-light); font-size: 14px; margin-left: 16px;">
+                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 4px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 12px; background: rgba(37, 99, 235, 0.1); border-radius: 8px; text-align: center;">
+                        <span style="color: var(--secondary); font-weight: 600; font-size: 14px;">Click to Select Strategy</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+    
+    async selectStrategy(strategyType) {
+        this.showLoading('Selecting strategy for execution...');
+        
+        try {
+            const response = await fetch('/api/select-strategy', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    strategy_type: this.portfolioAnalysis.hedge_recommendation.strategy
-                })
+                body: JSON.stringify({ strategy_type: strategyType })
             });
             
             const data = await response.json();
             
             if (data.success) {
                 this.selectedStrategy = data.strategy;
-                this.displayStrategyResults(data.strategy);
-                this.showStep(3);
+                this.displaySelectedStrategy(data.strategy);
+                // Auto-proceed to execution or show execution button
+                setTimeout(() => {
+                    this.executeStrategy();
+                }, 1000);
             } else {
-                alert('Error generating strategy: ' + data.error);
+                alert('Error selecting strategy: ' + data.error);
             }
         } catch (error) {
-            console.error('Strategy generation error:', error);
-            alert('Error generating strategy. Please try again.');
+            console.error('Strategy selection error:', error);
+            alert('Error selecting strategy. Please try again.');
         } finally {
             this.hideLoading();
         }
     }
     
-    displayStrategyResults(strategy) {
+    displaySelectedStrategy(strategy) {
+        // Highlight selected strategy and show brief summary
         const container = document.getElementById('strategy-results');
-        
-        const html = `
-            <div class="analysis-card">
-                <h4>${strategy.strategy_name}</h4>
-                <p style="color: var(--text-light); margin-bottom: 24px;">
-                    Professional ${strategy.strategy_type.replace('_', ' ')} strategy with institutional-grade pricing and execution.
-                </p>
-                
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Position Size:</span>
-                        <span class="metric-value">${strategy.position_size} BTC</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Strike Price:</span>
-                        <span class="metric-value">$${(strategy.strike_price || strategy.protection_level).toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Time to Expiry:</span>
-                        <span class="metric-value">${strategy.time_to_expiry_days} days</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Cost Percentage:</span>
-                        <span class="metric-value">${strategy.cost_percentage}%</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="analysis-card">
-                <h4>Pricing Breakdown</h4>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Base Premium:</span>
-                        <span class="metric-value">$${(strategy.base_premium_total || strategy.net_premium_base || 0).toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Platform Markup:</span>
-                        <span class="metric-value">$${strategy.platform_markup.toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Execution Fee:</span>
-                        <span class="metric-value">$${strategy.execution_fee}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Total Client Cost:</span>
-                        <span class="metric-value">$${strategy.total_client_cost.toLocaleString()}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="analysis-card">
-                <h4>Strategy Outcomes</h4>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Maximum Loss:</span>
-                        <span class="metric-value">$${(strategy.max_loss || 0).toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Break-Even Price:</span>
-                        <span class="metric-value">$${(strategy.breakeven || strategy.break_even || 0).toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Protection Level:</span>
-                        <span class="metric-value">$${(strategy.protection_level || strategy.strike_price || 0).toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Platform Revenue:</span>
-                        <span class="metric-value">$${strategy.platform_revenue.toLocaleString()}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 32px;">
-                <button class="cta-btn" onclick="demo.executeStrategy()">
-                    Execute Strategy →
-                </button>
+        const summaryHtml = `
+            <div style="background: rgba(22, 163, 74, 0.1); border: 2px solid var(--success); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
+                <h4 style="color: var(--success); margin-bottom: 12px;">✅ ${strategy.strategy_name} Selected</h4>
+                <p style="color: var(--text-bright);">Proceeding to execution...</p>
             </div>
         `;
-        
-        container.innerHTML = html;
+        container.innerHTML = summaryHtml + container.innerHTML;
     }
     
     async executeStrategy() {
@@ -417,8 +434,12 @@ class AttticusProfessionalDemo {
         
         const html = `
             <div class="analysis-card" style="background: rgba(22, 163, 74, 0.1); border-color: rgba(22, 163, 74, 0.3);">
-                <h4>✅ Execution Completed</h4>
+                <h4>✅ Execution Completed Successfully</h4>
                 <div class="metrics-grid">
+                    <div class="metric-item">
+                        <span class="metric-label">Strategy Executed:</span>
+                        <span class="metric-value">${execution.execution_summary.strategy_name}</span>
+                    </div>
                     <div class="metric-item">
                         <span class="metric-label">Status:</span>
                         <span class="metric-value">${execution.execution_summary.status.toUpperCase()}</span>
@@ -430,10 +451,6 @@ class AttticusProfessionalDemo {
                     <div class="metric-item">
                         <span class="metric-label">Total Premium:</span>
                         <span class="metric-value">$${execution.execution_summary.total_premium_client.toLocaleString()}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Platform Revenue:</span>
-                        <span class="metric-value">$${execution.execution_summary.platform_revenue.toLocaleString()}</span>
                     </div>
                 </div>
             </div>
@@ -486,8 +503,8 @@ class AttticusProfessionalDemo {
                 <h4>Execution Venues</h4>
                 <div style="display: grid; gap: 12px;">
                     ${execution.execution_summary.execution_venues.map(venue => `
-                        <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.05); border-radius: 6px;">
-                            <span>${venue.exchange.toUpperCase()}</span>
+                        <div style="display: flex; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <span style="font-weight: 600;">${venue.exchange.toUpperCase()}</span>
                             <span>${venue.size} BTC (${venue.liquidity} liquidity)</span>
                         </div>
                     `).join('')}
@@ -501,6 +518,7 @@ class AttticusProfessionalDemo {
     resetDemo() {
         this.currentStep = 1;
         this.portfolioAnalysis = null;
+        this.availableStrategies = null;
         this.selectedStrategy = null;
         
         this.showStep(1);
@@ -583,7 +601,7 @@ function analyzeCustomPosition() {
 }
 
 function generateStrategy() {
-    demo.generateStrategy();
+    demo.generateStrategies();
 }
 
 function resetDemo() {

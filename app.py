@@ -1,6 +1,6 @@
 """
-ATTICUS PROFESSIONAL V17.1 - INSTITUTIONAL PORTFOLIO HEDGING PLATFORM
-Fixed version with guaranteed service initialization
+ATTICUS PROFESSIONAL V17.2 - MULTI-STRATEGY INSTITUTIONAL PLATFORM
+Enhanced with multiple smart strategy recommendations
 """
 
 import os
@@ -39,26 +39,24 @@ class MarketDataService:
     """Live market data service"""
     
     def __init__(self):
-        self.price_cache = 111500.0  # Default BTC price
+        self.price_cache = 111500.0
         self.cache_time = datetime.now()
         print("✅ MarketDataService initialized")
         
     def get_live_btc_price(self):
         """Get live BTC price with robust fallback"""
-        # Check cache first (5 minute validity)
         if self.price_cache and self.cache_time:
             age = (datetime.now() - self.cache_time).total_seconds()
-            if age < 300:  # Use cache if less than 5 minutes old
+            if age < 300:
                 return self.price_cache
         
-        # Try to get live price
         try:
             import requests
             response = requests.get('https://api.coinbase.com/v2/exchange-rates?currency=BTC', timeout=3)
             if response.status_code == 200:
                 data = response.json()
                 price = float(data['data']['rates']['USD'])
-                if price > 10000:  # Sanity check
+                if price > 10000:
                     self.price_cache = price
                     self.cache_time = datetime.now()
                     print(f"📊 Live BTC price: ${price:,.2f}")
@@ -66,7 +64,6 @@ class MarketDataService:
         except Exception as e:
             print(f"⚠️ Coinbase API error: {e}")
         
-        # Try backup API
         try:
             import requests
             response = requests.get('https://api.coindesk.com/v1/bpi/currentprice/USD.json', timeout=3)
@@ -74,7 +71,7 @@ class MarketDataService:
                 data = response.json()
                 price_str = data['bpi']['USD']['rate'].replace(',', '').replace('$', '')
                 price = float(price_str)
-                if price > 10000:  # Sanity check
+                if price > 10000:
                     self.price_cache = price
                     self.cache_time = datetime.now()
                     print(f"📊 CoinDesk BTC price: ${price:,.2f}")
@@ -82,18 +79,15 @@ class MarketDataService:
         except Exception as e:
             print(f"⚠️ CoinDesk API error: {e}")
         
-        # Use cached price or default
         fallback_price = self.price_cache if self.price_cache else 111500.0
         print(f"📊 Using fallback BTC price: ${fallback_price:,.2f}")
         return fallback_price
     
     def get_volatility(self):
-        """Get BTC volatility - using fixed professional estimate"""
-        return 0.65  # 65% annualized volatility
+        return 0.65
     
     def get_risk_free_rate(self):
-        """Get risk-free rate - using fixed professional estimate"""
-        return 0.0475  # 4.75% current rate
+        return 0.0475
 
 class PortfolioAnalyzer:
     """Portfolio analysis service"""
@@ -106,34 +100,38 @@ class PortfolioAnalyzer:
                 'aum': 2100000000,
                 'btc_allocation_pct': 3.0,
                 'risk_tolerance': 'conservative',
-                'hedge_ratio_target': 0.85
+                'hedge_ratio_target': 0.85,
+                'preferred_strategies': ['protective_put', 'collar', 'put_spread']
             },
             'hedge_fund': {
                 'name': 'Quantitative Hedge Fund',
                 'aum': 450000000,
                 'btc_allocation_pct': 15.0,
                 'risk_tolerance': 'aggressive',
-                'hedge_ratio_target': 0.60
+                'hedge_ratio_target': 0.60,
+                'preferred_strategies': ['collar', 'put_spread', 'protective_put']
             },
             'family_office': {
                 'name': 'UHNW Family Office',
                 'aum': 180000000,
                 'btc_allocation_pct': 8.0,
                 'risk_tolerance': 'moderate',
-                'hedge_ratio_target': 0.75
+                'hedge_ratio_target': 0.75,
+                'preferred_strategies': ['protective_put', 'collar', 'covered_call']
             },
             'corporate_treasury': {
                 'name': 'Corporate Treasury',
                 'aum': 500000000,
                 'btc_allocation_pct': 5.0,
                 'risk_tolerance': 'conservative',
-                'hedge_ratio_target': 0.90
+                'hedge_ratio_target': 0.90,
+                'preferred_strategies': ['protective_put', 'put_spread', 'collar']
             }
         }
         print("✅ PortfolioAnalyzer initialized")
     
     def analyze(self, portfolio_type=None, custom_params=None):
-        """Analyze portfolio"""
+        """Analyze portfolio with multiple strategy recommendations"""
         try:
             if custom_params:
                 return self._analyze_custom(custom_params)
@@ -145,11 +143,8 @@ class PortfolioAnalyzer:
             btc_allocation = profile['aum'] * (profile['btc_allocation_pct'] / 100)
             btc_size = btc_allocation / btc_price
             
-            # Calculate VaR
             var_1d = self._safe_var_calculation(btc_size, btc_price, vol, 1)
             var_30d = self._safe_var_calculation(btc_size, btc_price, vol, 30)
-            
-            # Generate scenarios
             scenarios = self._generate_scenarios(btc_size, btc_price)
             
             result = {
@@ -169,7 +164,7 @@ class PortfolioAnalyzer:
                 'hedge_recommendation': {
                     'hedge_ratio': profile['hedge_ratio_target'],
                     'hedge_size_btc': round(btc_size * profile['hedge_ratio_target'], 4),
-                    'strategy': 'protective_put'
+                    'preferred_strategies': profile['preferred_strategies']
                 }
             }
             
@@ -186,18 +181,26 @@ class PortfolioAnalyzer:
             btc_price = self.market.get_live_btc_price()
             vol = self.market.get_volatility()
             position_size = float(params.get('size', 1.0))
+            institution_type = params.get('type', 'hedge_fund')
             
             if position_size <= 0:
                 position_size = 1.0
             
             position_value = position_size * btc_price
             
+            # Use institution type preferences for custom positions
+            base_profile = self.profiles.get(institution_type, self.profiles['hedge_fund'])
+            
             var_1d = self._safe_var_calculation(position_size, btc_price, vol, 1)
             var_30d = self._safe_var_calculation(position_size, btc_price, vol, 30)
             scenarios = self._generate_scenarios(position_size, btc_price)
             
             result = {
-                'profile': {'name': 'Custom Position', 'risk_tolerance': 'moderate'},
+                'profile': {
+                    'name': 'Custom Position', 
+                    'risk_tolerance': base_profile['risk_tolerance'],
+                    'preferred_strategies': base_profile['preferred_strategies']
+                },
                 'positions': {
                     'btc_size': round(position_size, 4),
                     'btc_value': round(position_value, 2),
@@ -211,9 +214,9 @@ class PortfolioAnalyzer:
                 },
                 'scenarios': scenarios,
                 'hedge_recommendation': {
-                    'hedge_ratio': 0.80,
-                    'hedge_size_btc': round(position_size * 0.80, 4),
-                    'strategy': 'protective_put'
+                    'hedge_ratio': base_profile['hedge_ratio_target'],
+                    'hedge_size_btc': round(position_size * base_profile['hedge_ratio_target'], 4),
+                    'preferred_strategies': base_profile['preferred_strategies']
                 }
             }
             
@@ -225,20 +228,18 @@ class PortfolioAnalyzer:
             raise Exception(f"Custom analysis failed: {str(e)}")
     
     def _safe_var_calculation(self, size, price, vol, days):
-        """Safe VaR calculation with error handling"""
         try:
             if size <= 0 or price <= 0 or vol <= 0 or days <= 0:
                 return 0.0
             value = size * price
-            z_score = 1.645  # 95% confidence
+            z_score = 1.645
             var = value * vol * z_score * math.sqrt(days / 365)
-            return abs(var)  # Always return positive VaR
+            return abs(var)
         except Exception as e:
             print(f"⚠️ VaR calculation error: {e}")
             return 0.0
     
     def _generate_scenarios(self, size, price):
-        """Generate scenario analysis"""
         scenarios = []
         try:
             value = size * price
@@ -260,45 +261,79 @@ class PortfolioAnalyzer:
         
         return scenarios
 
-class PricingEngine:
-    """Black-Scholes pricing engine"""
+class MultiStrategyPricingEngine:
+    """Enhanced pricing engine with multiple strategy support"""
     
     def __init__(self, market_service):
         self.market = market_service
         self.risk_free_rate = 0.0475
-        print("✅ PricingEngine initialized")
+        print("✅ MultiStrategyPricingEngine initialized")
     
-    def price_strategy(self, strategy_type, size, current_price, strike_offset=-5):
-        """Price strategy with comprehensive error handling"""
+    def price_all_strategies(self, analysis_data):
+        """Price all suitable strategies for the given analysis"""
         try:
-            # Validate inputs
-            if size <= 0:
-                size = 1.0
-            if current_price <= 0:
-                current_price = self.market.get_live_btc_price()
+            positions = analysis_data['positions']
+            hedge_rec = analysis_data['hedge_recommendation']
+            profile = analysis_data['profile']
             
-            vol = self.market.get_volatility()
-            T = 45 / 365.0  # 45 days to expiry
+            current_price = positions['current_price']
+            hedge_size = hedge_rec['hedge_size_btc']
+            preferred_strategies = hedge_rec.get('preferred_strategies', ['protective_put'])
+            risk_tolerance = profile.get('risk_tolerance', 'moderate')
             
-            if strategy_type == 'protective_put' or strategy_type not in ['collar', 'put_spread']:
-                return self._price_protective_put(size, current_price, vol, T, strike_offset)
-            elif strategy_type == 'collar':
-                return self._price_collar(size, current_price, vol, T, strike_offset)
-            elif strategy_type == 'put_spread':
-                return self._price_put_spread(size, current_price, vol, T, strike_offset)
-                
+            strategies = []
+            
+            # Price each preferred strategy
+            for i, strategy_type in enumerate(preferred_strategies):
+                try:
+                    strategy = self._price_single_strategy(
+                        strategy_type, hedge_size, current_price, risk_tolerance
+                    )
+                    strategy['recommended'] = (i == 0)  # First strategy is recommended
+                    strategy['risk_tolerance_match'] = risk_tolerance
+                    strategies.append(strategy)
+                except Exception as e:
+                    print(f"❌ Error pricing {strategy_type}: {e}")
+                    continue
+            
+            # Ensure we have at least one strategy
+            if not strategies:
+                fallback = self._price_single_strategy('protective_put', hedge_size, current_price, risk_tolerance)
+                fallback['recommended'] = True
+                strategies.append(fallback)
+            
+            return strategies
+            
         except Exception as e:
-            print(f"❌ Pricing error: {e}")
-            # Return a safe fallback strategy
-            return self._create_fallback_strategy(size, current_price)
+            print(f"❌ Multi-strategy pricing error: {e}")
+            raise Exception(f"Strategy pricing failed: {str(e)}")
     
-    def _price_protective_put(self, size, S, vol, T, offset):
-        """Price protective put with safety checks"""
+    def _price_single_strategy(self, strategy_type, size, current_price, risk_tolerance):
+        """Price a single strategy"""
+        vol = self.market.get_volatility()
+        T = 45 / 365.0
+        
+        if strategy_type == 'protective_put':
+            return self._price_protective_put(size, current_price, vol, T, -5, risk_tolerance)
+        elif strategy_type == 'collar':
+            return self._price_collar(size, current_price, vol, T, -5, risk_tolerance)
+        elif strategy_type == 'put_spread':
+            return self._price_put_spread(size, current_price, vol, T, -5, risk_tolerance)
+        elif strategy_type == 'covered_call':
+            return self._price_covered_call(size, current_price, vol, T, 10, risk_tolerance)
+        else:
+            return self._price_protective_put(size, current_price, vol, T, -5, risk_tolerance)
+    
+    def _price_protective_put(self, size, S, vol, T, offset, risk_tolerance):
+        """Price protective put strategy"""
         try:
-            K = S * (1 + offset/100)  # Strike price
+            # Adjust strike based on risk tolerance
+            strike_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
+            actual_offset = strike_adj.get(risk_tolerance, -5)
+            
+            K = S * (1 + actual_offset/100)
             put_price = self._safe_bs_put(S, K, T, self.risk_free_rate, vol)
             
-            # Calculate costs
             base_premium = size * put_price
             markup_amount = max(
                 base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100),
@@ -312,10 +347,10 @@ class PricingEngine:
             return {
                 'strategy_type': 'protective_put',
                 'strategy_name': 'Protective Put Strategy',
+                'strategy_description': 'Maximum downside protection with full upside participation. Ideal for conservative portfolios seeking capital preservation.',
                 'position_size': size,
                 'strike_price': round(K, 2),
                 'premium_per_contract_base': round(put_price, 2),
-                'premium_per_contract_client': round(total_cost / size, 2),
                 'base_premium_total': round(base_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
@@ -325,18 +360,172 @@ class PricingEngine:
                 'max_loss': round(max(0, (S - K) * size) + total_cost, 2),
                 'breakeven': round(K - (total_cost / size), 2),
                 'protection_level': round(K, 2),
+                'upside_participation': '100%',
                 'time_to_expiry_days': 45,
-                'greeks': {'delta': -0.3, 'gamma': 0.01, 'vega': 150.0, 'theta': -2.5}
+                'key_benefits': [
+                    'Full downside protection below strike price',
+                    'Unlimited upside potential',
+                    'Clear maximum loss amount',
+                    'Professional execution and pricing'
+                ],
+                'risk_profile': risk_tolerance,
+                'complexity': 'Low'
             }
         except Exception as e:
             print(f"❌ Put pricing error: {e}")
-            return self._create_fallback_strategy(size, S)
+            return self._create_fallback_strategy(size, S, 'protective_put')
+    
+    def _price_collar(self, size, S, vol, T, offset, risk_tolerance):
+        """Price collar strategy"""
+        try:
+            # Adjust strikes based on risk tolerance
+            put_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
+            call_adj = {'conservative': 20, 'moderate': 15, 'aggressive': 12}
+            
+            put_strike = S * (1 + put_adj.get(risk_tolerance, -5)/100)
+            call_strike = S * (1 + call_adj.get(risk_tolerance, 15)/100)
+            
+            put_price = self._safe_bs_put(S, put_strike, T, self.risk_free_rate, vol)
+            call_price = self._safe_bs_call(S, call_strike, T, self.risk_free_rate, vol)
+            
+            net_premium = size * (put_price - call_price)
+            markup_amount = abs(net_premium) * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            total_premium = net_premium + markup_amount if net_premium >= 0 else net_premium - markup_amount
+            exec_fee = PLATFORM_CONFIG['execution_fee']
+            total_cost = abs(total_premium) + exec_fee
+            
+            return {
+                'strategy_type': 'collar',
+                'strategy_name': 'Collar Strategy',
+                'strategy_description': 'Cost-effective protection with capped upside. Reduces premium cost by selling upside above call strike.',
+                'position_size': size,
+                'put_strike': round(put_strike, 2),
+                'call_strike': round(call_strike, 2),
+                'net_premium_base': round(net_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': exec_fee,
+                'total_client_cost': round(total_cost, 2),
+                'platform_revenue': round(markup_amount + exec_fee, 2),
+                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
+                'max_loss': round(max(0, (S - put_strike) * size) + total_cost, 2),
+                'max_upside': round(call_strike, 2),
+                'upside_participation': f"100% up to ${call_strike:,.0f}",
+                'protection_level': round(put_strike, 2),
+                'time_to_expiry_days': 45,
+                'key_benefits': [
+                    'Lower cost than outright put protection',
+                    'Downside protection below put strike',
+                    'Participates in upside to call strike',
+                    'Self-funding in favorable conditions'
+                ],
+                'risk_profile': risk_tolerance,
+                'complexity': 'Medium'
+            }
+        except Exception as e:
+            print(f"❌ Collar pricing error: {e}")
+            return self._create_fallback_strategy(size, S, 'collar')
+    
+    def _price_put_spread(self, size, S, vol, T, offset, risk_tolerance):
+        """Price put spread strategy"""
+        try:
+            # Adjust strikes based on risk tolerance
+            long_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
+            short_adj = {'conservative': -8, 'moderate': -12, 'aggressive': -15}
+            
+            long_strike = S * (1 + long_adj.get(risk_tolerance, -5)/100)
+            short_strike = S * (1 + short_adj.get(risk_tolerance, -12)/100)
+            
+            long_put = self._safe_bs_put(S, long_strike, T, self.risk_free_rate, vol)
+            short_put = self._safe_bs_put(S, short_strike, T, self.risk_free_rate, vol)
+            
+            net_premium = size * (long_put - short_put)
+            markup_amount = net_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            total_premium = net_premium + markup_amount
+            exec_fee = PLATFORM_CONFIG['execution_fee']
+            total_cost = total_premium + exec_fee
+            
+            max_payout = size * (long_strike - short_strike)
+            
+            return {
+                'strategy_type': 'put_spread',
+                'strategy_name': 'Put Spread Strategy',
+                'strategy_description': 'Cost-efficient protection for moderate declines. Lower premium than outright puts with defined risk.',
+                'position_size': size,
+                'long_strike': round(long_strike, 2),
+                'short_strike': round(short_strike, 2),
+                'net_premium_base': round(net_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': exec_fee,
+                'total_client_cost': round(total_cost, 2),
+                'platform_revenue': round(markup_amount + exec_fee, 2),
+                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
+                'max_loss': round(total_cost, 2),
+                'max_payout': round(max_payout, 2),
+                'breakeven': round(long_strike - (total_cost / size), 2),
+                'protection_level': round(long_strike, 2),
+                'upside_participation': '100%',
+                'time_to_expiry_days': 45,
+                'key_benefits': [
+                    'Lower premium cost than outright puts',
+                    'Protection against moderate declines',
+                    'Defined maximum risk and reward',
+                    'Efficient capital utilization'
+                ],
+                'risk_profile': risk_tolerance,
+                'complexity': 'Medium'
+            }
+        except Exception as e:
+            print(f"❌ Put spread pricing error: {e}")
+            return self._create_fallback_strategy(size, S, 'put_spread')
+    
+    def _price_covered_call(self, size, S, vol, T, offset, risk_tolerance):
+        """Price covered call strategy"""
+        try:
+            # Adjust call strike based on risk tolerance
+            call_adj = {'conservative': 15, 'moderate': 10, 'aggressive': 5}
+            call_strike = S * (1 + call_adj.get(risk_tolerance, 10)/100)
+            
+            call_price = self._safe_bs_call(S, call_strike, T, self.risk_free_rate, vol)
+            
+            gross_premium = size * call_price
+            markup_amount = gross_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            net_premium_received = gross_premium - markup_amount
+            exec_fee = PLATFORM_CONFIG['execution_fee']
+            total_net_received = net_premium_received - exec_fee
+            
+            return {
+                'strategy_type': 'covered_call',
+                'strategy_name': 'Covered Call Strategy',
+                'strategy_description': 'Generate income from existing BTC position with capped upside. Ideal for range-bound markets.',
+                'position_size': size,
+                'call_strike': round(call_strike, 2),
+                'premium_received_gross': round(gross_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': exec_fee,
+                'total_net_received': round(total_net_received, 2),
+                'platform_revenue': round(markup_amount + exec_fee, 2),
+                'income_percentage': round((total_net_received / (size * S)) * 100, 2),
+                'max_upside': round(call_strike, 2),
+                'breakeven': round(S - (total_net_received / size), 2),
+                'upside_participation': f"100% up to ${call_strike:,.0f}",
+                'time_to_expiry_days': 45,
+                'key_benefits': [
+                    'Generate income from BTC holdings',
+                    'Reduce cost basis of position',
+                    'Profit in sideways or moderately up markets',
+                    'Professional execution and management'
+                ],
+                'risk_profile': risk_tolerance,
+                'complexity': 'Low-Medium'
+            }
+        except Exception as e:
+            print(f"❌ Covered call pricing error: {e}")
+            return self._create_fallback_strategy(size, S, 'covered_call')
     
     def _safe_bs_put(self, S, K, T, r, sigma):
-        """Safe Black-Scholes put calculation"""
         try:
             if T <= 0 or S <= 0 or K <= 0 or sigma <= 0:
-                return max(0, K - S)  # Intrinsic value
+                return max(0, K - S)
             
             d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T) / (sigma*math.sqrt(T))
             d2 = d1 - sigma*math.sqrt(T)
@@ -344,26 +533,40 @@ class PricingEngine:
             put_price = K*math.exp(-r*T)*self._norm_cdf(-d2) - S*self._norm_cdf(-d1)
             return max(0, put_price)
         except Exception as e:
-            print(f"⚠️ BS calculation error: {e}")
-            return max(0, K - S)  # Fallback to intrinsic value
+            print(f"⚠️ BS put calculation error: {e}")
+            return max(0, K - S)
+    
+    def _safe_bs_call(self, S, K, T, r, sigma):
+        try:
+            if T <= 0 or S <= 0 or K <= 0 or sigma <= 0:
+                return max(0, S - K)
+            
+            d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T) / (sigma*math.sqrt(T))
+            d2 = d1 - sigma*math.sqrt(T)
+            
+            call_price = S*self._norm_cdf(d1) - K*math.exp(-r*T)*self._norm_cdf(d2)
+            return max(0, call_price)
+        except Exception as e:
+            print(f"⚠️ BS call calculation error: {e}")
+            return max(0, S - K)
     
     def _norm_cdf(self, x):
-        """Standard normal CDF approximation"""
         try:
             return 0.5 * (1 + math.erf(x / math.sqrt(2)))
         except:
             return 0.5 if x >= 0 else 0.0
     
-    def _create_fallback_strategy(self, size, price):
+    def _create_fallback_strategy(self, size, price, strategy_type):
         """Create fallback strategy when pricing fails"""
         strike = price * 0.95
-        premium_estimate = price * 0.03 * size  # 3% of position value
+        premium_estimate = price * 0.03 * size
         markup = premium_estimate * 0.025
         total_cost = premium_estimate + markup + 25
         
         return {
-            'strategy_type': 'protective_put',
-            'strategy_name': 'Protective Put Strategy (Estimated)',
+            'strategy_type': strategy_type,
+            'strategy_name': f'{strategy_type.replace("_", " ").title()} Strategy (Estimated)',
+            'strategy_description': 'Estimated pricing due to calculation error. Please contact support for accurate pricing.',
             'position_size': size,
             'strike_price': round(strike, 2),
             'base_premium_total': round(premium_estimate, 2),
@@ -376,7 +579,9 @@ class PricingEngine:
             'breakeven': round(strike - (total_cost / size), 2),
             'protection_level': round(strike, 2),
             'time_to_expiry_days': 45,
-            'greeks': {'delta': -0.3, 'gamma': 0.01, 'vega': 150.0, 'theta': -2.5}
+            'key_benefits': ['Estimated pricing', 'Contact for accurate quotes'],
+            'risk_profile': 'moderate',
+            'complexity': 'Low'
         }
 
 class ExchangeManager:
@@ -391,7 +596,6 @@ class ExchangeManager:
         print("✅ ExchangeManager initialized")
     
     def calculate_optimal_execution(self, total_size, instrument_type='btc_options'):
-        """Calculate execution plan"""
         try:
             return [
                 {
@@ -418,7 +622,6 @@ class PlatformRiskManager:
         print("✅ PlatformRiskManager initialized")
     
     def calculate_net_exposure(self):
-        """Calculate platform exposure"""
         try:
             return {
                 'total_client_long_btc': platform_state['total_client_exposure_btc'],
@@ -448,36 +651,33 @@ class PlatformRiskManager:
                 'net_revenue': 0.0
             }
 
-# Initialize services immediately when module loads
-print("🏛️ Initializing Atticus Professional v17.1...")
+# Initialize services
+print("🏛️ Initializing Atticus Professional v17.2...")
 
-# Create services in order
 market_service = MarketDataService()
 exchange_manager = ExchangeManager()
 portfolio_analyzer = PortfolioAnalyzer(market_service)
-pricing_engine = PricingEngine(market_service)
+multi_strategy_engine = MultiStrategyPricingEngine(market_service)
 platform_risk_manager = PlatformRiskManager(exchange_manager)
 
 print("🎯 All services initialized successfully!")
 
-# Routes with guaranteed initialized services
+# Routes
 @app.route('/')
 def index():
-    """Main page"""
     return render_template('index.html')
 
 @app.route('/api/health')
 def health():
-    """Health check"""
     try:
         return jsonify({
             'status': 'healthy',
-            'version': 'v17.1',
+            'version': 'v17.2',
             'timestamp': datetime.now().isoformat(),
             'services': {
                 'market_data': 'operational',
                 'portfolio_analyzer': 'operational',
-                'pricing_engine': 'operational',
+                'multi_strategy_engine': 'operational',
                 'exchange_manager': 'operational',
                 'platform_risk_manager': 'operational'
             },
@@ -489,7 +689,6 @@ def health():
 
 @app.route('/api/market-data')
 def market_data():
-    """Market data endpoint"""
     try:
         price = market_service.get_live_btc_price()
         vol = market_service.get_volatility()
@@ -504,7 +703,6 @@ def market_data():
         })
     except Exception as e:
         print(f"❌ Market data error: {e}")
-        traceback.print_exc()
         return jsonify({
             'btc_price': 111500.0,
             'volatility': 65.0,
@@ -516,7 +714,6 @@ def market_data():
 
 @app.route('/api/analyze-portfolio', methods=['POST'])
 def analyze_portfolio():
-    """Portfolio analysis endpoint"""
     try:
         data = request.get_json() or {}
         portfolio_type = data.get('type', 'pension_fund')
@@ -531,49 +728,72 @@ def analyze_portfolio():
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Analysis error: {error_msg}")
-        traceback.print_exc()
         return jsonify({'success': False, 'error': error_msg}), 500
 
-@app.route('/api/generate-strategy', methods=['POST'])
-def generate_strategy():
-    """Strategy generation endpoint"""
+@app.route('/api/generate-strategies', methods=['POST'])
+def generate_strategies():
+    """Generate multiple strategy options"""
     try:
         analysis = session.get('portfolio_analysis')
         if not analysis:
             return jsonify({'success': False, 'error': 'No portfolio analysis found'}), 400
         
-        data = request.get_json() or {}
-        strategy_type = data.get('strategy_type', 'protective_put')
+        print(f"💰 Generating multiple strategies for {analysis['profile']['name']}")
         
-        positions = analysis['positions']
-        hedge_rec = analysis['hedge_recommendation']
+        strategies = multi_strategy_engine.price_all_strategies(analysis)
+        session['available_strategies'] = strategies
         
-        strategy = pricing_engine.price_strategy(
-            strategy_type,
-            hedge_rec['hedge_size_btc'],
-            positions['current_price'],
-            -5
-        )
-        
-        # Add context
-        strategy['portfolio_context'] = {
-            'institution': analysis['profile']['name'],
-            'position_size_btc': positions['btc_size'],
-            'var_before': analysis['risk_metrics']['var_30d_95'],
-            'var_after_estimated': analysis['risk_metrics']['var_30d_95'] * 0.25
-        }
-        
-        session['selected_strategy'] = strategy
-        return jsonify({'success': True, 'strategy': strategy})
+        return jsonify({
+            'success': True, 
+            'strategies': strategies,
+            'analysis_context': {
+                'institution': analysis['profile']['name'],
+                'position_size': analysis['positions']['btc_size'],
+                'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate')
+            }
+        })
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Strategy error: {error_msg}")
-        traceback.print_exc()
+        print(f"❌ Strategy generation error: {error_msg}")
+        return jsonify({'success': False, 'error': error_msg}), 500
+
+@app.route('/api/select-strategy', methods=['POST'])
+def select_strategy():
+    """Select a specific strategy for execution"""
+    try:
+        data = request.get_json() or {}
+        strategy_type = data.get('strategy_type')
+        
+        available_strategies = session.get('available_strategies', [])
+        selected_strategy = None
+        
+        for strategy in available_strategies:
+            if strategy['strategy_type'] == strategy_type:
+                selected_strategy = strategy
+                break
+        
+        if not selected_strategy:
+            return jsonify({'success': False, 'error': 'Strategy not found'}), 400
+        
+        # Add portfolio context
+        analysis = session.get('portfolio_analysis')
+        if analysis:
+            selected_strategy['portfolio_context'] = {
+                'institution': analysis['profile']['name'],
+                'position_size_btc': analysis['positions']['btc_size'],
+                'var_before': analysis['risk_metrics']['var_30d_95'],
+                'var_after_estimated': analysis['risk_metrics']['var_30d_95'] * 0.25
+            }
+        
+        session['selected_strategy'] = selected_strategy
+        return jsonify({'success': True, 'strategy': selected_strategy})
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ Strategy selection error: {error_msg}")
         return jsonify({'success': False, 'error': error_msg}), 500
 
 @app.route('/api/execute-strategy', methods=['POST'])
 def execute_strategy():
-    """Strategy execution endpoint"""
     try:
         strategy = session.get('selected_strategy')
         if not strategy:
@@ -586,7 +806,6 @@ def execute_strategy():
         platform_state['total_client_exposure_btc'] += size
         platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
         
-        # Simple hedge logic
         net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
         platform_state['net_platform_exposure_btc'] = net_exposure
         
@@ -606,8 +825,9 @@ def execute_strategy():
         results = {
             'execution_summary': {
                 'status': 'completed',
+                'strategy_name': strategy['strategy_name'],
                 'contracts_filled': size,
-                'total_premium_client': strategy.get('total_client_cost', 0),
+                'total_premium_client': strategy.get('total_client_cost', strategy.get('total_net_received', 0)),
                 'platform_revenue': strategy.get('platform_revenue', 0),
                 'execution_venues': execution_plan
             },
@@ -632,19 +852,16 @@ def execute_strategy():
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Execution error: {error_msg}")
-        traceback.print_exc()
         return jsonify({'success': False, 'error': error_msg}), 500
 
 @app.route('/api/platform-exposure')
 def platform_exposure():
-    """Platform exposure endpoint"""
     try:
         exposure = platform_risk_manager.calculate_net_exposure()
         return jsonify({'success': True, 'exposure': exposure})
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Exposure error: {error_msg}")
-        traceback.print_exc()
         return jsonify({'success': False, 'exposure': {
             'total_client_long_btc': 0.0,
             'total_platform_hedges_btc': 0.0,
@@ -653,10 +870,11 @@ def platform_exposure():
         }}), 500
 
 if __name__ == '__main__':
-    print("🎯 Atticus Professional v17.1 Starting...")
-    print("   ✓ All services pre-initialized")
-    print("   ✓ Error handling implemented")
-    print("   ✓ Fallback values ready")
+    print("🎯 Atticus Professional v17.2 Starting...")
+    print("   ✓ Multi-strategy pricing engine")
+    print("   ✓ Smart strategy recommendations")
+    print("   ✓ Risk tolerance matching")
+    print("   ✓ Enhanced UI layout")
     
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
