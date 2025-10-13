@@ -1,4 +1,4 @@
-// Atticus Professional v17.3 - CFO Feedback Implementation
+// Atticus Professional v17.4 - LIVE DATA ONLY with Error Handling
 class AttticusProfessionalDemo {
     constructor() {
         this.currentStep = 1;
@@ -6,6 +6,7 @@ class AttticusProfessionalDemo {
         this.availableStrategies = null;
         this.selectedStrategy = null;
         this.marketData = null;
+        this.liveDataAvailable = false;
         
         this.init();
     }
@@ -15,7 +16,7 @@ class AttticusProfessionalDemo {
         this.loadPlatformExposure();
         this.setupEventListeners();
         
-        // Update data every 30 seconds
+        // Update live data every 30 seconds
         setInterval(() => {
             this.loadMarketData();
             this.loadPlatformExposure();
@@ -32,22 +33,82 @@ class AttticusProfessionalDemo {
     
     async loadMarketData() {
         try {
+            console.log('📊 Fetching LIVE market data...');
             const response = await fetch('/api/market-data');
             const data = await response.json();
             
-            this.marketData = data;
-            this.updateMarketDisplay(data);
+            if (response.ok && data.status === 'live') {
+                this.marketData = data;
+                this.liveDataAvailable = true;
+                this.updateMarketDisplay(data);
+                this.showLiveDataStatus(true);
+                console.log('✅ Live market data loaded successfully');
+            } else {
+                throw new Error(data.message || 'Live data unavailable');
+            }
         } catch (error) {
-            console.error('Market data error:', error);
+            console.error('🚨 LIVE DATA ERROR:', error);
+            this.liveDataAvailable = false;
+            this.showLiveDataStatus(false, error.message);
             this.updateMarketDisplay({
-                btc_price: 'Error',
-                volatility: 'N/A',
-                risk_free_rate: 5
+                btc_price: 'LIVE DATA ERROR',
+                volatility: 'UNAVAILABLE',
+                risk_free_rate: 'ERROR'
             });
         }
     }
     
-    // NO DECIMAL POINTS - CFO REQUEST
+    showLiveDataStatus(isAvailable, errorMessage = '') {
+        // Update status indicators
+        const statusElements = document.querySelectorAll('.value.live');
+        statusElements.forEach(element => {
+            if (isAvailable) {
+                element.textContent = 'LIVE';
+                element.style.color = 'var(--success)';
+            } else {
+                element.textContent = 'ERROR';
+                element.style.color = 'var(--danger)';
+            }
+        });
+        
+        // Show error message if needed
+        if (!isAvailable && errorMessage) {
+            this.showDataError(errorMessage);
+        }
+    }
+    
+    showDataError(message) {
+        // Create or update error banner
+        let errorBanner = document.getElementById('live-data-error');
+        if (!errorBanner) {
+            errorBanner = document.createElement('div');
+            errorBanner.id = 'live-data-error';
+            errorBanner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+                color: white;
+                padding: 16px 32px;
+                text-align: center;
+                font-weight: 700;
+                font-size: 16px;
+                z-index: 2000;
+                box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+            `;
+            document.body.prepend(errorBanner);
+        }
+        
+        errorBanner.innerHTML = `
+            🚨 LIVE DATA ERROR: ${message}
+            <br>
+            <span style="font-size: 14px; font-weight: 500;">
+                Platform requires live market data. Please try again or contact support.
+            </span>
+        `;
+    }
+    
     formatCurrency(value) {
         if (typeof value !== 'number') return value;
         return `$${Math.round(value).toLocaleString()}`;
@@ -71,12 +132,26 @@ class AttticusProfessionalDemo {
             btcPrice.textContent = typeof data.btc_price === 'number' 
                 ? this.formatCurrency(data.btc_price)
                 : data.btc_price;
+                
+            // Color code based on data availability
+            if (data.btc_price === 'LIVE DATA ERROR') {
+                btcPrice.style.color = 'var(--danger)';
+            } else if (typeof data.btc_price === 'number') {
+                btcPrice.style.color = 'var(--text-bright)';
+            }
         }
         
         if (volatility) {
             volatility.textContent = typeof data.volatility === 'number'
                 ? this.formatPercentage(data.volatility)
                 : data.volatility;
+                
+            // Color code based on data availability
+            if (data.volatility === 'UNAVAILABLE') {
+                volatility.style.color = 'var(--danger)';
+            } else if (typeof data.volatility === 'number') {
+                volatility.style.color = 'var(--text-bright)';
+            }
         }
     }
     
@@ -128,7 +203,13 @@ class AttticusProfessionalDemo {
     }
     
     async analyzePortfolio(portfolioType) {
-        this.showLoading('Analyzing institutional portfolio...');
+        // Check live data availability
+        if (!this.liveDataAvailable) {
+            alert('🚨 LIVE DATA REQUIRED: Portfolio analysis requires live market data. Please wait for data connection or try again.');
+            return;
+        }
+        
+        this.showLoading('Analyzing portfolio with LIVE market data...');
         
         try {
             const response = await fetch('/api/analyze-portfolio', {
@@ -139,16 +220,21 @@ class AttticusProfessionalDemo {
             
             const data = await response.json();
             
-            if (data.success) {
+            if (data.success && data.analysis.data_source === 'LIVE_MARKET_DATA') {
                 this.portfolioAnalysis = data.analysis;
                 this.displayAnalysisResults(data.analysis);
                 this.showStep(2);
             } else {
-                alert('Error analyzing portfolio: ' + data.error);
+                const errorMsg = data.error || 'Analysis failed';
+                if (data.error_type === 'LIVE_DATA_REQUIRED') {
+                    alert('🚨 LIVE DATA ERROR: ' + errorMsg);
+                } else {
+                    alert('Analysis Error: ' + errorMsg);
+                }
             }
         } catch (error) {
             console.error('Portfolio analysis error:', error);
-            alert('Error analyzing portfolio. Please try again.');
+            alert('🚨 CRITICAL ERROR: Portfolio analysis failed. Live market data may be unavailable.');
         } finally {
             this.hideLoading();
         }
@@ -163,7 +249,13 @@ class AttticusProfessionalDemo {
             return;
         }
         
-        this.showLoading('Analyzing custom position...');
+        // Check live data availability
+        if (!this.liveDataAvailable) {
+            alert('🚨 LIVE DATA REQUIRED: Portfolio analysis requires live market data. Please wait for data connection or try again.');
+            return;
+        }
+        
+        this.showLoading('Analyzing custom position with LIVE market data...');
         
         try {
             const response = await fetch('/api/analyze-portfolio', {
@@ -176,16 +268,21 @@ class AttticusProfessionalDemo {
             
             const data = await response.json();
             
-            if (data.success) {
+            if (data.success && data.analysis.data_source === 'LIVE_MARKET_DATA') {
                 this.portfolioAnalysis = data.analysis;
                 this.displayAnalysisResults(data.analysis);
                 this.showStep(2);
             } else {
-                alert('Error analyzing position: ' + data.error);
+                const errorMsg = data.error || 'Analysis failed';
+                if (data.error_type === 'LIVE_DATA_REQUIRED') {
+                    alert('🚨 LIVE DATA ERROR: ' + errorMsg);
+                } else {
+                    alert('Analysis Error: ' + errorMsg);
+                }
             }
         } catch (error) {
             console.error('Custom analysis error:', error);
-            alert('Error analyzing position. Please try again.');
+            alert('🚨 CRITICAL ERROR: Position analysis failed. Live market data may be unavailable.');
         } finally {
             this.hideLoading();
         }
@@ -194,7 +291,15 @@ class AttticusProfessionalDemo {
     displayAnalysisResults(analysis) {
         const container = document.getElementById('analysis-results');
         
+        // Add live data timestamp
+        const timestamp = new Date(analysis.data_timestamp).toLocaleString();
+        
         const html = `
+            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 20px; margin-bottom: 32px; text-align: center;">
+                <h5 style="color: var(--success); margin-bottom: 8px; font-size: 16px;">✅ LIVE MARKET DATA ANALYSIS</h5>
+                <p style="color: var(--text-bright); font-size: 14px;">Data Source: ${analysis.data_source} | Timestamp: ${timestamp}</p>
+            </div>
+            
             <div class="analysis-card">
                 <h4>Portfolio Overview</h4>
                 <div class="metrics-grid">
@@ -211,14 +316,14 @@ class AttticusProfessionalDemo {
                         <span class="metric-value">${this.formatCurrency(analysis.positions.btc_value)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Current BTC Price</span>
-                        <span class="metric-value">${this.formatCurrency(analysis.positions.current_price)}</span>
+                        <span class="metric-label">Live BTC Price</span>
+                        <span class="metric-value" style="color: var(--success);">${this.formatCurrency(analysis.positions.current_price)}</span>
                     </div>
                 </div>
             </div>
             
             <div class="analysis-card">
-                <h4>Risk Analysis</h4>
+                <h4>Risk Analysis (Live Data)</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
                         <span class="metric-label">1-Day VaR (95%)</span>
@@ -229,8 +334,8 @@ class AttticusProfessionalDemo {
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_30d_95)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Annual Volatility</span>
-                        <span class="metric-value">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span>
+                        <span class="metric-label">Live Volatility</span>
+                        <span class="metric-value" style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span>
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Max Drawdown (30%)</span>
@@ -279,7 +384,7 @@ class AttticusProfessionalDemo {
     }
     
     async generateStrategies() {
-        this.showLoading('Generating multiple hedging strategies...');
+        this.showLoading('Generating strategies with LIVE market data...');
         
         try {
             const response = await fetch('/api/generate-strategies', {
@@ -289,16 +394,21 @@ class AttticusProfessionalDemo {
             
             const data = await response.json();
             
-            if (data.success) {
+            if (data.success && data.analysis_context.data_source === 'LIVE_MARKET_DATA') {
                 this.availableStrategies = data.strategies;
                 this.displayStrategies(data.strategies, data.analysis_context);
                 this.showStep(3);
             } else {
-                alert('Error generating strategies: ' + data.error);
+                const errorMsg = data.error || 'Strategy generation failed';
+                if (data.error_type === 'LIVE_DATA_REQUIRED') {
+                    alert('🚨 LIVE DATA ERROR: ' + errorMsg);
+                } else {
+                    alert('Strategy Error: ' + errorMsg);
+                }
             }
         } catch (error) {
             console.error('Strategy generation error:', error);
-            alert('Error generating strategies. Please try again.');
+            alert('🚨 CRITICAL ERROR: Strategy generation failed. Live market data may be unavailable.');
         } finally {
             this.hideLoading();
         }
@@ -308,9 +418,10 @@ class AttticusProfessionalDemo {
         const container = document.getElementById('strategy-results');
         
         let html = `
-            <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(37,99,235,0.1) 100%); border-radius: 20px; border: 2px solid rgba(251,191,36,0.3);">
-                <h4 style="color: var(--warning-light); margin-bottom: 16px; font-size: 24px;">Smart Strategy Recommendations for ${context.institution}</h4>
+            <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border-radius: 20px; border: 2px solid var(--success);">
+                <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ LIVE DATA STRATEGIES for ${context.institution}</h4>
                 <p style="color: var(--text-bright); font-size: 18px;">Based on ${context.risk_tolerance} risk tolerance and ${Math.round(context.position_size)} BTC position</p>
+                <p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">All strategies priced with live market data and real-time volatility</p>
             </div>
             
             <div class="strategies-grid">
@@ -318,12 +429,18 @@ class AttticusProfessionalDemo {
         
         strategies.forEach((strategy, index) => {
             const isRecommended = strategy.recommended || index === 0;
+            const timestamp = new Date(strategy.pricing_timestamp).toLocaleString();
             
             html += `
                 <div class="strategy-option ${isRecommended ? 'recommended' : ''}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
                     <div class="strategy-header">
                         <div class="strategy-name">${strategy.strategy_name}</div>
                         <div class="strategy-cost">${Math.round(strategy.cost_percentage || strategy.income_percentage || 0)}%</div>
+                    </div>
+                    
+                    <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                        <div style="font-size: 12px; color: var(--success); font-weight: 700;">✅ LIVE DATA PRICING</div>
+                        <div style="font-size: 11px; color: var(--text-light);">${timestamp}</div>
                     </div>
                     
                     <div class="strategy-description">${strategy.strategy_description}</div>
@@ -354,8 +471,8 @@ class AttticusProfessionalDemo {
                         </ul>
                     </div>
                     
-                    <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(37,99,235,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(251,191,36,0.4);">
-                        <span style="color: var(--warning-light); font-weight: 700; font-size: 15px;">Click to Select Strategy</span>
+                    <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(16,185,129,0.4);">
+                        <span style="color: var(--success); font-weight: 700; font-size: 15px;">Select Live-Priced Strategy</span>
                     </div>
                 </div>
             `;
@@ -366,7 +483,7 @@ class AttticusProfessionalDemo {
     }
     
     async selectStrategy(strategyType) {
-        this.showLoading('Selecting strategy for execution...');
+        this.showLoading('Selecting strategy (live data verified)...');
         
         try {
             const response = await fetch('/api/select-strategy', {
@@ -384,11 +501,11 @@ class AttticusProfessionalDemo {
                     this.executeStrategy();
                 }, 1500);
             } else {
-                alert('Error selecting strategy: ' + data.error);
+                alert('Strategy Selection Error: ' + data.error);
             }
         } catch (error) {
             console.error('Strategy selection error:', error);
-            alert('Error selecting strategy. Please try again.');
+            alert('🚨 CRITICAL ERROR: Strategy selection failed.');
         } finally {
             this.hideLoading();
         }
@@ -399,14 +516,15 @@ class AttticusProfessionalDemo {
         const summaryHtml = `
             <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border: 3px solid var(--success); border-radius: 16px; padding: 28px; margin-bottom: 28px; text-align: center;">
                 <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ ${strategy.strategy_name} Selected</h4>
-                <p style="color: var(--text-bright); font-size: 17px;">Proceeding to execution via institutional channels...</p>
+                <p style="color: var(--text-bright); font-size: 17px;">Executing with live market data pricing...</p>
+                <p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">Data Source: ${strategy.data_source}</p>
             </div>
         `;
         container.innerHTML = summaryHtml + container.innerHTML;
     }
     
     async executeStrategy() {
-        this.showLoading('Executing strategy via institutional channels...');
+        this.showLoading('Executing strategy with live data verification...');
         
         try {
             const response = await fetch('/api/execute-strategy', {
@@ -421,11 +539,11 @@ class AttticusProfessionalDemo {
                 this.showStep(4);
                 this.loadPlatformExposure();
             } else {
-                alert('Error executing strategy: ' + data.error);
+                alert('Execution Error: ' + data.error);
             }
         } catch (error) {
             console.error('Execution error:', error);
-            alert('Error executing strategy. Please try again.');
+            alert('🚨 CRITICAL ERROR: Strategy execution failed.');
         } finally {
             this.hideLoading();
         }
@@ -433,8 +551,14 @@ class AttticusProfessionalDemo {
     
     displayExecutionResults(execution) {
         const container = document.getElementById('execution-results');
+        const timestamp = new Date(execution.execution_summary.execution_timestamp).toLocaleString();
         
         const html = `
+            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 24px; margin-bottom: 32px; text-align: center;">
+                <h5 style="color: var(--success); margin-bottom: 8px; font-size: 18px;">✅ LIVE DATA EXECUTION COMPLETED</h5>
+                <p style="color: var(--text-bright); font-size: 14px;">Execution Time: ${timestamp} | Data Source: ${execution.execution_summary.data_source}</p>
+            </div>
+            
             <div class="analysis-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); border-color: var(--success);">
                 <h4>✅ Execution Completed Successfully</h4>
                 <div class="metrics-grid">
@@ -505,8 +629,8 @@ class AttticusProfessionalDemo {
                 <h4>Execution Venues</h4>
                 <div style="display: grid; gap: 12px;">
                     ${execution.execution_summary.execution_venues.map(venue => `
-                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, rgba(30,41,59,0.2) 0%, rgba(37,99,235,0.1) 100%); border-radius: 12px; border: 1px solid rgba(251,191,36,0.2);">
-                            <span style="font-weight: 700; font-size: 16px; color: var(--warning-light);">${venue.exchange.toUpperCase()}</span>
+                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, rgba(30,41,59,0.2) 0%, rgba(37,99,235,0.1) 100%); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2);">
+                            <span style="font-weight: 700; font-size: 16px; color: var(--success);">${venue.exchange.toUpperCase()}</span>
                             <span style="font-size: 16px; color: var(--text-bright);">${Math.round(venue.size)} BTC (${venue.liquidity} liquidity)</span>
                         </div>
                     `).join('')}
@@ -531,6 +655,12 @@ class AttticusProfessionalDemo {
         document.getElementById('analysis-results').innerHTML = '';
         document.getElementById('strategy-results').innerHTML = '';
         document.getElementById('execution-results').innerHTML = '';
+        
+        // Remove error banner if exists
+        const errorBanner = document.getElementById('live-data-error');
+        if (errorBanner) {
+            errorBanner.remove();
+        }
     }
     
     showSection(sectionName) {
@@ -549,7 +679,7 @@ class AttticusProfessionalDemo {
         if (targetNav) targetNav.classList.add('active');
     }
     
-    showLoading(message = 'Processing...') {
+    showLoading(message = 'Processing with live data...') {
         const overlay = document.getElementById('loading');
         const text = document.getElementById('loading-text');
         
@@ -562,30 +692,15 @@ class AttticusProfessionalDemo {
     }
 }
 
-// Global functions for onclick handlers
-function showSection(section) {
-    demo.showSection(section);
-}
+// Global functions
+function showSection(section) { demo.showSection(section); }
+function analyzePortfolio(type) { demo.analyzePortfolio(type); }
+function analyzeCustomPosition() { demo.analyzeCustomPosition(); }
+function generateStrategy() { demo.generateStrategies(); }
+function resetDemo() { demo.resetDemo(); }
 
-function analyzePortfolio(type) {
-    demo.analyzePortfolio(type);
-}
-
-function analyzeCustomPosition() {
-    demo.analyzeCustomPosition();
-}
-
-function generateStrategy() {
-    demo.generateStrategies();
-}
-
-function resetDemo() {
-    demo.resetDemo();
-}
-
-// Initialize demo
+// Initialize
 let demo;
-
 document.addEventListener('DOMContentLoaded', function() {
     demo = new AttticusProfessionalDemo();
 });

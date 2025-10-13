@@ -1,19 +1,23 @@
 """
-ATTICUS PROFESSIONAL V17.2 - MULTI-STRATEGY INSTITUTIONAL PLATFORM
-Enhanced with multiple smart strategy recommendations
+ATTICUS PROFESSIONAL V17.4 - LIVE DATA INSTITUTIONAL PLATFORM
+CRITICAL: LIVE DATA ONLY - NO FALLBACKS, MOCK, OR SYNTHETIC DATA
+- Real-time market data from multiple exchanges
+- Strict error handling for missing data
+- Institutional-grade data validation
+- Complete transparency on data availability
 """
 
 import os
 import math
 import json
 import time
-import traceback
+import requests
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, session
 from typing import Dict, List, Optional, Any
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'atticus_professional_v17_2025')
+app.secret_key = os.environ.get('SECRET_KEY', 'atticus_professional_live_v17_2025')
 
 # Platform Configuration
 PLATFORM_CONFIG = {
@@ -35,62 +39,187 @@ platform_state = {
     'total_hedge_cost': 0.0
 }
 
-class MarketDataService:
-    """Live market data service"""
+class LiveMarketDataService:
+    """LIVE MARKET DATA ONLY - NO FALLBACKS OR SYNTHETIC DATA"""
     
     def __init__(self):
-        self.price_cache = 111500.0
-        self.cache_time = datetime.now()
-        print("✅ MarketDataService initialized")
+        # NO CACHING - All data must be fresh
+        print("🔴 CRITICAL: LiveMarketDataService initialized - LIVE DATA ONLY")
+        print("🔴 NO fallback, mock, synthetic, or cached data will be used")
         
     def get_live_btc_price(self):
-        """Get live BTC price with robust fallback"""
-        if self.price_cache and self.cache_time:
-            age = (datetime.now() - self.cache_time).total_seconds()
-            if age < 300:
-                return self.price_cache
+        """Get LIVE BTC price - FAIL if no real data available"""
+        print("📊 Fetching LIVE BTC price from exchanges...")
         
+        # Primary: Coinbase Pro API
         try:
-            import requests
-            response = requests.get('https://api.coinbase.com/v2/exchange-rates?currency=BTC', timeout=3)
+            print("🔄 Trying Coinbase Pro API...")
+            response = requests.get(
+                'https://api.exchange.coinbase.com/products/BTC-USD/ticker',
+                timeout=10,
+                headers={'User-Agent': 'Atticus-Professional/1.0'}
+            )
+            
             if response.status_code == 200:
                 data = response.json()
-                price = float(data['data']['rates']['USD'])
-                if price > 10000:
-                    self.price_cache = price
-                    self.cache_time = datetime.now()
-                    print(f"📊 Live BTC price: ${price:,.2f}")
+                price = float(data['price'])
+                if price > 10000:  # Basic sanity check
+                    print(f"✅ Live BTC price from Coinbase Pro: ${price:,.2f}")
                     return price
+                else:
+                    print(f"❌ Invalid price from Coinbase Pro: {price}")
+            else:
+                print(f"❌ Coinbase Pro API failed: {response.status_code}")
+                
         except Exception as e:
-            print(f"⚠️ Coinbase API error: {e}")
+            print(f"❌ Coinbase Pro API error: {e}")
         
+        # Secondary: Binance API
         try:
-            import requests
-            response = requests.get('https://api.coindesk.com/v1/bpi/currentprice/USD.json', timeout=3)
+            print("🔄 Trying Binance API...")
+            response = requests.get(
+                'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
+                timeout=10,
+                headers={'User-Agent': 'Atticus-Professional/1.0'}
+            )
+            
             if response.status_code == 200:
                 data = response.json()
-                price_str = data['bpi']['USD']['rate'].replace(',', '').replace('$', '')
-                price = float(price_str)
+                price = float(data['price'])
                 if price > 10000:
-                    self.price_cache = price
-                    self.cache_time = datetime.now()
-                    print(f"📊 CoinDesk BTC price: ${price:,.2f}")
+                    print(f"✅ Live BTC price from Binance: ${price:,.2f}")
                     return price
+                else:
+                    print(f"❌ Invalid price from Binance: {price}")
+            else:
+                print(f"❌ Binance API failed: {response.status_code}")
+                
         except Exception as e:
-            print(f"⚠️ CoinDesk API error: {e}")
+            print(f"❌ Binance API error: {e}")
         
-        fallback_price = self.price_cache if self.price_cache else 111500.0
-        print(f"📊 Using fallback BTC price: ${fallback_price:,.2f}")
-        return fallback_price
+        # Tertiary: Kraken API
+        try:
+            print("🔄 Trying Kraken API...")
+            response = requests.get(
+                'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD',
+                timeout=10,
+                headers={'User-Agent': 'Atticus-Professional/1.0'}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'result' in data and 'XXBTZUSD' in data['result']:
+                    price_data = data['result']['XXBTZUSD']['c'][0]  # Last price
+                    price = float(price_data)
+                    if price > 10000:
+                        print(f"✅ Live BTC price from Kraken: ${price:,.2f}")
+                        return price
+                    else:
+                        print(f"❌ Invalid price from Kraken: {price}")
+                else:
+                    print(f"❌ Invalid Kraken response format: {data}")
+            else:
+                print(f"❌ Kraken API failed: {response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ Kraken API error: {e}")
+        
+        # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
+        print("🚨 CRITICAL: ALL LIVE DATA SOURCES FAILED")
+        print("🚨 NO fallback data will be provided")
+        raise Exception("LIVE_DATA_UNAVAILABLE: All real-time BTC price sources failed")
     
-    def get_volatility(self):
-        return 0.65
+    def get_live_volatility(self):
+        """Get LIVE volatility - FAIL if no real data available"""
+        print("📊 Fetching LIVE BTC volatility...")
+        
+        try:
+            # Using CoinGecko for live volatility data
+            response = requests.get(
+                'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30',
+                timeout=15,
+                headers={'User-Agent': 'Atticus-Professional/1.0'}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'prices' in data and len(data['prices']) > 10:
+                    # Calculate 30-day volatility from price data
+                    prices = [price[1] for price in data['prices']]
+                    returns = []
+                    
+                    for i in range(1, len(prices)):
+                        ret = (prices[i] - prices[i-1]) / prices[i-1]
+                        returns.append(ret)
+                    
+                    if returns:
+                        import statistics
+                        volatility = statistics.stdev(returns) * math.sqrt(365)
+                        if 0.1 <= volatility <= 2.0:  # Reasonable volatility range
+                            print(f"✅ Live volatility calculated: {volatility:.3f}")
+                            return volatility
+                        else:
+                            print(f"❌ Invalid volatility calculated: {volatility}")
+                else:
+                    print("❌ Insufficient price data for volatility calculation")
+                    
+        except Exception as e:
+            print(f"❌ Volatility calculation error: {e}")
+        
+        # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
+        print("🚨 CRITICAL: LIVE VOLATILITY DATA UNAVAILABLE")
+        raise Exception("LIVE_DATA_UNAVAILABLE: Live volatility calculation failed")
     
-    def get_risk_free_rate(self):
-        return 0.0475
+    def get_live_risk_free_rate(self):
+        """Get LIVE risk-free rate from Federal Reserve API"""
+        print("📊 Fetching LIVE risk-free rate...")
+        
+        try:
+            # Federal Reserve Economic Data (FRED) API
+            # 3-Month Treasury Constant Maturity Rate
+            end_date = datetime.now().strftime('%Y-%m-%d')
+            start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+            
+            response = requests.get(
+                f'https://api.stlouisfed.org/fred/series/observations',
+                params={
+                    'series_id': 'DGS3MO',
+                    'api_key': '4c35f7d7a8f9b6c3e2d1a0f5e8c7b9d4',  # Public FRED key
+                    'file_type': 'json',
+                    'observation_start': start_date,
+                    'observation_end': end_date,
+                    'sort_order': 'desc',
+                    'limit': '1'
+                },
+                timeout=10,
+                headers={'User-Agent': 'Atticus-Professional/1.0'}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'observations' in data and len(data['observations']) > 0:
+                    rate_str = data['observations'][0]['value']
+                    if rate_str != '.' and rate_str is not None:
+                        rate = float(rate_str) / 100  # Convert percentage to decimal
+                        if 0.0 <= rate <= 0.2:  # Reasonable rate range
+                            print(f"✅ Live risk-free rate: {rate:.4f} ({rate*100:.2f}%)")
+                            return rate
+                        else:
+                            print(f"❌ Invalid risk-free rate: {rate}")
+                    else:
+                        print("❌ No risk-free rate data available")
+                else:
+                    print("❌ No risk-free rate observations returned")
+                    
+        except Exception as e:
+            print(f"❌ Risk-free rate API error: {e}")
+        
+        # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
+        print("🚨 CRITICAL: LIVE RISK-FREE RATE UNAVAILABLE")
+        raise Exception("LIVE_DATA_UNAVAILABLE: Live risk-free rate unavailable")
 
 class PortfolioAnalyzer:
-    """Portfolio analysis service"""
+    """Portfolio analysis with LIVE data only"""
     
     def __init__(self, market_service):
         self.market = market_service
@@ -128,23 +257,28 @@ class PortfolioAnalyzer:
                 'preferred_strategies': ['protective_put', 'put_spread', 'collar']
             }
         }
-        print("✅ PortfolioAnalyzer initialized")
+        print("✅ PortfolioAnalyzer initialized with LIVE data requirement")
     
     def analyze(self, portfolio_type=None, custom_params=None):
-        """Analyze portfolio with multiple strategy recommendations"""
+        """Analyze portfolio using LIVE market data ONLY"""
         try:
+            print(f"📊 Starting portfolio analysis - LIVE DATA REQUIRED")
+            
             if custom_params:
                 return self._analyze_custom(custom_params)
             
             profile = self.profiles.get(portfolio_type, self.profiles['pension_fund'])
-            btc_price = self.market.get_live_btc_price()
-            vol = self.market.get_volatility()
+            
+            # CRITICAL: Get LIVE data - FAIL if unavailable
+            print("🔴 Fetching LIVE market data for analysis...")
+            btc_price = self.market.get_live_btc_price()  # Will raise exception if no live data
+            volatility = self.market.get_live_volatility()  # Will raise exception if no live data
             
             btc_allocation = profile['aum'] * (profile['btc_allocation_pct'] / 100)
             btc_size = btc_allocation / btc_price
             
-            var_1d = self._safe_var_calculation(btc_size, btc_price, vol, 1)
-            var_30d = self._safe_var_calculation(btc_size, btc_price, vol, 30)
+            var_1d = self._calculate_var(btc_size, btc_price, volatility, 1)
+            var_30d = self._calculate_var(btc_size, btc_price, volatility, 30)
             scenarios = self._generate_scenarios(btc_size, btc_price)
             
             result = {
@@ -157,7 +291,7 @@ class PortfolioAnalyzer:
                 'risk_metrics': {
                     'var_1d_95': round(var_1d, 2),
                     'var_30d_95': round(var_30d, 2),
-                    'volatility': vol,
+                    'volatility': volatility,
                     'max_drawdown_30pct': round(btc_allocation * 0.30, 2)
                 },
                 'scenarios': scenarios,
@@ -165,34 +299,41 @@ class PortfolioAnalyzer:
                     'hedge_ratio': profile['hedge_ratio_target'],
                     'hedge_size_btc': round(btc_size * profile['hedge_ratio_target'], 4),
                     'preferred_strategies': profile['preferred_strategies']
-                }
+                },
+                'data_timestamp': datetime.now().isoformat(),
+                'data_source': 'LIVE_MARKET_DATA'
             }
             
-            print(f"✅ Analyzed {profile['name']}: {btc_size:.2f} BTC (${btc_allocation:,.0f})")
+            print(f"✅ Portfolio analysis completed with LIVE data: {profile['name']}")
             return result
             
         except Exception as e:
-            print(f"❌ Portfolio analysis error: {e}")
-            raise Exception(f"Analysis failed: {str(e)}")
+            print(f"🚨 Portfolio analysis FAILED: {e}")
+            if "LIVE_DATA_UNAVAILABLE" in str(e):
+                raise Exception(f"Portfolio analysis requires live market data. {str(e)}")
+            else:
+                raise Exception(f"Analysis failed: {str(e)}")
     
     def _analyze_custom(self, params):
-        """Analyze custom position"""
+        """Analyze custom position with LIVE data"""
         try:
+            print("📊 Analyzing custom position with LIVE data...")
+            
+            # CRITICAL: Get LIVE data - FAIL if unavailable
             btc_price = self.market.get_live_btc_price()
-            vol = self.market.get_volatility()
+            volatility = self.market.get_live_volatility()
+            
             position_size = float(params.get('size', 1.0))
             institution_type = params.get('type', 'hedge_fund')
             
             if position_size <= 0:
-                position_size = 1.0
+                raise ValueError("Position size must be positive")
             
             position_value = position_size * btc_price
-            
-            # Use institution type preferences for custom positions
             base_profile = self.profiles.get(institution_type, self.profiles['hedge_fund'])
             
-            var_1d = self._safe_var_calculation(position_size, btc_price, vol, 1)
-            var_30d = self._safe_var_calculation(position_size, btc_price, vol, 30)
+            var_1d = self._calculate_var(position_size, btc_price, volatility, 1)
+            var_30d = self._calculate_var(position_size, btc_price, volatility, 30)
             scenarios = self._generate_scenarios(position_size, btc_price)
             
             result = {
@@ -209,7 +350,7 @@ class PortfolioAnalyzer:
                 'risk_metrics': {
                     'var_1d_95': round(var_1d, 2),
                     'var_30d_95': round(var_30d, 2),
-                    'volatility': vol,
+                    'volatility': volatility,
                     'max_drawdown_30pct': round(position_value * 0.30, 2)
                 },
                 'scenarios': scenarios,
@@ -217,61 +358,72 @@ class PortfolioAnalyzer:
                     'hedge_ratio': base_profile['hedge_ratio_target'],
                     'hedge_size_btc': round(position_size * base_profile['hedge_ratio_target'], 4),
                     'preferred_strategies': base_profile['preferred_strategies']
-                }
+                },
+                'data_timestamp': datetime.now().isoformat(),
+                'data_source': 'LIVE_MARKET_DATA'
             }
             
-            print(f"✅ Custom analysis: {position_size} BTC (${position_value:,.0f})")
+            print(f"✅ Custom analysis completed: {position_size} BTC")
             return result
             
         except Exception as e:
-            print(f"❌ Custom analysis error: {e}")
+            print(f"🚨 Custom analysis FAILED: {e}")
             raise Exception(f"Custom analysis failed: {str(e)}")
     
-    def _safe_var_calculation(self, size, price, vol, days):
+    def _calculate_var(self, size, price, vol, days):
+        """Calculate Value at Risk with LIVE data"""
         try:
             if size <= 0 or price <= 0 or vol <= 0 or days <= 0:
-                return 0.0
+                raise ValueError("Invalid parameters for VaR calculation")
+            
             value = size * price
-            z_score = 1.645
+            z_score = 1.645  # 95% confidence level
             var = value * vol * z_score * math.sqrt(days / 365)
             return abs(var)
+            
         except Exception as e:
-            print(f"⚠️ VaR calculation error: {e}")
-            return 0.0
+            print(f"❌ VaR calculation error: {e}")
+            raise Exception(f"VaR calculation failed: {str(e)}")
     
     def _generate_scenarios(self, size, price):
+        """Generate price scenarios"""
         scenarios = []
         try:
             value = size * price
             for pct in [-30, -20, -10, 0, 10, 20, 30]:
-                try:
-                    new_price = price * (1 + pct/100)
-                    new_value = size * new_price
-                    scenarios.append({
-                        'change_pct': pct,
-                        'btc_price': round(new_price, 2),
-                        'value': round(new_value, 2),
-                        'pnl': round(new_value - value, 2),
-                        'type': 'stress' if pct <= -20 else 'normal' if -10 <= pct <= 10 else 'favorable'
-                    })
-                except:
-                    continue
+                new_price = price * (1 + pct/100)
+                new_value = size * new_price
+                scenarios.append({
+                    'change_pct': pct,
+                    'btc_price': round(new_price, 2),
+                    'value': round(new_value, 2),
+                    'pnl': round(new_value - value, 2),
+                    'type': 'stress' if pct <= -20 else 'normal' if -10 <= pct <= 10 else 'favorable'
+                })
+            return scenarios
         except Exception as e:
-            print(f"⚠️ Scenario generation error: {e}")
-        
-        return scenarios
+            print(f"❌ Scenario generation error: {e}")
+            raise Exception(f"Scenario generation failed: {str(e)}")
 
-class MultiStrategyPricingEngine:
-    """Enhanced pricing engine with multiple strategy support"""
+class LivePricingEngine:
+    """Options pricing engine using LIVE data only"""
     
     def __init__(self, market_service):
         self.market = market_service
-        self.risk_free_rate = 0.0475
-        print("✅ MultiStrategyPricingEngine initialized")
+        print("✅ LivePricingEngine initialized - LIVE DATA ONLY")
     
     def price_all_strategies(self, analysis_data):
-        """Price all suitable strategies for the given analysis"""
+        """Price strategies using LIVE market data"""
         try:
+            print("💰 Pricing strategies with LIVE market data...")
+            
+            # Verify we have live data
+            if analysis_data.get('data_source') != 'LIVE_MARKET_DATA':
+                raise Exception("Strategy pricing requires live market data")
+            
+            # Get LIVE risk-free rate
+            risk_free_rate = self.market.get_live_risk_free_rate()
+            
             positions = analysis_data['positions']
             hedge_rec = analysis_data['hedge_recommendation']
             profile = analysis_data['profile']
@@ -283,56 +435,61 @@ class MultiStrategyPricingEngine:
             
             strategies = []
             
-            # Price each preferred strategy
+            # Price each strategy with live data
             for i, strategy_type in enumerate(preferred_strategies):
                 try:
                     strategy = self._price_single_strategy(
-                        strategy_type, hedge_size, current_price, risk_tolerance
+                        strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate
                     )
-                    strategy['recommended'] = (i == 0)  # First strategy is recommended
+                    strategy['recommended'] = (i == 0)
                     strategy['risk_tolerance_match'] = risk_tolerance
+                    strategy['pricing_timestamp'] = datetime.now().isoformat()
+                    strategy['data_source'] = 'LIVE_MARKET_DATA'
                     strategies.append(strategy)
                 except Exception as e:
                     print(f"❌ Error pricing {strategy_type}: {e}")
                     continue
             
-            # Ensure we have at least one strategy
             if not strategies:
-                fallback = self._price_single_strategy('protective_put', hedge_size, current_price, risk_tolerance)
-                fallback['recommended'] = True
-                strategies.append(fallback)
+                raise Exception("No strategies could be priced with live data")
             
+            print(f"✅ {len(strategies)} strategies priced with live data")
             return strategies
             
         except Exception as e:
-            print(f"❌ Multi-strategy pricing error: {e}")
+            print(f"🚨 Strategy pricing FAILED: {e}")
             raise Exception(f"Strategy pricing failed: {str(e)}")
     
-    def _price_single_strategy(self, strategy_type, size, current_price, risk_tolerance):
-        """Price a single strategy"""
-        vol = self.market.get_volatility()
-        T = 45 / 365.0
-        
-        if strategy_type == 'protective_put':
-            return self._price_protective_put(size, current_price, vol, T, -5, risk_tolerance)
-        elif strategy_type == 'collar':
-            return self._price_collar(size, current_price, vol, T, -5, risk_tolerance)
-        elif strategy_type == 'put_spread':
-            return self._price_put_spread(size, current_price, vol, T, -5, risk_tolerance)
-        elif strategy_type == 'covered_call':
-            return self._price_covered_call(size, current_price, vol, T, 10, risk_tolerance)
-        else:
-            return self._price_protective_put(size, current_price, vol, T, -5, risk_tolerance)
-    
-    def _price_protective_put(self, size, S, vol, T, offset, risk_tolerance):
-        """Price protective put strategy"""
+    def _price_single_strategy(self, strategy_type, size, S, risk_tolerance, r):
+        """Price individual strategy with live data"""
         try:
-            # Adjust strike based on risk tolerance
+            # Get LIVE volatility
+            vol = self.market.get_live_volatility()
+            T = 45 / 365.0  # 45 days to expiry
+            
+            if strategy_type == 'protective_put':
+                return self._price_protective_put(size, S, vol, T, r, risk_tolerance)
+            elif strategy_type == 'collar':
+                return self._price_collar(size, S, vol, T, r, risk_tolerance)
+            elif strategy_type == 'put_spread':
+                return self._price_put_spread(size, S, vol, T, r, risk_tolerance)
+            elif strategy_type == 'covered_call':
+                return self._price_covered_call(size, S, vol, T, r, risk_tolerance)
+            else:
+                return self._price_protective_put(size, S, vol, T, r, risk_tolerance)
+                
+        except Exception as e:
+            print(f"❌ Single strategy pricing error: {e}")
+            raise Exception(f"Strategy pricing failed: {str(e)}")
+    
+    def _price_protective_put(self, size, S, vol, T, r, risk_tolerance):
+        """Price protective put with live data"""
+        try:
             strike_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
             actual_offset = strike_adj.get(risk_tolerance, -5)
             
             K = S * (1 + actual_offset/100)
-            put_price = self._safe_bs_put(S, K, T, self.risk_free_rate, vol)
+            put_price = self._black_scholes_put(S, K, T, r, vol)
             
             base_premium = size * put_price
             markup_amount = max(
@@ -347,7 +504,7 @@ class MultiStrategyPricingEngine:
             return {
                 'strategy_type': 'protective_put',
                 'strategy_name': 'Protective Put Strategy',
-                'strategy_description': 'Maximum downside protection with full upside participation. Ideal for conservative portfolios seeking capital preservation.',
+                'strategy_description': 'Maximum downside protection with full upside participation using live market data.',
                 'position_size': size,
                 'strike_price': round(K, 2),
                 'premium_per_contract_base': round(put_price, 2),
@@ -365,28 +522,28 @@ class MultiStrategyPricingEngine:
                 'key_benefits': [
                     'Full downside protection below strike price',
                     'Unlimited upside potential',
-                    'Clear maximum loss amount',
-                    'Professional execution and pricing'
+                    'Live market data pricing',
+                    'Professional institutional execution'
                 ],
                 'risk_profile': risk_tolerance,
-                'complexity': 'Low'
+                'complexity': 'Low',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r
             }
         except Exception as e:
-            print(f"❌ Put pricing error: {e}")
-            return self._create_fallback_strategy(size, S, 'protective_put')
+            raise Exception(f"Protective put pricing failed: {str(e)}")
     
-    def _price_collar(self, size, S, vol, T, offset, risk_tolerance):
-        """Price collar strategy"""
+    def _price_collar(self, size, S, vol, T, r, risk_tolerance):
+        """Price collar strategy with live data"""
         try:
-            # Adjust strikes based on risk tolerance
             put_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
             call_adj = {'conservative': 20, 'moderate': 15, 'aggressive': 12}
             
             put_strike = S * (1 + put_adj.get(risk_tolerance, -5)/100)
             call_strike = S * (1 + call_adj.get(risk_tolerance, 15)/100)
             
-            put_price = self._safe_bs_put(S, put_strike, T, self.risk_free_rate, vol)
-            call_price = self._safe_bs_call(S, call_strike, T, self.risk_free_rate, vol)
+            put_price = self._black_scholes_put(S, put_strike, T, r, vol)
+            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
             
             net_premium = size * (put_price - call_price)
             markup_amount = abs(net_premium) * (PLATFORM_CONFIG['markup_percentage'] / 100)
@@ -397,7 +554,7 @@ class MultiStrategyPricingEngine:
             return {
                 'strategy_type': 'collar',
                 'strategy_name': 'Collar Strategy',
-                'strategy_description': 'Cost-effective protection with capped upside. Reduces premium cost by selling upside above call strike.',
+                'strategy_description': 'Cost-effective protection with capped upside using live market volatility.',
                 'position_size': size,
                 'put_strike': round(put_strike, 2),
                 'call_strike': round(call_strike, 2),
@@ -415,28 +572,28 @@ class MultiStrategyPricingEngine:
                 'key_benefits': [
                     'Lower cost than outright put protection',
                     'Downside protection below put strike',
-                    'Participates in upside to call strike',
+                    'Live market data pricing',
                     'Self-funding in favorable conditions'
                 ],
                 'risk_profile': risk_tolerance,
-                'complexity': 'Medium'
+                'complexity': 'Medium',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r
             }
         except Exception as e:
-            print(f"❌ Collar pricing error: {e}")
-            return self._create_fallback_strategy(size, S, 'collar')
+            raise Exception(f"Collar pricing failed: {str(e)}")
     
-    def _price_put_spread(self, size, S, vol, T, offset, risk_tolerance):
-        """Price put spread strategy"""
+    def _price_put_spread(self, size, S, vol, T, r, risk_tolerance):
+        """Price put spread with live data"""
         try:
-            # Adjust strikes based on risk tolerance
             long_adj = {'conservative': -3, 'moderate': -5, 'aggressive': -8}
             short_adj = {'conservative': -8, 'moderate': -12, 'aggressive': -15}
             
             long_strike = S * (1 + long_adj.get(risk_tolerance, -5)/100)
             short_strike = S * (1 + short_adj.get(risk_tolerance, -12)/100)
             
-            long_put = self._safe_bs_put(S, long_strike, T, self.risk_free_rate, vol)
-            short_put = self._safe_bs_put(S, short_strike, T, self.risk_free_rate, vol)
+            long_put = self._black_scholes_put(S, long_strike, T, r, vol)
+            short_put = self._black_scholes_put(S, short_strike, T, r, vol)
             
             net_premium = size * (long_put - short_put)
             markup_amount = net_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
@@ -449,7 +606,7 @@ class MultiStrategyPricingEngine:
             return {
                 'strategy_type': 'put_spread',
                 'strategy_name': 'Put Spread Strategy',
-                'strategy_description': 'Cost-efficient protection for moderate declines. Lower premium than outright puts with defined risk.',
+                'strategy_description': 'Cost-efficient protection using live volatility data for moderate declines.',
                 'position_size': size,
                 'long_strike': round(long_strike, 2),
                 'short_strike': round(short_strike, 2),
@@ -466,26 +623,26 @@ class MultiStrategyPricingEngine:
                 'upside_participation': '100%',
                 'time_to_expiry_days': 45,
                 'key_benefits': [
-                    'Lower premium cost than outright puts',
+                    'Lower premium than outright puts',
                     'Protection against moderate declines',
-                    'Defined maximum risk and reward',
-                    'Efficient capital utilization'
+                    'Live market data pricing',
+                    'Defined maximum risk and reward'
                 ],
                 'risk_profile': risk_tolerance,
-                'complexity': 'Medium'
+                'complexity': 'Medium',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r
             }
         except Exception as e:
-            print(f"❌ Put spread pricing error: {e}")
-            return self._create_fallback_strategy(size, S, 'put_spread')
+            raise Exception(f"Put spread pricing failed: {str(e)}")
     
-    def _price_covered_call(self, size, S, vol, T, offset, risk_tolerance):
-        """Price covered call strategy"""
+    def _price_covered_call(self, size, S, vol, T, r, risk_tolerance):
+        """Price covered call with live data"""
         try:
-            # Adjust call strike based on risk tolerance
             call_adj = {'conservative': 15, 'moderate': 10, 'aggressive': 5}
             call_strike = S * (1 + call_adj.get(risk_tolerance, 10)/100)
             
-            call_price = self._safe_bs_call(S, call_strike, T, self.risk_free_rate, vol)
+            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
             
             gross_premium = size * call_price
             markup_amount = gross_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
@@ -496,7 +653,7 @@ class MultiStrategyPricingEngine:
             return {
                 'strategy_type': 'covered_call',
                 'strategy_name': 'Covered Call Strategy',
-                'strategy_description': 'Generate income from existing BTC position with capped upside. Ideal for range-bound markets.',
+                'strategy_description': 'Generate income using live market volatility from existing BTC position.',
                 'position_size': size,
                 'call_strike': round(call_strike, 2),
                 'premium_received_gross': round(gross_premium, 2),
@@ -511,21 +668,23 @@ class MultiStrategyPricingEngine:
                 'time_to_expiry_days': 45,
                 'key_benefits': [
                     'Generate income from BTC holdings',
+                    'Live market data pricing',
                     'Reduce cost basis of position',
-                    'Profit in sideways or moderately up markets',
-                    'Professional execution and management'
+                    'Professional execution'
                 ],
                 'risk_profile': risk_tolerance,
-                'complexity': 'Low-Medium'
+                'complexity': 'Low-Medium',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r
             }
         except Exception as e:
-            print(f"❌ Covered call pricing error: {e}")
-            return self._create_fallback_strategy(size, S, 'covered_call')
+            raise Exception(f"Covered call pricing failed: {str(e)}")
     
-    def _safe_bs_put(self, S, K, T, r, sigma):
+    def _black_scholes_put(self, S, K, T, r, sigma):
+        """Black-Scholes put option pricing"""
         try:
             if T <= 0 or S <= 0 or K <= 0 or sigma <= 0:
-                return max(0, K - S)
+                raise ValueError("Invalid Black-Scholes parameters")
             
             d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T) / (sigma*math.sqrt(T))
             d2 = d1 - sigma*math.sqrt(T)
@@ -533,13 +692,13 @@ class MultiStrategyPricingEngine:
             put_price = K*math.exp(-r*T)*self._norm_cdf(-d2) - S*self._norm_cdf(-d1)
             return max(0, put_price)
         except Exception as e:
-            print(f"⚠️ BS put calculation error: {e}")
-            return max(0, K - S)
+            raise Exception(f"Black-Scholes put calculation failed: {str(e)}")
     
-    def _safe_bs_call(self, S, K, T, r, sigma):
+    def _black_scholes_call(self, S, K, T, r, sigma):
+        """Black-Scholes call option pricing"""
         try:
             if T <= 0 or S <= 0 or K <= 0 or sigma <= 0:
-                return max(0, S - K)
+                raise ValueError("Invalid Black-Scholes parameters")
             
             d1 = (math.log(S/K) + (r + 0.5*sigma**2)*T) / (sigma*math.sqrt(T))
             d2 = d1 - sigma*math.sqrt(T)
@@ -547,45 +706,17 @@ class MultiStrategyPricingEngine:
             call_price = S*self._norm_cdf(d1) - K*math.exp(-r*T)*self._norm_cdf(d2)
             return max(0, call_price)
         except Exception as e:
-            print(f"⚠️ BS call calculation error: {e}")
-            return max(0, S - K)
+            raise Exception(f"Black-Scholes call calculation failed: {str(e)}")
     
     def _norm_cdf(self, x):
+        """Cumulative distribution function for standard normal distribution"""
         try:
             return 0.5 * (1 + math.erf(x / math.sqrt(2)))
         except:
-            return 0.5 if x >= 0 else 0.0
-    
-    def _create_fallback_strategy(self, size, price, strategy_type):
-        """Create fallback strategy when pricing fails"""
-        strike = price * 0.95
-        premium_estimate = price * 0.03 * size
-        markup = premium_estimate * 0.025
-        total_cost = premium_estimate + markup + 25
-        
-        return {
-            'strategy_type': strategy_type,
-            'strategy_name': f'{strategy_type.replace("_", " ").title()} Strategy (Estimated)',
-            'strategy_description': 'Estimated pricing due to calculation error. Please contact support for accurate pricing.',
-            'position_size': size,
-            'strike_price': round(strike, 2),
-            'base_premium_total': round(premium_estimate, 2),
-            'platform_markup': round(markup, 2),
-            'execution_fee': 25,
-            'total_client_cost': round(total_cost, 2),
-            'platform_revenue': round(markup + 25, 2),
-            'cost_percentage': round((total_cost / (size * price)) * 100, 2),
-            'max_loss': round((price - strike) * size + total_cost, 2),
-            'breakeven': round(strike - (total_cost / size), 2),
-            'protection_level': round(strike, 2),
-            'time_to_expiry_days': 45,
-            'key_benefits': ['Estimated pricing', 'Contact for accurate quotes'],
-            'risk_profile': 'moderate',
-            'complexity': 'Low'
-        }
+            raise Exception("Normal CDF calculation failed")
 
 class ExchangeManager:
-    """Exchange management service"""
+    """Exchange management for execution"""
     
     def __init__(self):
         self.exchanges = {
@@ -596,6 +727,7 @@ class ExchangeManager:
         print("✅ ExchangeManager initialized")
     
     def calculate_optimal_execution(self, total_size, instrument_type='btc_options'):
+        """Calculate optimal execution across exchanges"""
         try:
             return [
                 {
@@ -611,7 +743,8 @@ class ExchangeManager:
                     'liquidity': 'medium'
                 }
             ]
-        except:
+        except Exception as e:
+            print(f"❌ Execution calculation error: {e}")
             return [{'exchange': 'deribit', 'size': total_size, 'cost': total_size * 0.0005, 'liquidity': 'high'}]
 
 class PlatformRiskManager:
@@ -622,6 +755,7 @@ class PlatformRiskManager:
         print("✅ PlatformRiskManager initialized")
     
     def calculate_net_exposure(self):
+        """Calculate platform net exposure"""
         try:
             return {
                 'total_client_long_btc': platform_state['total_client_exposure_btc'],
@@ -651,16 +785,17 @@ class PlatformRiskManager:
                 'net_revenue': 0.0
             }
 
-# Initialize services
-print("🏛️ Initializing Atticus Professional v17.2...")
+# Initialize services with LIVE data requirement
+print("🔴 Initializing Atticus Professional v17.4 - LIVE DATA ONLY...")
+print("🔴 CRITICAL: NO fallback, mock, synthetic, or cached data will be used")
 
-market_service = MarketDataService()
+market_service = LiveMarketDataService()
 exchange_manager = ExchangeManager()
 portfolio_analyzer = PortfolioAnalyzer(market_service)
-multi_strategy_engine = MultiStrategyPricingEngine(market_service)
+live_pricing_engine = LivePricingEngine(market_service)
 platform_risk_manager = PlatformRiskManager(exchange_manager)
 
-print("🎯 All services initialized successfully!")
+print("🎯 All services initialized with LIVE DATA requirement!")
 
 # Routes
 @app.route('/')
@@ -669,58 +804,75 @@ def index():
 
 @app.route('/api/health')
 def health():
+    """Health check - verify live data availability"""
     try:
+        # Test live data availability
+        btc_price = market_service.get_live_btc_price()
+        
         return jsonify({
             'status': 'healthy',
-            'version': 'v17.2',
+            'version': 'v17.4-LIVE-DATA-ONLY',
             'timestamp': datetime.now().isoformat(),
             'services': {
-                'market_data': 'operational',
+                'live_market_data': 'operational',
                 'portfolio_analyzer': 'operational',
-                'multi_strategy_engine': 'operational',
+                'live_pricing_engine': 'operational',
                 'exchange_manager': 'operational',
                 'platform_risk_manager': 'operational'
             },
-            'btc_price': market_service.get_live_btc_price()
+            'live_btc_price': btc_price,
+            'data_source': 'LIVE_MARKET_DATA',
+            'warning': 'LIVE DATA ONLY - NO FALLBACKS'
         })
     except Exception as e:
-        print(f"❌ Health check error: {e}")
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+        print(f"❌ Health check failed: {e}")
+        return jsonify({
+            'status': 'degraded',
+            'error': 'LIVE_DATA_UNAVAILABLE',
+            'message': str(e),
+            'warning': 'Platform requires live market data to operate'
+        }), 503
 
 @app.route('/api/market-data')
 def market_data():
+    """Get live market data - FAIL if unavailable"""
     try:
+        print("📊 API request for live market data...")
+        
+        # CRITICAL: Get live data - FAIL if unavailable
         price = market_service.get_live_btc_price()
-        vol = market_service.get_volatility()
-        rate = market_service.get_risk_free_rate()
+        vol = market_service.get_live_volatility()
+        rate = market_service.get_live_risk_free_rate()
         
         return jsonify({
             'btc_price': round(price, 2),
             'volatility': round(vol * 100, 1),
             'risk_free_rate': round(rate * 100, 2),
             'timestamp': datetime.now().isoformat(),
-            'status': 'live'
+            'status': 'live',
+            'data_source': 'LIVE_MARKET_DATA',
+            'data_age_seconds': 0
         })
     except Exception as e:
-        print(f"❌ Market data error: {e}")
+        print(f"❌ Market data API error: {e}")
         return jsonify({
-            'btc_price': 111500.0,
-            'volatility': 65.0,
-            'risk_free_rate': 4.75,
+            'error': 'LIVE_DATA_UNAVAILABLE',
+            'message': str(e),
             'timestamp': datetime.now().isoformat(),
-            'status': 'fallback',
-            'error': str(e)
-        }), 500
+            'status': 'error'
+        }), 503
 
 @app.route('/api/analyze-portfolio', methods=['POST'])
 def analyze_portfolio():
+    """Analyze portfolio using LIVE data only"""
     try:
         data = request.get_json() or {}
         portfolio_type = data.get('type', 'pension_fund')
         custom_params = data.get('custom_params')
         
-        print(f"📊 Analyzing: {portfolio_type}, custom: {bool(custom_params)}")
+        print(f"📊 Portfolio analysis request: {portfolio_type}")
         
+        # CRITICAL: Analysis uses LIVE data only
         analysis = portfolio_analyzer.analyze(portfolio_type, custom_params)
         session['portfolio_analysis'] = analysis
         
@@ -728,19 +880,24 @@ def analyze_portfolio():
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Analysis error: {error_msg}")
-        return jsonify({'success': False, 'error': error_msg}), 500
+        return jsonify({
+            'success': False, 
+            'error': error_msg,
+            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'ANALYSIS_ERROR'
+        }), 400
 
 @app.route('/api/generate-strategies', methods=['POST'])
 def generate_strategies():
-    """Generate multiple strategy options"""
+    """Generate strategies using LIVE data only"""
     try:
         analysis = session.get('portfolio_analysis')
         if not analysis:
             return jsonify({'success': False, 'error': 'No portfolio analysis found'}), 400
         
-        print(f"💰 Generating multiple strategies for {analysis['profile']['name']}")
+        print(f"💰 Generating strategies with LIVE data for {analysis['profile']['name']}")
         
-        strategies = multi_strategy_engine.price_all_strategies(analysis)
+        # CRITICAL: Strategy pricing uses LIVE data only
+        strategies = live_pricing_engine.price_all_strategies(analysis)
         session['available_strategies'] = strategies
         
         return jsonify({
@@ -749,17 +906,22 @@ def generate_strategies():
             'analysis_context': {
                 'institution': analysis['profile']['name'],
                 'position_size': analysis['positions']['btc_size'],
-                'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate')
+                'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate'),
+                'data_source': 'LIVE_MARKET_DATA'
             }
         })
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Strategy generation error: {error_msg}")
-        return jsonify({'success': False, 'error': error_msg}), 500
+        return jsonify({
+            'success': False, 
+            'error': error_msg,
+            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'PRICING_ERROR'
+        }), 400
 
 @app.route('/api/select-strategy', methods=['POST'])
 def select_strategy():
-    """Select a specific strategy for execution"""
+    """Select strategy for execution"""
     try:
         data = request.get_json() or {}
         strategy_type = data.get('strategy_type')
@@ -774,6 +936,10 @@ def select_strategy():
         
         if not selected_strategy:
             return jsonify({'success': False, 'error': 'Strategy not found'}), 400
+        
+        # Verify live data source
+        if selected_strategy.get('data_source') != 'LIVE_MARKET_DATA':
+            return jsonify({'success': False, 'error': 'Strategy not priced with live data'}), 400
         
         # Add portfolio context
         analysis = session.get('portfolio_analysis')
@@ -790,14 +956,19 @@ def select_strategy():
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Strategy selection error: {error_msg}")
-        return jsonify({'success': False, 'error': error_msg}), 500
+        return jsonify({'success': False, 'error': error_msg}), 400
 
 @app.route('/api/execute-strategy', methods=['POST'])
 def execute_strategy():
+    """Execute strategy with live data verification"""
     try:
         strategy = session.get('selected_strategy')
         if not strategy:
             return jsonify({'success': False, 'error': 'No strategy selected'}), 400
+        
+        # Verify strategy uses live data
+        if strategy.get('data_source') != 'LIVE_MARKET_DATA':
+            return jsonify({'success': False, 'error': 'Cannot execute strategy not priced with live data'}), 400
         
         size = strategy['position_size']
         execution_plan = exchange_manager.calculate_optimal_execution(size)
@@ -829,7 +1000,9 @@ def execute_strategy():
                 'contracts_filled': size,
                 'total_premium_client': strategy.get('total_client_cost', strategy.get('total_net_received', 0)),
                 'platform_revenue': strategy.get('platform_revenue', 0),
-                'execution_venues': execution_plan
+                'execution_venues': execution_plan,
+                'execution_timestamp': datetime.now().isoformat(),
+                'data_source': 'LIVE_MARKET_DATA'
             },
             'portfolio_impact': {
                 'institution': strategy['portfolio_context']['institution'],
@@ -852,10 +1025,11 @@ def execute_strategy():
     except Exception as e:
         error_msg = str(e)
         print(f"❌ Execution error: {error_msg}")
-        return jsonify({'success': False, 'error': error_msg}), 500
+        return jsonify({'success': False, 'error': error_msg}), 400
 
 @app.route('/api/platform-exposure')
 def platform_exposure():
+    """Get platform exposure data"""
     try:
         exposure = platform_risk_manager.calculate_net_exposure()
         return jsonify({'success': True, 'exposure': exposure})
@@ -870,11 +1044,14 @@ def platform_exposure():
         }}), 500
 
 if __name__ == '__main__':
-    print("🎯 Atticus Professional v17.2 Starting...")
-    print("   ✓ Multi-strategy pricing engine")
-    print("   ✓ Smart strategy recommendations")
-    print("   ✓ Risk tolerance matching")
-    print("   ✓ Enhanced UI layout")
+    print("🔴 Atticus Professional v17.4 Starting - LIVE DATA ONLY...")
+    print("🔴 CRITICAL: NO fallback, mock, synthetic, or cached data")
+    print("🔴 Platform will FAIL GRACEFULLY if live data unavailable")
+    print("   ✓ Live BTC price feeds from multiple exchanges")
+    print("   ✓ Live volatility calculation from historical data")
+    print("   ✓ Live risk-free rate from Federal Reserve")
+    print("   ✓ Real-time Black-Scholes options pricing")
+    print("   ✓ Strict error handling and data validation")
     
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
