@@ -1,4 +1,4 @@
-// Atticus Professional v17.2 - Enhanced Multi-Strategy Demo
+// Atticus Professional v17.3 - CFO Feedback Implementation
 class AttticusProfessionalDemo {
     constructor() {
         this.currentStep = 1;
@@ -23,7 +23,6 @@ class AttticusProfessionalDemo {
     }
     
     setupEventListeners() {
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.hideLoading();
@@ -43,9 +42,25 @@ class AttticusProfessionalDemo {
             this.updateMarketDisplay({
                 btc_price: 'Error',
                 volatility: 'N/A',
-                risk_free_rate: 4.75
+                risk_free_rate: 5
             });
         }
+    }
+    
+    // NO DECIMAL POINTS - CFO REQUEST
+    formatCurrency(value) {
+        if (typeof value !== 'number') return value;
+        return `$${Math.round(value).toLocaleString()}`;
+    }
+    
+    formatBTC(value) {
+        if (typeof value !== 'number') return value;
+        return `${Math.round(value)} BTC`;
+    }
+    
+    formatPercentage(value) {
+        if (typeof value !== 'number') return value;
+        return `${Math.round(value)}%`;
     }
     
     updateMarketDisplay(data) {
@@ -54,13 +69,13 @@ class AttticusProfessionalDemo {
         
         if (btcPrice) {
             btcPrice.textContent = typeof data.btc_price === 'number' 
-                ? `$${data.btc_price.toLocaleString()}` 
+                ? this.formatCurrency(data.btc_price)
                 : data.btc_price;
         }
         
         if (volatility) {
             volatility.textContent = typeof data.volatility === 'number'
-                ? `${data.volatility}%`
+                ? this.formatPercentage(data.volatility)
                 : data.volatility;
         }
     }
@@ -85,7 +100,7 @@ class AttticusProfessionalDemo {
             'platform-net': exposure.net_exposure_btc || 0,
             'net-exposure': exposure.net_exposure_btc || 0,
             'coverage-ratio': exposure.hedge_coverage_ratio 
-                ? `${(exposure.hedge_coverage_ratio * 100).toFixed(1)}%`
+                ? this.formatPercentage(exposure.hedge_coverage_ratio * 100)
                 : 'N/A'
         };
         
@@ -93,19 +108,17 @@ class AttticusProfessionalDemo {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
-                    ? `${value.toFixed(2)} BTC`
+                    ? this.formatBTC(value)
                     : value;
             }
         });
     }
     
     showStep(stepNumber) {
-        // Hide all steps
         document.querySelectorAll('.workflow-step').forEach(step => {
             step.classList.remove('active');
         });
         
-        // Show target step
         const targetStep = document.getElementById(`step-${stepNumber}`);
         if (targetStep) {
             targetStep.classList.add('active');
@@ -186,20 +199,20 @@ class AttticusProfessionalDemo {
                 <h4>Portfolio Overview</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Institution:</span>
+                        <span class="metric-label">Institution</span>
                         <span class="metric-value">${analysis.profile.name}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">BTC Position:</span>
-                        <span class="metric-value">${analysis.positions.btc_size} BTC</span>
+                        <span class="metric-label">BTC Position</span>
+                        <span class="metric-value">${Math.round(analysis.positions.btc_size)} BTC</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Position Value:</span>
-                        <span class="metric-value">$${analysis.positions.btc_value.toLocaleString()}</span>
+                        <span class="metric-label">Position Value</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.positions.btc_value)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Current BTC Price:</span>
-                        <span class="metric-value">$${analysis.positions.current_price.toLocaleString()}</span>
+                        <span class="metric-label">Current BTC Price</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.positions.current_price)}</span>
                     </div>
                 </div>
             </div>
@@ -208,20 +221,20 @@ class AttticusProfessionalDemo {
                 <h4>Risk Analysis</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">1-Day VaR (95%):</span>
-                        <span class="metric-value">$${analysis.risk_metrics.var_1d_95.toLocaleString()}</span>
+                        <span class="metric-label">1-Day VaR (95%)</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_1d_95)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">30-Day VaR (95%):</span>
-                        <span class="metric-value">$${analysis.risk_metrics.var_30d_95.toLocaleString()}</span>
+                        <span class="metric-label">30-Day VaR (95%)</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_30d_95)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Annual Volatility:</span>
-                        <span class="metric-value">${(analysis.risk_metrics.volatility * 100).toFixed(1)}%</span>
+                        <span class="metric-label">Annual Volatility</span>
+                        <span class="metric-value">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Max Drawdown (30%):</span>
-                        <span class="metric-value">$${analysis.risk_metrics.max_drawdown_30pct.toLocaleString()}</span>
+                        <span class="metric-label">Max Drawdown (30%)</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.max_drawdown_30pct)}</span>
                     </div>
                 </div>
             </div>
@@ -232,7 +245,7 @@ class AttticusProfessionalDemo {
                     ${analysis.scenarios.filter(s => s.change_pct < 0).map(scenario => `
                         <div class="scenario-card">
                             <h5>${scenario.change_pct}% BTC Decline</h5>
-                            <div class="scenario-value">$${Math.abs(scenario.pnl).toLocaleString()}</div>
+                            <div class="scenario-value">${this.formatCurrency(Math.abs(scenario.pnl))}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -242,19 +255,19 @@ class AttticusProfessionalDemo {
                 <h4>Hedge Recommendation</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Risk Tolerance:</span>
+                        <span class="metric-label">Risk Tolerance</span>
                         <span class="metric-value">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Recommended Hedge Ratio:</span>
-                        <span class="metric-value">${(analysis.hedge_recommendation.hedge_ratio * 100).toFixed(0)}%</span>
+                        <span class="metric-label">Recommended Hedge Ratio</span>
+                        <span class="metric-value">${this.formatPercentage(analysis.hedge_recommendation.hedge_ratio * 100)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Hedge Size:</span>
-                        <span class="metric-value">${analysis.hedge_recommendation.hedge_size_btc} BTC</span>
+                        <span class="metric-label">Hedge Size</span>
+                        <span class="metric-value">${Math.round(analysis.hedge_recommendation.hedge_size_btc)} BTC</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Available Strategies:</span>
+                        <span class="metric-label">Available Strategies</span>
                         <span class="metric-value">${analysis.hedge_recommendation.preferred_strategies?.length || 1} Options</span>
                     </div>
                 </div>
@@ -295,9 +308,9 @@ class AttticusProfessionalDemo {
         const container = document.getElementById('strategy-results');
         
         let html = `
-            <div style="text-align: center; margin-bottom: 48px; padding: 32px; background: rgba(255,255,255,0.08); border-radius: 20px; border: 2px solid rgba(255,255,255,0.15);">
-                <h4 style="color: var(--text-bright); margin-bottom: 16px; font-size: 26px;">Smart Strategy Recommendations for ${context.institution}</h4>
-                <p style="color: var(--text-light); font-size: 20px;">Based on ${context.risk_tolerance} risk tolerance and ${context.position_size.toFixed(2)} BTC position</p>
+            <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(37,99,235,0.1) 100%); border-radius: 20px; border: 2px solid rgba(251,191,36,0.3);">
+                <h4 style="color: var(--warning-light); margin-bottom: 16px; font-size: 24px;">Smart Strategy Recommendations for ${context.institution}</h4>
+                <p style="color: var(--text-bright); font-size: 18px;">Based on ${context.risk_tolerance} risk tolerance and ${Math.round(context.position_size)} BTC position</p>
             </div>
             
             <div class="strategies-grid">
@@ -310,7 +323,7 @@ class AttticusProfessionalDemo {
                 <div class="strategy-option ${isRecommended ? 'recommended' : ''}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
                     <div class="strategy-header">
                         <div class="strategy-name">${strategy.strategy_name}</div>
-                        <div class="strategy-cost">${strategy.cost_percentage || strategy.income_percentage || 0}%</div>
+                        <div class="strategy-cost">${Math.round(strategy.cost_percentage || strategy.income_percentage || 0)}%</div>
                     </div>
                     
                     <div class="strategy-description">${strategy.strategy_description}</div>
@@ -318,15 +331,15 @@ class AttticusProfessionalDemo {
                     <div class="strategy-metrics">
                         <div class="strategy-metric">
                             <span class="metric-label">Total Cost/Income</span>
-                            <span class="metric-value">$${(strategy.total_client_cost || strategy.total_net_received || 0).toLocaleString()}</span>
+                            <span class="metric-value">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</span>
                         </div>
                         <div class="strategy-metric">
                             <span class="metric-label">Max Loss/Upside</span>
-                            <span class="metric-value">$${(strategy.max_loss || strategy.max_upside || 0).toLocaleString()}</span>
+                            <span class="metric-value">${this.formatCurrency(strategy.max_loss || strategy.max_upside || 0)}</span>
                         </div>
                         <div class="strategy-metric">
                             <span class="metric-label">Protection Level</span>
-                            <span class="metric-value">$${(strategy.protection_level || strategy.strike_price || strategy.call_strike || 0).toLocaleString()}</span>
+                            <span class="metric-value">${this.formatCurrency(strategy.protection_level || strategy.strike_price || strategy.call_strike || 0)}</span>
                         </div>
                         <div class="strategy-metric">
                             <span class="metric-label">Complexity</span>
@@ -334,15 +347,15 @@ class AttticusProfessionalDemo {
                         </div>
                     </div>
                     
-                    <div style="margin-top: 24px;">
-                        <h6 style="color: var(--success); margin-bottom: 12px; font-size: 16px; font-weight: 700;">Key Benefits:</h6>
-                        <ul style="color: var(--text-light); font-size: 16px; margin-left: 20px; line-height: 1.5;">
-                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 8px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
+                    <div style="margin-top: 20px;">
+                        <h6 style="color: var(--success); margin-bottom: 10px; font-size: 15px; font-weight: 700;">Key Benefits:</h6>
+                        <ul style="color: var(--text-bright); font-size: 15px; margin-left: 18px; line-height: 1.4;">
+                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 6px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
                         </ul>
                     </div>
                     
-                    <div style="margin-top: 24px; padding: 16px; background: rgba(37, 99, 235, 0.15); border-radius: 12px; text-align: center; border: 2px solid rgba(37, 99, 235, 0.3);">
-                        <span style="color: var(--secondary); font-weight: 700; font-size: 16px;">Click to Select Strategy</span>
+                    <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(37,99,235,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(251,191,36,0.4);">
+                        <span style="color: var(--warning-light); font-weight: 700; font-size: 15px;">Click to Select Strategy</span>
                     </div>
                 </div>
             `;
@@ -367,7 +380,6 @@ class AttticusProfessionalDemo {
             if (data.success) {
                 this.selectedStrategy = data.strategy;
                 this.displaySelectedStrategy(data.strategy);
-                // Auto-proceed to execution after brief delay
                 setTimeout(() => {
                     this.executeStrategy();
                 }, 1500);
@@ -383,12 +395,11 @@ class AttticusProfessionalDemo {
     }
     
     displaySelectedStrategy(strategy) {
-        // Highlight selected strategy
         const container = document.getElementById('strategy-results');
         const summaryHtml = `
-            <div style="background: rgba(22, 163, 74, 0.15); border: 3px solid var(--success); border-radius: 16px; padding: 32px; margin-bottom: 32px; text-align: center;">
-                <h4 style="color: var(--success); margin-bottom: 16px; font-size: 26px;">✅ ${strategy.strategy_name} Selected</h4>
-                <p style="color: var(--text-bright); font-size: 18px;">Proceeding to execution via institutional channels...</p>
+            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border: 3px solid var(--success); border-radius: 16px; padding: 28px; margin-bottom: 28px; text-align: center;">
+                <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ ${strategy.strategy_name} Selected</h4>
+                <p style="color: var(--text-bright); font-size: 17px;">Proceeding to execution via institutional channels...</p>
             </div>
         `;
         container.innerHTML = summaryHtml + container.innerHTML;
@@ -408,8 +419,6 @@ class AttticusProfessionalDemo {
             if (data.success) {
                 this.displayExecutionResults(data.execution);
                 this.showStep(4);
-                
-                // Update platform exposure display
                 this.loadPlatformExposure();
             } else {
                 alert('Error executing strategy: ' + data.error);
@@ -426,24 +435,24 @@ class AttticusProfessionalDemo {
         const container = document.getElementById('execution-results');
         
         const html = `
-            <div class="analysis-card" style="background: rgba(22, 163, 74, 0.15); border-color: rgba(22, 163, 74, 0.4);">
+            <div class="analysis-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); border-color: var(--success);">
                 <h4>✅ Execution Completed Successfully</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Strategy Executed:</span>
+                        <span class="metric-label">Strategy Executed</span>
                         <span class="metric-value">${execution.execution_summary.strategy_name}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Status:</span>
+                        <span class="metric-label">Status</span>
                         <span class="metric-value" style="color: var(--success);">${execution.execution_summary.status.toUpperCase()}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Contracts Filled:</span>
-                        <span class="metric-value">${execution.execution_summary.contracts_filled} BTC</span>
+                        <span class="metric-label">Contracts Filled</span>
+                        <span class="metric-value">${Math.round(execution.execution_summary.contracts_filled)} BTC</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Total Premium:</span>
-                        <span class="metric-value">$${execution.execution_summary.total_premium_client.toLocaleString()}</span>
+                        <span class="metric-label">Total Premium</span>
+                        <span class="metric-value">${this.formatCurrency(execution.execution_summary.total_premium_client)}</span>
                     </div>
                 </div>
             </div>
@@ -452,19 +461,19 @@ class AttticusProfessionalDemo {
                 <h4>Portfolio Impact</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Institution:</span>
+                        <span class="metric-label">Institution</span>
                         <span class="metric-value">${execution.portfolio_impact.institution}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">VaR Before:</span>
-                        <span class="metric-value">$${execution.portfolio_impact.var_reduction.before.toLocaleString()}</span>
+                        <span class="metric-label">VaR Before</span>
+                        <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.before)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">VaR After:</span>
-                        <span class="metric-value">$${execution.portfolio_impact.var_reduction.after.toLocaleString()}</span>
+                        <span class="metric-label">VaR After</span>
+                        <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.after)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Risk Reduction:</span>
+                        <span class="metric-label">Risk Reduction</span>
                         <span class="metric-value" style="color: var(--success);">${execution.portfolio_impact.var_reduction.reduction_pct}%</span>
                     </div>
                 </div>
@@ -474,19 +483,19 @@ class AttticusProfessionalDemo {
                 <h4>Platform Exposure Management</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Total Client Positions:</span>
-                        <span class="metric-value">${execution.platform_exposure.client_positions_btc.toFixed(2)} BTC</span>
+                        <span class="metric-label">Total Client Positions</span>
+                        <span class="metric-value">${this.formatBTC(execution.platform_exposure.client_positions_btc)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Platform Hedges:</span>
-                        <span class="metric-value">${execution.platform_exposure.platform_hedges_btc.toFixed(2)} BTC</span>
+                        <span class="metric-label">Platform Hedges</span>
+                        <span class="metric-value">${this.formatBTC(execution.platform_exposure.platform_hedges_btc)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Net Exposure:</span>
-                        <span class="metric-value">${execution.platform_exposure.net_exposure_btc.toFixed(2)} BTC</span>
+                        <span class="metric-label">Net Exposure</span>
+                        <span class="metric-value">${this.formatBTC(execution.platform_exposure.net_exposure_btc)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Hedge Action:</span>
+                        <span class="metric-label">Hedge Action</span>
                         <span class="metric-value">${execution.platform_exposure.platform_hedge_action.status.toUpperCase()}</span>
                     </div>
                 </div>
@@ -494,11 +503,11 @@ class AttticusProfessionalDemo {
             
             <div class="analysis-card">
                 <h4>Execution Venues</h4>
-                <div style="display: grid; gap: 16px;">
+                <div style="display: grid; gap: 12px;">
                     ${execution.execution_summary.execution_venues.map(venue => `
-                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
-                            <span style="font-weight: 700; font-size: 18px;">${venue.exchange.toUpperCase()}</span>
-                            <span style="font-size: 18px;">${venue.size} BTC (${venue.liquidity} liquidity)</span>
+                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, rgba(30,41,59,0.2) 0%, rgba(37,99,235,0.1) 100%); border-radius: 12px; border: 1px solid rgba(251,191,36,0.2);">
+                            <span style="font-weight: 700; font-size: 16px; color: var(--warning-light);">${venue.exchange.toUpperCase()}</span>
+                            <span style="font-size: 16px; color: var(--text-bright);">${Math.round(venue.size)} BTC (${venue.liquidity} liquidity)</span>
                         </div>
                     `).join('')}
                 </div>
@@ -516,28 +525,23 @@ class AttticusProfessionalDemo {
         
         this.showStep(1);
         
-        // Reset form inputs
         document.getElementById('custom-size').value = '';
         document.getElementById('generate-strategy-btn').style.display = 'none';
         
-        // Clear results
         document.getElementById('analysis-results').innerHTML = '';
         document.getElementById('strategy-results').innerHTML = '';
         document.getElementById('execution-results').innerHTML = '';
     }
     
     showSection(sectionName) {
-        // Hide all sections
         document.querySelectorAll('.demo-section').forEach(section => {
             section.classList.remove('active');
         });
         
-        // Update navigation
         document.querySelectorAll('.nav-step').forEach(step => {
             step.classList.remove('active');
         });
         
-        // Show target section and update nav
         const targetSection = document.getElementById(`${sectionName}-section`);
         const targetNav = document.querySelector(`[data-section="${sectionName}"]`);
         

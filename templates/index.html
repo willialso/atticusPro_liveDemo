@@ -7,19 +7,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Centered Logo Header -->
+    <!-- Enhanced Header with Blue Background -->
     <header class="header">
         <div class="container">
             <div class="header-content">
                 <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo">
                 <div class="platform-status">
                     <div class="status-item">
-                        <span class="label">Platform Status:</span>
+                        <span class="label">Platform Status</span>
                         <span class="value live">LIVE</span>
                     </div>
                     <div class="status-item">
-                        <span class="label">Net Exposure:</span>
-                        <span id="net-exposure" class="value">0.0 BTC</span>
+                        <span class="label">Net Exposure</span>
+                        <span id="net-exposure" class="value">0 BTC</span>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
     </header>
 
     <main class="main-content">
-        <!-- Demo Navigation -->
+        <!-- Reduced Height Demo Navigation -->
         <nav class="demo-nav">
             <div class="container">
                 <div class="nav-steps">
@@ -47,7 +47,7 @@
             </div>
         </nav>
 
-        <!-- Section 1: Institutional Challenge -->
+        <!-- Section 1: Institutional Challenge - Removed X's and "at risk" -->
         <section id="challenge-section" class="demo-section active">
             <div class="container">
                 <div class="section-header">
@@ -59,7 +59,7 @@
                 <div class="challenge-stats-single-row">
                     <div class="stat-card">
                         <h3>$2.1T</h3>
-                        <p>Institutional crypto AUM at risk</p>
+                        <p>Institutional crypto AUM</p>
                     </div>
                     <div class="stat-card">
                         <h3>65%</h3>
@@ -75,18 +75,18 @@
                     </div>
                 </div>
 
-                <!-- 3 boxes in single row underneath -->
+                <!-- 3 boxes in single row - Removed X's for better perception -->
                 <div class="problem-points-single-row">
                     <div class="problem-card">
-                        <h4>❌ Traditional Hedging Fails</h4>
+                        <h4>Traditional Hedging Fails</h4>
                         <p>Conventional derivatives take hours while Bitcoin moves in minutes</p>
                     </div>
                     <div class="problem-card">
-                        <h4>❌ Limited Institutional Solutions</h4>
+                        <h4>Limited Institutional Solutions</h4>
                         <p>Existing platforms lack institutional-size contracts and transparency</p>
                     </div>
                     <div class="problem-card">
-                        <h4>❌ Platform Risk Exposure</h4>
+                        <h4>Platform Risk Exposure</h4>
                         <p>Most platforms don't hedge their own exposure, creating counterparty risk</p>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
             </div>
         </section>
 
-        <!-- Section 2: Professional Solution -->
+        <!-- Section 2: Professional Solution - Fixed pricing grid -->
         <section id="solution-section" class="demo-section">
             <div class="container">
                 <div class="section-header">
@@ -115,7 +115,7 @@
                     <div class="feature-card">
                         <div class="feature-icon">🎯</div>
                         <h4>Platform Net Exposure Hedging</h4>
-                        <p>We hedge our own exposure across all clients at 110% coverage ratio</p>
+                        <p>We hedge our own exposure across all clients at a 110% coverage ratio</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon">📊</div>
@@ -129,23 +129,24 @@
                     </div>
                 </div>
 
+                <!-- Fixed 2x2 Pricing Grid -->
                 <div class="pricing-transparency">
                     <h3>Transparent Platform Economics</h3>
-                    <div class="pricing-grid">
+                    <div class="pricing-grid-2x2">
                         <div class="pricing-item">
-                            <span class="label">Option Premium Markup:</span>
+                            <span class="label">Option Premium Markup</span>
                             <span class="value">2.5% of base premium</span>
                         </div>
                         <div class="pricing-item">
-                            <span class="label">Minimum Per Contract:</span>
+                            <span class="label">Minimum Per Contract</span>
                             <span class="value">$50</span>
                         </div>
                         <div class="pricing-item">
-                            <span class="label">Execution Fee:</span>
+                            <span class="label">Execution Fee</span>
                             <span class="value">$25 per trade</span>
                         </div>
                         <div class="pricing-item">
-                            <span class="label">Platform Hedge Coverage:</span>
+                            <span class="label">Platform Hedge Coverage</span>
                             <span class="value">110% of net exposure</span>
                         </div>
                     </div>
@@ -168,19 +169,19 @@
                 <!-- Market Data Bar -->
                 <div class="market-data-bar">
                     <div class="market-item">
-                        <span class="label">BTC Price:</span>
+                        <span class="label">BTC Price</span>
                         <span id="btc-price" class="value">Loading...</span>
                     </div>
                     <div class="market-item">
-                        <span class="label">Volatility:</span>
+                        <span class="label">Volatility</span>
                         <span id="volatility" class="value">Loading...</span>
                     </div>
                     <div class="market-item">
-                        <span class="label">Risk-Free Rate:</span>
-                        <span id="risk-rate" class="value">4.75%</span>
+                        <span class="label">Risk-Free Rate</span>
+                        <span id="risk-rate" class="value">5%</span>
                     </div>
                     <div class="market-item">
-                        <span class="label">Status:</span>
+                        <span class="label">Status</span>
                         <span class="value live">LIVE</span>
                     </div>
                 </div>
@@ -305,32 +306,32 @@
                 </div>
             </div>
         </section>
+    </main>
 
-        <!-- Platform Exposure Dashboard (Fixed Bottom) -->
-        <div id="platform-exposure" class="platform-dashboard">
-            <div class="container">
-                <h4>Platform Exposure Dashboard</h4>
-                <div class="exposure-metrics">
-                    <div class="metric">
-                        <span class="label">Client Positions:</span>
-                        <span id="client-exposure" class="value">0.0 BTC</span>
-                    </div>
-                    <div class="metric">
-                        <span class="label">Platform Hedges:</span>
-                        <span id="platform-hedges" class="value">0.0 BTC</span>
-                    </div>
-                    <div class="metric">
-                        <span class="label">Net Exposure:</span>
-                        <span id="platform-net" class="value">0.0 BTC</span>
-                    </div>
-                    <div class="metric">
-                        <span class="label">Coverage Ratio:</span>
-                        <span id="coverage-ratio" class="value">N/A</span>
-                    </div>
+    <!-- RIGHT SIDEBAR PLATFORM EXPOSURE DASHBOARD -->
+    <div id="platform-exposure" class="platform-dashboard-sidebar">
+        <div class="sidebar-content">
+            <h4>Platform Exposure Dashboard</h4>
+            <div class="sidebar-metrics">
+                <div class="sidebar-metric">
+                    <span class="metric-label">Client Positions</span>
+                    <span id="client-exposure" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Platform Hedges</span>
+                    <span id="platform-hedges" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Net Exposure</span>
+                    <span id="platform-net" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Coverage Ratio</span>
+                    <span id="coverage-ratio" class="metric-value">N/A</span>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Loading Overlay -->
     <div id="loading" class="loading-overlay">
