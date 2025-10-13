@@ -234,8 +234,8 @@ body {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
-    border: 2px solid var(--danger);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+    border: 2px solid var(--warning);
     border-radius: 24px;
     padding: 48px;
     text-align: center;
@@ -252,9 +252,9 @@ body {
 .stat-card h3 {
     font-size: 44px;
     font-weight: 800;
-    color: var(--danger);
+    color: var(--warning);
     margin-bottom: 16px;
-    text-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    text-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
 .stat-card p {
@@ -283,7 +283,7 @@ body {
 
 .problem-card:hover {
     transform: translateY(-4px);
-    border-color: var(--danger);
+    border-color: var(--warning);
     box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2);
 }
 
@@ -844,7 +844,7 @@ body {
 
 .scenario-card {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
-    border: 2px solid var(--danger);
+    border: 2px solid var(--warning);
     border-radius: 16px;
     padding: 20px;
     text-align: center;
@@ -854,7 +854,7 @@ body {
 .scenario-card:hover {
     transform: translateY(-4px);
     border-color: var(--warning);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
 }
 
 .scenario-card h5 {
@@ -867,7 +867,7 @@ body {
 .scenario-value {
     font-size: 20px;
     font-weight: 800;
-    color: var(--danger);
+    color: var(--warning);
 }
 
 /* RIGHT SIDEBAR PLATFORM DASHBOARD */
