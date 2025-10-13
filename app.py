@@ -1,23 +1,46 @@
 """
-ATTICUS PROFESSIONAL V17.4 - LIVE DATA INSTITUTIONAL PLATFORM
+ATTICUS PROFESSIONAL V17.5 - LIVE DATA WITH REAL API KEYS
 CRITICAL: LIVE DATA ONLY - NO FALLBACKS, MOCK, OR SYNTHETIC DATA
-- Real-time market data from multiple exchanges
-- Strict error handling for missing data
-- Institutional-grade data validation
-- Complete transparency on data availability
+- Real FRED API Key: 17d3b0a9b20e8b012e99238c48ef8da1
+- Real CoinGecko Demo API Key: CG-fkJcvVk4rakjCLAbo6ygiqGQ
+- Comprehensive error logging and debugging
 """
 
 import os
 import math
 import json
 import time
-import requests
+import traceback
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, session
 from typing import Dict, List, Optional, Any
 
+# Try importing requests - critical for live data
+try:
+    import requests
+    print("✅ Successfully imported requests module")
+except ImportError as e:
+    print(f"🚨 CRITICAL: requests module not available: {e}")
+    print("🚨 Install with: pip install requests")
+    exit(1)
+
+# Try importing statistics - needed for volatility
+try:
+    import statistics
+    print("✅ Successfully imported statistics module")
+except ImportError as e:
+    print(f"🚨 CRITICAL: statistics module not available: {e}")
+    exit(1)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'atticus_professional_live_v17_2025')
+
+# Real API Keys
+REAL_FRED_API_KEY = "17d3b0a9b20e8b012e99238c48ef8da1"
+REAL_COINGECKO_API_KEY = "CG-fkJcvVk4rakjCLAbo6ygiqGQ"
+
+print(f"🔑 Using REAL FRED API Key: {REAL_FRED_API_KEY[:8]}...")
+print(f"🔑 Using REAL CoinGecko API Key: {REAL_COINGECKO_API_KEY[:8]}...")
 
 # Platform Configuration
 PLATFORM_CONFIG = {
@@ -39,187 +62,445 @@ platform_state = {
     'total_hedge_cost': 0.0
 }
 
+def log_detailed_error(operation, error, response=None):
+    """Comprehensive error logging"""
+    print(f"🚨 ERROR in {operation}:")
+    print(f"   Error Type: {type(error).__name__}")
+    print(f"   Error Message: {error}")
+    
+    if response:
+        print(f"   HTTP Status: {response.status_code}")
+        print(f"   Response Headers: {dict(response.headers)}")
+        try:
+            print(f"   Response Body: {response.text[:500]}...")
+        except:
+            print("   Response Body: Unable to decode")
+    
+    print(f"   Full Traceback:")
+    print(traceback.format_exc())
+    print("   " + "="*80)
+
 class LiveMarketDataService:
-    """LIVE MARKET DATA ONLY - NO FALLBACKS OR SYNTHETIC DATA"""
+    """LIVE MARKET DATA ONLY with Real API Keys and Detailed Logging"""
     
     def __init__(self):
-        # NO CACHING - All data must be fresh
         print("🔴 CRITICAL: LiveMarketDataService initialized - LIVE DATA ONLY")
-        print("🔴 NO fallback, mock, synthetic, or cached data will be used")
+        print("🔴 Using REAL API keys - NO fallback, mock, synthetic, or cached data")
         
-    def get_live_btc_price(self):
-        """Get LIVE BTC price - FAIL if no real data available"""
-        print("📊 Fetching LIVE BTC price from exchanges...")
+        # Test API connectivity on startup
+        self.test_api_connectivity()
         
-        # Primary: Coinbase Pro API
+    def test_api_connectivity(self):
+        """Test all API endpoints on startup"""
+        print("🔍 Testing API connectivity...")
+        
+        # Test basic HTTP
         try:
-            print("🔄 Trying Coinbase Pro API...")
-            response = requests.get(
-                'https://api.exchange.coinbase.com/products/BTC-USD/ticker',
-                timeout=10,
-                headers={'User-Agent': 'Atticus-Professional/1.0'}
-            )
-            
+            response = requests.get('https://httpbin.org/status/200', timeout=5)
+            print(f"✅ Basic HTTP works: {response.status_code}")
+        except Exception as e:
+            print(f"❌ Basic HTTP failed: {e}")
+        
+        # Test BTC price APIs
+        print("🔍 Testing BTC price APIs...")
+        self._test_btc_apis()
+        
+        # Test volatility API
+        print("🔍 Testing CoinGecko API...")
+        self._test_coingecko_api()
+        
+        # Test FRED API
+        print("🔍 Testing FRED API...")
+        self._test_fred_api()
+    
+    def _test_btc_apis(self):
+        """Test BTC price API endpoints"""
+        # Test Coinbase Pro
+        try:
+            response = requests.get('https://api.exchange.coinbase.com/products/BTC-USD/ticker', timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                price = float(data['price'])
-                if price > 10000:  # Basic sanity check
-                    print(f"✅ Live BTC price from Coinbase Pro: ${price:,.2f}")
-                    return price
-                else:
-                    print(f"❌ Invalid price from Coinbase Pro: {price}")
+                print(f"✅ Coinbase Pro API: ${float(data['price']):,.2f}")
             else:
-                print(f"❌ Coinbase Pro API failed: {response.status_code}")
-                
+                print(f"⚠️ Coinbase Pro API returned {response.status_code}: {response.text[:100]}")
         except Exception as e:
-            print(f"❌ Coinbase Pro API error: {e}")
+            log_detailed_error("Coinbase Pro Test", e)
         
-        # Secondary: Binance API
+        # Test Binance
         try:
-            print("🔄 Trying Binance API...")
-            response = requests.get(
-                'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
-                timeout=10,
-                headers={'User-Agent': 'Atticus-Professional/1.0'}
-            )
-            
+            response = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT', timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                price = float(data['price'])
-                if price > 10000:
-                    print(f"✅ Live BTC price from Binance: ${price:,.2f}")
-                    return price
-                else:
-                    print(f"❌ Invalid price from Binance: {price}")
+                print(f"✅ Binance API: ${float(data['price']):,.2f}")
             else:
-                print(f"❌ Binance API failed: {response.status_code}")
-                
+                print(f"⚠️ Binance API returned {response.status_code}: {response.text[:100]}")
         except Exception as e:
-            print(f"❌ Binance API error: {e}")
+            log_detailed_error("Binance Test", e)
         
-        # Tertiary: Kraken API
+        # Test Kraken
         try:
-            print("🔄 Trying Kraken API...")
-            response = requests.get(
-                'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD',
-                timeout=10,
-                headers={'User-Agent': 'Atticus-Professional/1.0'}
-            )
-            
+            response = requests.get('https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD', timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 if 'result' in data and 'XXBTZUSD' in data['result']:
-                    price_data = data['result']['XXBTZUSD']['c'][0]  # Last price
-                    price = float(price_data)
-                    if price > 10000:
-                        print(f"✅ Live BTC price from Kraken: ${price:,.2f}")
+                    price = float(data['result']['XXBTZUSD']['c'][0])
+                    print(f"✅ Kraken API: ${price:,.2f}")
+                else:
+                    print(f"⚠️ Kraken API unexpected format: {data}")
+            else:
+                print(f"⚠️ Kraken API returned {response.status_code}: {response.text[:100]}")
+        except Exception as e:
+            log_detailed_error("Kraken Test", e)
+    
+    def _test_coingecko_api(self):
+        """Test CoinGecko API with real key"""
+        try:
+            headers = {'X-CG-Demo-API-Key': REAL_COINGECKO_API_KEY}
+            response = requests.get(
+                'https://api.coingecko.com/api/v3/ping',
+                headers=headers,
+                timeout=10
+            )
+            if response.status_code == 200:
+                print(f"✅ CoinGecko API authenticated: {response.json()}")
+            else:
+                print(f"⚠️ CoinGecko API returned {response.status_code}: {response.text}")
+        except Exception as e:
+            log_detailed_error("CoinGecko Test", e)
+    
+    def _test_fred_api(self):
+        """Test FRED API with real key"""
+        try:
+            response = requests.get(
+                'https://api.stlouisfed.org/fred/series/observations',
+                params={
+                    'series_id': 'DGS3MO',
+                    'api_key': REAL_FRED_API_KEY,
+                    'file_type': 'json',
+                    'limit': '1'
+                },
+                timeout=10
+            )
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ FRED API authenticated: Found {len(data.get('observations', []))} observations")
+            else:
+                print(f"⚠️ FRED API returned {response.status_code}: {response.text}")
+        except Exception as e:
+            log_detailed_error("FRED Test", e)
+        
+    def get_live_btc_price(self):
+        """Get LIVE BTC price with detailed logging - FAIL if no real data available"""
+        print("📊 [LIVE] Fetching BTC price from multiple exchanges...")
+        
+        # Primary: Coinbase Pro API
+        try:
+            print("🔄 [1/3] Trying Coinbase Pro API...")
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(
+                'https://api.exchange.coinbase.com/products/BTC-USD/ticker',
+                timeout=15,
+                headers=headers
+            )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"   Response Data: {data}")
+                
+                if 'price' in data:
+                    price = float(data['price'])
+                    print(f"   Parsed Price: {price}")
+                    
+                    if price > 10000:  # Basic sanity check
+                        print(f"✅ [SUCCESS] Live BTC price from Coinbase Pro: ${price:,.2f}")
                         return price
                     else:
-                        print(f"❌ Invalid price from Kraken: {price}")
+                        print(f"❌ [INVALID] Price too low: {price}")
                 else:
-                    print(f"❌ Invalid Kraken response format: {data}")
+                    print(f"❌ [MISSING] No 'price' field in response")
             else:
-                print(f"❌ Kraken API failed: {response.status_code}")
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}: {response.text[:200]}")
                 
         except Exception as e:
-            print(f"❌ Kraken API error: {e}")
+            log_detailed_error("Coinbase Pro API", e)
+        
+        # Secondary: Binance API
+        try:
+            print("🔄 [2/3] Trying Binance API...")
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(
+                'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT',
+                timeout=15,
+                headers=headers
+            )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"   Response Data: {data}")
+                
+                if 'price' in data:
+                    price = float(data['price'])
+                    print(f"   Parsed Price: {price}")
+                    
+                    if price > 10000:
+                        print(f"✅ [SUCCESS] Live BTC price from Binance: ${price:,.2f}")
+                        return price
+                    else:
+                        print(f"❌ [INVALID] Price too low: {price}")
+                else:
+                    print(f"❌ [MISSING] No 'price' field in response")
+            else:
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}: {response.text[:200]}")
+                
+        except Exception as e:
+            log_detailed_error("Binance API", e)
+        
+        # Tertiary: Kraken API
+        try:
+            print("🔄 [3/3] Trying Kraken API...")
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(
+                'https://api.kraken.com/0/public/Ticker?pair=XXBTZUSD',
+                timeout=15,
+                headers=headers
+            )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                print(f"   Response Keys: {list(data.keys())}")
+                
+                if 'result' in data and 'XXBTZUSD' in data['result']:
+                    ticker_data = data['result']['XXBTZUSD']
+                    print(f"   Ticker Data: {ticker_data}")
+                    
+                    if 'c' in ticker_data and len(ticker_data['c']) > 0:
+                        price_str = ticker_data['c'][0]  # Last price
+                        price = float(price_str)
+                        print(f"   Parsed Price: {price}")
+                        
+                        if price > 10000:
+                            print(f"✅ [SUCCESS] Live BTC price from Kraken: ${price:,.2f}")
+                            return price
+                        else:
+                            print(f"❌ [INVALID] Price too low: {price}")
+                    else:
+                        print(f"❌ [MISSING] No 'c' field or empty array")
+                else:
+                    print(f"❌ [FORMAT] Unexpected response format: {data}")
+            else:
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}: {response.text[:200]}")
+                
+        except Exception as e:
+            log_detailed_error("Kraken API", e)
         
         # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
-        print("🚨 CRITICAL: ALL LIVE DATA SOURCES FAILED")
+        print("🚨 [CRITICAL] ALL LIVE BTC PRICE SOURCES FAILED")
         print("🚨 NO fallback data will be provided")
         raise Exception("LIVE_DATA_UNAVAILABLE: All real-time BTC price sources failed")
     
     def get_live_volatility(self):
-        """Get LIVE volatility - FAIL if no real data available"""
-        print("📊 Fetching LIVE BTC volatility...")
+        """Get LIVE volatility with detailed logging - FAIL if no real data available"""
+        print("📊 [LIVE] Fetching BTC volatility from CoinGecko...")
         
         try:
-            # Using CoinGecko for live volatility data
+            print("🔄 Using CoinGecko Demo API with authentication...")
+            
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json',
+                'X-CG-Demo-API-Key': REAL_COINGECKO_API_KEY
+            }
+            
+            url = 'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart'
+            params = {
+                'vs_currency': 'usd',
+                'days': '30',
+                'interval': 'daily'
+            }
+            
+            print(f"   URL: {url}")
+            print(f"   Params: {params}")
+            print(f"   Headers: {headers}")
+            
             response = requests.get(
-                'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30',
-                timeout=15,
-                headers={'User-Agent': 'Atticus-Professional/1.0'}
+                url,
+                params=params,
+                headers=headers,
+                timeout=20
             )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
             
             if response.status_code == 200:
                 data = response.json()
-                if 'prices' in data and len(data['prices']) > 10:
-                    # Calculate 30-day volatility from price data
-                    prices = [price[1] for price in data['prices']]
-                    returns = []
+                print(f"   Response Keys: {list(data.keys())}")
+                
+                if 'prices' in data:
+                    prices_data = data['prices']
+                    print(f"   Price Data Points: {len(prices_data)}")
                     
-                    for i in range(1, len(prices)):
-                        ret = (prices[i] - prices[i-1]) / prices[i-1]
-                        returns.append(ret)
-                    
-                    if returns:
-                        import statistics
-                        volatility = statistics.stdev(returns) * math.sqrt(365)
-                        if 0.1 <= volatility <= 2.0:  # Reasonable volatility range
-                            print(f"✅ Live volatility calculated: {volatility:.3f}")
-                            return volatility
+                    if len(prices_data) > 10:
+                        # Extract prices from [timestamp, price] pairs
+                        prices = [float(price_point[1]) for price_point in prices_data]
+                        print(f"   Price Range: ${min(prices):,.2f} - ${max(prices):,.2f}")
+                        
+                        # Calculate daily returns
+                        returns = []
+                        for i in range(1, len(prices)):
+                            daily_return = (prices[i] - prices[i-1]) / prices[i-1]
+                            returns.append(daily_return)
+                        
+                        print(f"   Daily Returns Count: {len(returns)}")
+                        
+                        if len(returns) > 5:
+                            # Annualized volatility
+                            volatility = statistics.stdev(returns) * math.sqrt(365)
+                            print(f"   Calculated Volatility: {volatility:.4f}")
+                            
+                            if 0.1 <= volatility <= 3.0:  # Reasonable volatility range
+                                print(f"✅ [SUCCESS] Live volatility: {volatility:.3f} ({volatility*100:.1f}%)")
+                                return volatility
+                            else:
+                                print(f"❌ [INVALID] Volatility out of range: {volatility}")
                         else:
-                            print(f"❌ Invalid volatility calculated: {volatility}")
+                            print(f"❌ [INSUFFICIENT] Not enough returns: {len(returns)}")
+                    else:
+                        print(f"❌ [INSUFFICIENT] Not enough price data: {len(prices_data)}")
                 else:
-                    print("❌ Insufficient price data for volatility calculation")
+                    print(f"❌ [MISSING] No 'prices' field in response")
+                    print(f"   Available fields: {list(data.keys())}")
+            else:
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}")
+                print(f"   Response Text: {response.text[:500]}")
+                
+                # Check for rate limiting
+                if response.status_code == 429:
+                    print("⚠️ [RATE_LIMIT] CoinGecko API rate limit hit")
+                elif response.status_code == 401:
+                    print("⚠️ [AUTH_ERROR] Invalid CoinGecko API key")
+                elif response.status_code == 403:
+                    print("⚠️ [FORBIDDEN] CoinGecko API access denied")
                     
         except Exception as e:
-            print(f"❌ Volatility calculation error: {e}")
+            log_detailed_error("CoinGecko Volatility API", e)
         
         # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
-        print("🚨 CRITICAL: LIVE VOLATILITY DATA UNAVAILABLE")
+        print("🚨 [CRITICAL] LIVE VOLATILITY DATA UNAVAILABLE")
         raise Exception("LIVE_DATA_UNAVAILABLE: Live volatility calculation failed")
     
     def get_live_risk_free_rate(self):
-        """Get LIVE risk-free rate from Federal Reserve API"""
-        print("📊 Fetching LIVE risk-free rate...")
+        """Get LIVE risk-free rate with detailed logging"""
+        print("📊 [LIVE] Fetching risk-free rate from FRED API...")
         
         try:
-            # Federal Reserve Economic Data (FRED) API
-            # 3-Month Treasury Constant Maturity Rate
+            print("🔄 Using FRED API with real authentication...")
+            
             end_date = datetime.now().strftime('%Y-%m-%d')
             start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
             
+            url = 'https://api.stlouisfed.org/fred/series/observations'
+            params = {
+                'series_id': 'DGS3MO',  # 3-Month Treasury Constant Maturity Rate
+                'api_key': REAL_FRED_API_KEY,
+                'file_type': 'json',
+                'observation_start': start_date,
+                'observation_end': end_date,
+                'sort_order': 'desc',
+                'limit': '10'  # Get more observations for reliability
+            }
+            
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json'
+            }
+            
+            print(f"   URL: {url}")
+            print(f"   Params: {params}")
+            print(f"   Date Range: {start_date} to {end_date}")
+            
             response = requests.get(
-                f'https://api.stlouisfed.org/fred/series/observations',
-                params={
-                    'series_id': 'DGS3MO',
-                    'api_key': '4c35f7d7a8f9b6c3e2d1a0f5e8c7b9d4',  # Public FRED key
-                    'file_type': 'json',
-                    'observation_start': start_date,
-                    'observation_end': end_date,
-                    'sort_order': 'desc',
-                    'limit': '1'
-                },
-                timeout=10,
-                headers={'User-Agent': 'Atticus-Professional/1.0'}
+                url,
+                params=params,
+                headers=headers,
+                timeout=15
             )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
             
             if response.status_code == 200:
                 data = response.json()
-                if 'observations' in data and len(data['observations']) > 0:
-                    rate_str = data['observations'][0]['value']
-                    if rate_str != '.' and rate_str is not None:
-                        rate = float(rate_str) / 100  # Convert percentage to decimal
-                        if 0.0 <= rate <= 0.2:  # Reasonable rate range
-                            print(f"✅ Live risk-free rate: {rate:.4f} ({rate*100:.2f}%)")
-                            return rate
+                print(f"   Response Keys: {list(data.keys())}")
+                
+                if 'observations' in data:
+                    observations = data['observations']
+                    print(f"   Observations Count: {len(observations)}")
+                    
+                    # Find first valid observation
+                    for obs in observations:
+                        print(f"   Observation: {obs}")
+                        
+                        if obs.get('value') and obs['value'] != '.' and obs['value'] != 'null':
+                            try:
+                                rate_percent = float(obs['value'])
+                                rate_decimal = rate_percent / 100  # Convert percentage to decimal
+                                print(f"   Parsed Rate: {rate_percent}% -> {rate_decimal:.4f}")
+                                
+                                if 0.0 <= rate_decimal <= 0.25:  # Reasonable rate range
+                                    print(f"✅ [SUCCESS] Live risk-free rate: {rate_decimal:.4f} ({rate_percent:.2f}%)")
+                                    print(f"   Date: {obs.get('date', 'unknown')}")
+                                    return rate_decimal
+                                else:
+                                    print(f"❌ [INVALID] Rate out of range: {rate_decimal}")
+                            except ValueError as ve:
+                                print(f"❌ [PARSE_ERROR] Cannot parse rate '{obs['value']}': {ve}")
                         else:
-                            print(f"❌ Invalid risk-free rate: {rate}")
-                    else:
-                        print("❌ No risk-free rate data available")
+                            print(f"⚠️ [MISSING] No valid value in observation: {obs.get('value')}")
+                    
+                    print(f"❌ [NO_VALID] No valid observations found")
                 else:
-                    print("❌ No risk-free rate observations returned")
+                    print(f"❌ [MISSING] No 'observations' field in response")
+                    print(f"   Available fields: {list(data.keys())}")
+            else:
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}")
+                print(f"   Response Text: {response.text[:500]}")
+                
+                if response.status_code == 400:
+                    print("⚠️ [BAD_REQUEST] Invalid FRED API request")
+                elif response.status_code == 403:
+                    print("⚠️ [FORBIDDEN] Invalid FRED API key")
                     
         except Exception as e:
-            print(f"❌ Risk-free rate API error: {e}")
+            log_detailed_error("FRED Risk-Free Rate API", e)
         
         # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
-        print("🚨 CRITICAL: LIVE RISK-FREE RATE UNAVAILABLE")
+        print("🚨 [CRITICAL] LIVE RISK-FREE RATE UNAVAILABLE")
         raise Exception("LIVE_DATA_UNAVAILABLE: Live risk-free rate unavailable")
 
 class PortfolioAnalyzer:
-    """Portfolio analysis with LIVE data only"""
+    """Portfolio analysis with LIVE data only - enhanced logging"""
     
     def __init__(self, market_service):
         self.market = market_service
@@ -260,22 +541,36 @@ class PortfolioAnalyzer:
         print("✅ PortfolioAnalyzer initialized with LIVE data requirement")
     
     def analyze(self, portfolio_type=None, custom_params=None):
-        """Analyze portfolio using LIVE market data ONLY"""
+        """Analyze portfolio using LIVE market data ONLY with detailed logging"""
         try:
-            print(f"📊 Starting portfolio analysis - LIVE DATA REQUIRED")
+            print(f"📊 [ANALYSIS] Starting portfolio analysis - LIVE DATA REQUIRED")
             
             if custom_params:
+                print(f"   Using custom parameters: {custom_params}")
                 return self._analyze_custom(custom_params)
             
             profile = self.profiles.get(portfolio_type, self.profiles['pension_fund'])
+            print(f"   Using profile: {profile['name']}")
             
             # CRITICAL: Get LIVE data - FAIL if unavailable
-            print("🔴 Fetching LIVE market data for analysis...")
-            btc_price = self.market.get_live_btc_price()  # Will raise exception if no live data
-            volatility = self.market.get_live_volatility()  # Will raise exception if no live data
+            print("🔴 [LIVE_DATA] Fetching live market data for analysis...")
             
+            print("   [1/2] Getting live BTC price...")
+            btc_price = self.market.get_live_btc_price()  # Will raise exception if no live data
+            print(f"   ✅ Live BTC Price: ${btc_price:,.2f}")
+            
+            print("   [2/2] Getting live volatility...")
+            volatility = self.market.get_live_volatility()  # Will raise exception if no live data
+            print(f"   ✅ Live Volatility: {volatility:.4f} ({volatility*100:.2f}%)")
+            
+            # Calculate portfolio metrics
             btc_allocation = profile['aum'] * (profile['btc_allocation_pct'] / 100)
             btc_size = btc_allocation / btc_price
+            
+            print(f"   Portfolio Calculations:")
+            print(f"     AUM: ${profile['aum']:,.0f}")
+            print(f"     BTC Allocation: {profile['btc_allocation_pct']}% = ${btc_allocation:,.2f}")
+            print(f"     BTC Size: {btc_size:.4f} BTC")
             
             var_1d = self._calculate_var(btc_size, btc_price, volatility, 1)
             var_30d = self._calculate_var(btc_size, btc_price, volatility, 30)
@@ -304,27 +599,39 @@ class PortfolioAnalyzer:
                 'data_source': 'LIVE_MARKET_DATA'
             }
             
-            print(f"✅ Portfolio analysis completed with LIVE data: {profile['name']}")
+            print(f"✅ [SUCCESS] Portfolio analysis completed with LIVE data: {profile['name']}")
             return result
             
         except Exception as e:
-            print(f"🚨 Portfolio analysis FAILED: {e}")
+            print(f"🚨 [FAILURE] Portfolio analysis FAILED: {e}")
+            print(f"   Error Type: {type(e).__name__}")
             if "LIVE_DATA_UNAVAILABLE" in str(e):
+                print("   Root Cause: Live market data unavailable")
                 raise Exception(f"Portfolio analysis requires live market data. {str(e)}")
             else:
+                print("   Root Cause: Analysis computation error")
                 raise Exception(f"Analysis failed: {str(e)}")
     
     def _analyze_custom(self, params):
-        """Analyze custom position with LIVE data"""
+        """Analyze custom position with LIVE data and logging"""
         try:
-            print("📊 Analyzing custom position with LIVE data...")
+            print("📊 [CUSTOM] Analyzing custom position with LIVE data...")
+            print(f"   Parameters: {params}")
             
             # CRITICAL: Get LIVE data - FAIL if unavailable
+            print("   Getting live BTC price...")
             btc_price = self.market.get_live_btc_price()
+            print(f"   ✅ Live BTC Price: ${btc_price:,.2f}")
+            
+            print("   Getting live volatility...")
             volatility = self.market.get_live_volatility()
+            print(f"   ✅ Live Volatility: {volatility:.4f}")
             
             position_size = float(params.get('size', 1.0))
             institution_type = params.get('type', 'hedge_fund')
+            
+            print(f"   Position Size: {position_size} BTC")
+            print(f"   Institution Type: {institution_type}")
             
             if position_size <= 0:
                 raise ValueError("Position size must be positive")
@@ -363,11 +670,11 @@ class PortfolioAnalyzer:
                 'data_source': 'LIVE_MARKET_DATA'
             }
             
-            print(f"✅ Custom analysis completed: {position_size} BTC")
+            print(f"✅ [SUCCESS] Custom analysis completed: {position_size} BTC")
             return result
             
         except Exception as e:
-            print(f"🚨 Custom analysis FAILED: {e}")
+            print(f"🚨 [FAILURE] Custom analysis FAILED: {e}")
             raise Exception(f"Custom analysis failed: {str(e)}")
     
     def _calculate_var(self, size, price, vol, days):
@@ -406,23 +713,35 @@ class PortfolioAnalyzer:
             raise Exception(f"Scenario generation failed: {str(e)}")
 
 class LivePricingEngine:
-    """Options pricing engine using LIVE data only"""
+    """Options pricing engine using LIVE data only with enhanced logging"""
     
     def __init__(self, market_service):
         self.market = market_service
         print("✅ LivePricingEngine initialized - LIVE DATA ONLY")
     
     def price_all_strategies(self, analysis_data):
-        """Price strategies using LIVE market data"""
+        """Price strategies using LIVE market data with detailed logging"""
         try:
-            print("💰 Pricing strategies with LIVE market data...")
+            print("💰 [PRICING] Pricing strategies with LIVE market data...")
             
             # Verify we have live data
             if analysis_data.get('data_source') != 'LIVE_MARKET_DATA':
                 raise Exception("Strategy pricing requires live market data")
             
+            print("   Verifying live data timestamp...")
+            timestamp = analysis_data.get('data_timestamp')
+            if timestamp:
+                data_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                age_minutes = (datetime.now() - data_time).total_seconds() / 60
+                print(f"   Data age: {age_minutes:.1f} minutes")
+                
+                if age_minutes > 30:
+                    print("⚠️ Data may be stale")
+            
             # Get LIVE risk-free rate
+            print("   Getting live risk-free rate...")
             risk_free_rate = self.market.get_live_risk_free_rate()
+            print(f"   ✅ Live Risk-Free Rate: {risk_free_rate:.4f}")
             
             positions = analysis_data['positions']
             hedge_rec = analysis_data['hedge_recommendation']
@@ -433,11 +752,19 @@ class LivePricingEngine:
             preferred_strategies = hedge_rec.get('preferred_strategies', ['protective_put'])
             risk_tolerance = profile.get('risk_tolerance', 'moderate')
             
+            print(f"   Pricing Parameters:")
+            print(f"     Current Price: ${current_price:,.2f}")
+            print(f"     Hedge Size: {hedge_size} BTC")
+            print(f"     Risk Tolerance: {risk_tolerance}")
+            print(f"     Strategies: {preferred_strategies}")
+            
             strategies = []
             
             # Price each strategy with live data
             for i, strategy_type in enumerate(preferred_strategies):
                 try:
+                    print(f"   [{i+1}/{len(preferred_strategies)}] Pricing {strategy_type}...")
+                    
                     strategy = self._price_single_strategy(
                         strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate
                     )
@@ -446,26 +773,32 @@ class LivePricingEngine:
                     strategy['pricing_timestamp'] = datetime.now().isoformat()
                     strategy['data_source'] = 'LIVE_MARKET_DATA'
                     strategies.append(strategy)
+                    
+                    print(f"   ✅ {strategy_type} priced successfully")
+                    
                 except Exception as e:
-                    print(f"❌ Error pricing {strategy_type}: {e}")
+                    print(f"   ❌ Error pricing {strategy_type}: {e}")
                     continue
             
             if not strategies:
                 raise Exception("No strategies could be priced with live data")
             
-            print(f"✅ {len(strategies)} strategies priced with live data")
+            print(f"✅ [SUCCESS] {len(strategies)} strategies priced with live data")
             return strategies
             
         except Exception as e:
-            print(f"🚨 Strategy pricing FAILED: {e}")
+            print(f"🚨 [FAILURE] Strategy pricing FAILED: {e}")
             raise Exception(f"Strategy pricing failed: {str(e)}")
     
     def _price_single_strategy(self, strategy_type, size, S, risk_tolerance, r):
         """Price individual strategy with live data"""
         try:
+            print(f"     Getting live volatility for {strategy_type}...")
             # Get LIVE volatility
             vol = self.market.get_live_volatility()
             T = 45 / 365.0  # 45 days to expiry
+            
+            print(f"     Pricing inputs: S=${S}, vol={vol:.4f}, T={T:.4f}, r={r:.4f}")
             
             if strategy_type == 'protective_put':
                 return self._price_protective_put(size, S, vol, T, r, risk_tolerance)
@@ -716,7 +1049,7 @@ class LivePricingEngine:
             raise Exception("Normal CDF calculation failed")
 
 class ExchangeManager:
-    """Exchange management for execution"""
+    """Exchange management for execution with logging"""
     
     def __init__(self):
         self.exchanges = {
@@ -729,7 +1062,9 @@ class ExchangeManager:
     def calculate_optimal_execution(self, total_size, instrument_type='btc_options'):
         """Calculate optimal execution across exchanges"""
         try:
-            return [
+            print(f"📊 [EXECUTION] Calculating optimal execution for {total_size} {instrument_type}")
+            
+            execution_plan = [
                 {
                     'exchange': 'deribit',
                     'size': round(total_size * 0.6, 4),
@@ -743,12 +1078,16 @@ class ExchangeManager:
                     'liquidity': 'medium'
                 }
             ]
+            
+            print(f"   Execution Plan: {execution_plan}")
+            return execution_plan
+            
         except Exception as e:
             print(f"❌ Execution calculation error: {e}")
             return [{'exchange': 'deribit', 'size': total_size, 'cost': total_size * 0.0005, 'liquidity': 'high'}]
 
 class PlatformRiskManager:
-    """Platform risk management"""
+    """Platform risk management with logging"""
     
     def __init__(self, exchange_mgr):
         self.exchange_mgr = exchange_mgr
@@ -757,7 +1096,7 @@ class PlatformRiskManager:
     def calculate_net_exposure(self):
         """Calculate platform net exposure"""
         try:
-            return {
+            exposure_data = {
                 'total_client_long_btc': platform_state['total_client_exposure_btc'],
                 'total_platform_hedges_btc': platform_state['total_platform_hedges_btc'],
                 'net_exposure_btc': platform_state['net_platform_exposure_btc'],
@@ -771,6 +1110,10 @@ class PlatformRiskManager:
                 'total_hedge_cost': platform_state['total_hedge_cost'],
                 'net_revenue': platform_state['total_premium_collected'] - platform_state['total_hedge_cost']
             }
+            
+            print(f"📊 [EXPOSURE] Platform exposure calculated: {exposure_data}")
+            return exposure_data
+            
         except Exception as e:
             print(f"⚠️ Exposure calculation error: {e}")
             return {
@@ -785,33 +1128,52 @@ class PlatformRiskManager:
                 'net_revenue': 0.0
             }
 
-# Initialize services with LIVE data requirement
-print("🔴 Initializing Atticus Professional v17.4 - LIVE DATA ONLY...")
+# Initialize services with LIVE data requirement and enhanced logging
+print("🔴 " + "="*80)
+print("🔴 Initializing Atticus Professional v17.5 - LIVE DATA ONLY...")
 print("🔴 CRITICAL: NO fallback, mock, synthetic, or cached data will be used")
+print("🔴 Using REAL API KEYS with comprehensive error logging")
+print("🔴 " + "="*80)
 
-market_service = LiveMarketDataService()
-exchange_manager = ExchangeManager()
-portfolio_analyzer = PortfolioAnalyzer(market_service)
-live_pricing_engine = LivePricingEngine(market_service)
-platform_risk_manager = PlatformRiskManager(exchange_manager)
+try:
+    market_service = LiveMarketDataService()
+    exchange_manager = ExchangeManager()
+    portfolio_analyzer = PortfolioAnalyzer(market_service)
+    live_pricing_engine = LivePricingEngine(market_service)
+    platform_risk_manager = PlatformRiskManager(exchange_manager)
+    
+    print("🎯 All services initialized with LIVE DATA requirement and real API keys!")
+    
+except Exception as init_error:
+    print(f"🚨 CRITICAL INITIALIZATION ERROR: {init_error}")
+    print("🚨 Platform cannot start without live data services")
+    log_detailed_error("Service Initialization", init_error)
+    exit(1)
 
-print("🎯 All services initialized with LIVE DATA requirement!")
-
-# Routes
+# Routes with enhanced error logging
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/api/health')
 def health():
-    """Health check - verify live data availability"""
+    """Health check with detailed diagnostics"""
     try:
+        print("🏥 [HEALTH] Health check requested...")
+        
         # Test live data availability
+        print("   Testing live BTC price...")
         btc_price = market_service.get_live_btc_price()
         
-        return jsonify({
+        print("   Testing live volatility...")
+        volatility = market_service.get_live_volatility()
+        
+        print("   Testing live risk-free rate...")
+        risk_rate = market_service.get_live_risk_free_rate()
+        
+        health_data = {
             'status': 'healthy',
-            'version': 'v17.4-LIVE-DATA-ONLY',
+            'version': 'v17.5-LIVE-DATA-ONLY-REAL-KEYS',
             'timestamp': datetime.now().isoformat(),
             'services': {
                 'live_market_data': 'operational',
@@ -820,111 +1182,165 @@ def health():
                 'exchange_manager': 'operational',
                 'platform_risk_manager': 'operational'
             },
-            'live_btc_price': btc_price,
+            'live_data_test': {
+                'btc_price': btc_price,
+                'volatility': round(volatility * 100, 2),
+                'risk_free_rate': round(risk_rate * 100, 4)
+            },
+            'api_keys': {
+                'fred_key_length': len(REAL_FRED_API_KEY),
+                'coingecko_key_length': len(REAL_COINGECKO_API_KEY)
+            },
             'data_source': 'LIVE_MARKET_DATA',
             'warning': 'LIVE DATA ONLY - NO FALLBACKS'
-        })
+        }
+        
+        print(f"✅ [HEALTH] All systems operational: {health_data}")
+        return jsonify(health_data)
+        
     except Exception as e:
-        print(f"❌ Health check failed: {e}")
+        error_msg = str(e)
+        print(f"❌ [HEALTH] Health check failed: {error_msg}")
+        log_detailed_error("Health Check", e)
+        
         return jsonify({
             'status': 'degraded',
             'error': 'LIVE_DATA_UNAVAILABLE',
-            'message': str(e),
-            'warning': 'Platform requires live market data to operate'
+            'message': error_msg,
+            'timestamp': datetime.now().isoformat(),
+            'warning': 'Platform requires live market data to operate',
+            'api_keys_configured': {
+                'fred': bool(REAL_FRED_API_KEY),
+                'coingecko': bool(REAL_COINGECKO_API_KEY)
+            }
         }), 503
 
 @app.route('/api/market-data')
 def market_data():
-    """Get live market data - FAIL if unavailable"""
+    """Get live market data with detailed logging"""
     try:
-        print("📊 API request for live market data...")
+        print("📊 [API] Market data request received...")
         
         # CRITICAL: Get live data - FAIL if unavailable
+        print("   [1/3] Getting live BTC price...")
         price = market_service.get_live_btc_price()
+        
+        print("   [2/3] Getting live volatility...")
         vol = market_service.get_live_volatility()
+        
+        print("   [3/3] Getting live risk-free rate...")
         rate = market_service.get_live_risk_free_rate()
         
-        return jsonify({
+        response_data = {
             'btc_price': round(price, 2),
             'volatility': round(vol * 100, 1),
             'risk_free_rate': round(rate * 100, 2),
             'timestamp': datetime.now().isoformat(),
             'status': 'live',
             'data_source': 'LIVE_MARKET_DATA',
-            'data_age_seconds': 0
-        })
+            'data_age_seconds': 0,
+            'api_sources': {
+                'price': 'Multi-exchange (Coinbase/Binance/Kraken)',
+                'volatility': 'CoinGecko Historical',
+                'risk_rate': 'Federal Reserve FRED'
+            }
+        }
+        
+        print(f"✅ [API] Market data served: {response_data}")
+        return jsonify(response_data)
+        
     except Exception as e:
-        print(f"❌ Market data API error: {e}")
+        error_msg = str(e)
+        print(f"❌ [API] Market data error: {error_msg}")
+        log_detailed_error("Market Data API", e)
+        
         return jsonify({
             'error': 'LIVE_DATA_UNAVAILABLE',
-            'message': str(e),
+            'message': error_msg,
             'timestamp': datetime.now().isoformat(),
-            'status': 'error'
+            'status': 'error',
+            'details': 'Check server logs for detailed error information'
         }), 503
 
 @app.route('/api/analyze-portfolio', methods=['POST'])
 def analyze_portfolio():
-    """Analyze portfolio using LIVE data only"""
+    """Analyze portfolio using LIVE data only with logging"""
     try:
         data = request.get_json() or {}
         portfolio_type = data.get('type', 'pension_fund')
         custom_params = data.get('custom_params')
         
-        print(f"📊 Portfolio analysis request: {portfolio_type}")
+        print(f"📊 [API] Portfolio analysis request: {portfolio_type}")
+        if custom_params:
+            print(f"   Custom parameters: {custom_params}")
         
         # CRITICAL: Analysis uses LIVE data only
         analysis = portfolio_analyzer.analyze(portfolio_type, custom_params)
         session['portfolio_analysis'] = analysis
         
+        print(f"✅ [API] Analysis completed successfully")
         return jsonify({'success': True, 'analysis': analysis})
+        
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Analysis error: {error_msg}")
+        print(f"❌ [API] Analysis error: {error_msg}")
+        log_detailed_error("Portfolio Analysis API", e)
+        
         return jsonify({
             'success': False, 
             'error': error_msg,
-            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'ANALYSIS_ERROR'
+            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'ANALYSIS_ERROR',
+            'timestamp': datetime.now().isoformat()
         }), 400
 
 @app.route('/api/generate-strategies', methods=['POST'])
 def generate_strategies():
-    """Generate strategies using LIVE data only"""
+    """Generate strategies using LIVE data only with logging"""
     try:
         analysis = session.get('portfolio_analysis')
         if not analysis:
             return jsonify({'success': False, 'error': 'No portfolio analysis found'}), 400
         
-        print(f"💰 Generating strategies with LIVE data for {analysis['profile']['name']}")
+        print(f"💰 [API] Generating strategies with LIVE data for {analysis['profile']['name']}")
         
         # CRITICAL: Strategy pricing uses LIVE data only
         strategies = live_pricing_engine.price_all_strategies(analysis)
         session['available_strategies'] = strategies
         
+        context = {
+            'institution': analysis['profile']['name'],
+            'position_size': analysis['positions']['btc_size'],
+            'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate'),
+            'data_source': 'LIVE_MARKET_DATA'
+        }
+        
+        print(f"✅ [API] {len(strategies)} strategies generated successfully")
         return jsonify({
             'success': True, 
             'strategies': strategies,
-            'analysis_context': {
-                'institution': analysis['profile']['name'],
-                'position_size': analysis['positions']['btc_size'],
-                'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate'),
-                'data_source': 'LIVE_MARKET_DATA'
-            }
+            'analysis_context': context
         })
+        
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Strategy generation error: {error_msg}")
+        print(f"❌ [API] Strategy generation error: {error_msg}")
+        log_detailed_error("Strategy Generation API", e)
+        
         return jsonify({
             'success': False, 
             'error': error_msg,
-            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'PRICING_ERROR'
+            'error_type': 'LIVE_DATA_REQUIRED' if 'LIVE_DATA_UNAVAILABLE' in error_msg else 'PRICING_ERROR',
+            'timestamp': datetime.now().isoformat()
         }), 400
 
 @app.route('/api/select-strategy', methods=['POST'])
 def select_strategy():
-    """Select strategy for execution"""
+    """Select strategy for execution with logging"""
     try:
         data = request.get_json() or {}
         strategy_type = data.get('strategy_type')
+        
+        print(f"🎯 [API] Strategy selection: {strategy_type}")
         
         available_strategies = session.get('available_strategies', [])
         selected_strategy = None
@@ -952,19 +1368,26 @@ def select_strategy():
             }
         
         session['selected_strategy'] = selected_strategy
+        
+        print(f"✅ [API] Strategy selected: {selected_strategy['strategy_name']}")
         return jsonify({'success': True, 'strategy': selected_strategy})
+        
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Strategy selection error: {error_msg}")
+        print(f"❌ [API] Strategy selection error: {error_msg}")
+        log_detailed_error("Strategy Selection API", e)
+        
         return jsonify({'success': False, 'error': error_msg}), 400
 
 @app.route('/api/execute-strategy', methods=['POST'])
 def execute_strategy():
-    """Execute strategy with live data verification"""
+    """Execute strategy with live data verification and logging"""
     try:
         strategy = session.get('selected_strategy')
         if not strategy:
             return jsonify({'success': False, 'error': 'No strategy selected'}), 400
+        
+        print(f"⚡ [API] Executing strategy: {strategy['strategy_name']}")
         
         # Verify strategy uses live data
         if strategy.get('data_source') != 'LIVE_MARKET_DATA':
@@ -992,6 +1415,7 @@ def execute_strategy():
                 'hedge_size_btc': hedge_size,
                 'coverage': '110%'
             }
+            print(f"   Platform hedge executed: {hedge_size} BTC")
         
         results = {
             'execution_summary': {
@@ -1021,21 +1445,31 @@ def execute_strategy():
             }
         }
         
+        print(f"✅ [API] Strategy execution completed successfully")
         return jsonify({'success': True, 'execution': results})
+        
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Execution error: {error_msg}")
+        print(f"❌ [API] Execution error: {error_msg}")
+        log_detailed_error("Strategy Execution API", e)
+        
         return jsonify({'success': False, 'error': error_msg}), 400
 
 @app.route('/api/platform-exposure')
 def platform_exposure():
-    """Get platform exposure data"""
+    """Get platform exposure data with logging"""
     try:
+        print("📊 [API] Platform exposure request...")
         exposure = platform_risk_manager.calculate_net_exposure()
+        
+        print(f"✅ [API] Platform exposure data served")
         return jsonify({'success': True, 'exposure': exposure})
+        
     except Exception as e:
         error_msg = str(e)
-        print(f"❌ Exposure error: {error_msg}")
+        print(f"❌ [API] Exposure error: {error_msg}")
+        log_detailed_error("Platform Exposure API", e)
+        
         return jsonify({'success': False, 'exposure': {
             'total_client_long_btc': 0.0,
             'total_platform_hedges_btc': 0.0,
@@ -1044,14 +1478,20 @@ def platform_exposure():
         }}), 500
 
 if __name__ == '__main__':
-    print("🔴 Atticus Professional v17.4 Starting - LIVE DATA ONLY...")
+    print("🔴 " + "="*80)
+    print("🔴 Atticus Professional v17.5 Starting - LIVE DATA ONLY...")
     print("🔴 CRITICAL: NO fallback, mock, synthetic, or cached data")
     print("🔴 Platform will FAIL GRACEFULLY if live data unavailable")
-    print("   ✓ Live BTC price feeds from multiple exchanges")
-    print("   ✓ Live volatility calculation from historical data")
-    print("   ✓ Live risk-free rate from Federal Reserve")
-    print("   ✓ Real-time Black-Scholes options pricing")
-    print("   ✓ Strict error handling and data validation")
+    print("🔴 REAL API KEYS CONFIGURED:")
+    print(f"🔴   ✓ FRED API Key: {REAL_FRED_API_KEY[:8]}...{REAL_FRED_API_KEY[-8:]}")
+    print(f"🔴   ✓ CoinGecko API Key: {REAL_COINGECKO_API_KEY[:8]}...{REAL_COINGECKO_API_KEY[-8:]}")
+    print("🔴 LIVE DATA SOURCES:")
+    print("🔴   ✓ Live BTC price feeds from Coinbase Pro, Binance, Kraken")
+    print("🔴   ✓ Live volatility calculation from CoinGecko historical data")
+    print("🔴   ✓ Live risk-free rate from Federal Reserve FRED API")
+    print("🔴   ✓ Real-time Black-Scholes options pricing")
+    print("🔴   ✓ Comprehensive error logging and data validation")
+    print("🔴 " + "="*80)
     
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
