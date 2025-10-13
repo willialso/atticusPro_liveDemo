@@ -1,4 +1,4 @@
-/* Atticus Professional - CFO Feedback Implementation */
+/* Atticus Professional - Compact Header with Dark Blue Background */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -58,44 +58,45 @@ body {
     box-sizing: border-box;
 }
 
-/* ENHANCED HEADER - Blue Background, Reduced Height */
+/* COMPACT HEADER - Dark Blue Background, Smaller Height */
 .header {
-    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
-    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--primary) 100%); /* Using dark app backgrounds */
+    border-bottom: 2px solid rgba(251, 191, 36, 0.3); /* Rich yellow border */
     position: sticky;
     top: 0;
     z-index: 1000;
     color: var(--text-white);
-    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 2px 15px rgba(15, 23, 42, 0.8); /* Dark shadow */
 }
 
 .header-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px 0; /* Reduced from 24px */
+    padding: 12px 0; /* Reduced from 16px for more compact look */
     position: relative;
 }
 
+/* SMALLER LOGO */
 .logo {
-    height: 70px;
+    height: 50px; /* Reduced from 70px */
     width: auto;
     margin: 0 auto;
-    filter: brightness(1.1) contrast(1.1);
+    filter: brightness(1.2) contrast(1.1); /* Slightly brighter for dark background */
 }
 
 .platform-status {
     position: absolute;
     right: 0;
     display: flex;
-    gap: 40px;
+    gap: 32px; /* Reduced slightly */
     align-items: center;
 }
 
 /* CONSISTENT FONT SIZING - CFO Request */
 .status-item .label,
 .status-item .value {
-    font-size: 16px; /* Standardized font size */
+    font-size: 15px; /* Slightly reduced for compact header */
     font-weight: 600;
 }
 
@@ -117,23 +118,23 @@ body {
 
 .status-item .value.live::before {
     content: '';
-    width: 12px;
-    height: 12px;
+    width: 10px; /* Slightly smaller for compact design */
+    height: 10px;
     background: var(--success);
     border-radius: 50%;
     position: absolute;
-    left: -20px;
+    left: -18px; /* Adjusted for smaller dot */
     top: 50%;
     transform: translateY(-50%);
     animation: pulse 2s infinite;
-    box-shadow: 0 0 12px var(--success);
+    box-shadow: 0 0 10px var(--success);
 }
 
-/* REDUCED HEIGHT NAVIGATION */
+/* NAVIGATION - Matches header style */
 .demo-nav {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(51, 65, 85, 0.95) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); /* Consistent with app theme */
     border-bottom: 2px solid rgba(251, 191, 36, 0.3);
-    padding: 20px 0; /* Reduced from 30px */
+    padding: 18px 0; /* Slightly reduced from 20px */
     backdrop-filter: blur(8px);
 }
 
@@ -147,7 +148,7 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 16px 32px; /* Slightly reduced */
+    padding: 14px 28px; /* Slightly reduced for consistency */
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -876,7 +877,7 @@ body {
     right: 0;
     width: 300px;
     height: 100vh;
-    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--primary) 50%, var(--primary-light) 100%); /* Matches header */
     border-left: 3px solid var(--warning-light);
     backdrop-filter: blur(15px);
     z-index: 800;
