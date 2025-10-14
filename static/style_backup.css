@@ -36,28 +36,10 @@
     --teal: #0d9488;
     --rose: #e11d48;
     --amber: #d97706;
-    
-    /* Cross-Platform Typography Scale */
-    --font-size-xs: 12px;
-    --font-size-sm: 14px;
-    --font-size-base: 16px;
-    --font-size-lg: 18px;
-    --font-size-xl: 20px;
-    --font-size-2xl: 22px;
-    --font-size-3xl: 24px;
-    
-    /* Consistent line heights */
-    --line-height-tight: 1.25;
-    --line-height-normal: 1.5;
-    --line-height-relaxed: 1.625;
-    
-    /* Platform-adjusted line heights */
-    --line-height-windows: 1.3;
-    --line-height-macos: 1.2;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-main) 50%, var(--primary-light) 100%);
     color: var(--text-bright);
     min-height: 100vh;
@@ -65,74 +47,6 @@ body {
     font-size: 16px;
     padding-right: 320px; /* Space for right sidebar */
     overflow-x: hidden;
-    
-    /* Cross-platform font rendering optimization */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "kern" 1, "liga" 1;
-    font-kerning: normal;
-}
-
-/* Platform-specific font adjustments */
-@supports (-webkit-font-feature-settings: normal) {
-    body { /* macOS Safari/Chrome */
-        font-feature-settings: "kern" 1, "liga" 1, "clig" 1;
-    }
-}
-
-@supports not (-webkit-font-feature-settings: normal) {
-    body { /* Windows/Firefox */
-        font-feature-settings: "kern" 1;
-    }
-}
-
-/* PHASE 3: HEADING CONSISTENCY SYSTEM */
-/* Standardized heading containers */
-.card-heading-container {
-    width: 100%;
-    min-height: 60px; /* Fixed minimum height */
-    max-height: 80px; /* Fixed maximum height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
-    overflow: hidden;
-    position: relative;
-}
-
-.card-heading-container::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.3), transparent);
-}
-
-/* PHASE 4: COPY TEXT STANDARDIZATION */
-/* Standardized copy containers */
-.card-copy-container {
-    width: 100%;
-    min-height: 72px; /* Fixed for 3 lines */
-    max-height: 96px; /* Fixed for 4 lines max */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
-
-.card-copy-container p {
-    margin: 0;
-    color: var(--text-bright);
-    font-size: 15px; /* Reduced from 17px/18px */
-    line-height: var(--line-height-normal);
-    text-align: center;
-    word-break: keep-all;
-    hyphens: auto;
-    max-width: 100%;
 }
 
 /* DESKTOP INSTITUTIONAL CONTAINER */
@@ -285,16 +199,16 @@ body {
     display: block;
 }
 
-/* Enhanced Section Headers - Tighter */
+/* Enhanced Section Headers */
 .section-header {
     text-align: center;
-    margin-bottom: 40px; /* Much tighter */
+    margin-bottom: 80px;
 }
 
 .section-header h2 {
-    font-size: 42px; /* Smaller for tighter look */
+    font-size: 48px;
     font-weight: 800;
-    margin-bottom: 16px; /* Tighter */
+    margin-bottom: 24px;
     background: linear-gradient(135deg, var(--warning-light) 0%, var(--text-white) 50%, var(--secondary-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -310,36 +224,23 @@ body {
     font-weight: 500;
 }
 
-/* ENHANCED CHALLENGE SECTION - Tighter & Cleaner */
+/* ENHANCED CHALLENGE SECTION - More Color Variety */
 .challenge-stats-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 32px;
+    margin-bottom: 80px;
     width: 100%;
-    align-items: start;
 }
 
 .stat-card {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
     border: 2px solid var(--warning);
-    border-radius: 16px; /* Smaller radius for cleaner look */
-    padding: 20px 16px; /* Much tighter padding */
+    border-radius: 24px;
+    padding: 48px;
     text-align: center;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
-    
-    /* Tighter height system */
-    min-height: 200px; /* Much smaller */
-    max-height: 240px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center content */
-    align-items: center;
-    
-    /* Prevent content overflow */
-    overflow: hidden;
-    box-sizing: border-box;
 }
 
 .stat-card:hover {
@@ -348,55 +249,36 @@ body {
     box-shadow: 0 20px 50px rgba(245, 158, 11, 0.3);
 }
 
-/* Stat card headings (numbers) */
 .stat-card h3 {
-    font-size: 42px; /* Reduced from 44px */
+    font-size: 44px;
     font-weight: 800;
     color: var(--warning);
-    margin: 0;
-    line-height: var(--line-height-tight);
+    margin-bottom: 16px;
     text-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
 }
 
 .stat-card p {
     color: var(--text-bright);
-    font-size: 16px; /* Reduced from 18px */
+    font-size: 18px;
     font-weight: 500;
-    line-height: var(--line-height-normal);
-    text-align: center;
-    margin: 0;
 }
 
-/* Problem Points - Tighter & Cleaner */
+/* Problem Points - Removed X's, Enhanced Colors */
 .problem-points-single-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 32px;
+    margin-bottom: 80px;
     width: 100%;
-    align-items: start;
 }
 
 .problem-card {
     background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
     border: 2px solid var(--purple);
-    border-radius: 16px; /* Smaller radius */
-    padding: 20px 16px; /* Much tighter padding */
+    border-radius: 24px;
+    padding: 40px;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
-    
-    /* Tighter height system */
-    min-height: 200px; /* Much smaller */
-    max-height: 240px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center content */
-    align-items: center;
-    text-align: center;
-    
-    /* Prevent content overflow */
-    overflow: hidden;
-    box-sizing: border-box;
 }
 
 .problem-card:hover {
@@ -405,66 +287,37 @@ body {
     box-shadow: 0 15px 40px rgba(124, 58, 237, 0.2);
 }
 
-/* Problem card headings */
 .problem-card h4 {
-    font-size: 18px; /* Reduced from 20px */
+    font-size: 20px;
     font-weight: 700;
-    color: var(--warning-light);
-    margin: 0;
-    line-height: var(--line-height-windows); /* Platform-specific */
-    text-align: center;
-    word-break: keep-all; /* Prevent unwanted breaks */
-    hyphens: none;
-    min-height: 48px; /* Fixed minimum height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    margin-bottom: 20px;
+    color: var(--warning-light); /* Rich yellow for headings */
+    line-height: 1.2; /* Ensures single line on desktop */
 }
 
 .problem-card p {
     color: var(--text-bright);
-    line-height: var(--line-height-normal);
-    font-size: 15px; /* Reduced from 17px */
-    text-align: center;
-    margin: 0;
-    min-height: 48px; /* Fixed height for 2 lines */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    line-height: 1.6;
+    font-size: 17px;
 }
 
-/* Solution Features - Tighter & Cleaner */
+/* Solution Features - Enhanced Color Variety */
 .solution-features-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 32px;
+    margin-bottom: 80px;
     width: 100%;
-    align-items: start;
 }
 
 .feature-card {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
     border: 2px solid var(--secondary);
-    border-radius: 16px; /* Smaller radius */
-    padding: 20px 16px; /* Much tighter padding */
+    border-radius: 24px;
+    padding: 40px;
     text-align: center;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
-    
-    /* Tighter height system */
-    min-height: 200px; /* Much smaller */
-    max-height: 240px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center content */
-    align-items: center;
-    
-    /* Prevent content overflow */
-    overflow: hidden;
-    box-sizing: border-box;
 }
 
 .feature-card:nth-child(1) { border-color: var(--secondary); }
@@ -483,34 +336,18 @@ body {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
-/* Feature card headings */
 .feature-card h4 {
-    font-size: 19px; /* Reduced from 22px */
+    font-size: 22px;
     font-weight: 700;
-    color: var(--warning-light);
-    margin: 0;
-    line-height: var(--line-height-windows); /* Platform-specific */
-    text-align: center;
-    word-break: keep-all;
-    hyphens: none;
-    min-height: 48px; /* Fixed minimum height */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    margin-bottom: 20px;
+    color: var(--warning-light); /* Rich yellow for headings */
+    line-height: 1.2;
 }
 
 .feature-card p {
     color: var(--text-bright);
-    line-height: var(--line-height-normal);
-    font-size: 15px; /* Reduced from 17px */
-    text-align: center;
-    margin: 0;
-    min-height: 60px; /* Fixed height for 3 lines */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    line-height: 1.6;
+    font-size: 17px;
 }
 
 /* FIXED PRICING GRID - 2x2 Layout */
@@ -661,18 +498,9 @@ body {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
     border: 2px solid var(--secondary);
     border-radius: 20px;
-    padding: 24px 20px; /* Reduced padding */
+    padding: 32px;
     cursor: pointer;
     transition: all 0.3s ease;
-    
-    /* Fixed height system */
-    min-height: 200px;
-    max-height: 240px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
 }
 
 .portfolio-card:hover {
@@ -683,35 +511,18 @@ body {
 }
 
 .portfolio-card h5 {
-    font-size: 17px; /* Reduced from 19px */
+    font-size: 19px;
     font-weight: 700;
-    margin: 0 0 12px 0;
-    color: var(--warning-light);
-    line-height: var(--line-height-windows);
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.portfolio-metrics {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    margin-bottom: 16px;
+    color: var(--warning-light); /* Rich yellow for card titles */
 }
 
 .portfolio-metrics span {
-    font-size: 14px; /* Reduced from 16px */
+    font-size: 16px;
     color: var(--text-bright);
     font-weight: 500;
-    line-height: var(--line-height-normal);
-    min-height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    display: block;
+    margin-bottom: 8px;
 }
 
 .divider {
@@ -1173,7 +984,6 @@ body {
     50% { opacity: 0.7; transform: translateY(-50%) scale(1.2); }
 }
 
-/* PHASE 8: RESPONSIVE TESTING & VALIDATION */
 /* Desktop-Only Optimizations */
 @media (min-width: 1200px) {
     .container {
@@ -1185,218 +995,19 @@ body {
     }
 }
 
-/* Test breakpoints for different screen sizes */
-@media (max-width: 1400px) {
-    .challenge-stats-single-row,
-    .solution-features-single-row {
-        gap: 20px;
-    }
-    
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 16px;
-    }
-    
-    .stat-card,
-    .problem-card,
-    .feature-card {
-        min-height: 260px;
-        padding: 24px 16px;
-    }
+/* UNIFORM LAYOUT FIXES */
+.stat-card, .problem-card, .solution-card {
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-@media (max-width: 1200px) {
-    .challenge-stats-single-row,
-    .solution-features-single-row {
-        gap: 16px;
-    }
-    
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 15px;
-        line-height: 1.4;
-    }
-    
-    .stat-card,
-    .problem-card,
-    .feature-card {
-        min-height: 240px;
-        padding: 20px 14px;
-    }
-    
-    .portfolio-card {
-        min-height: 180px;
-        padding: 20px 16px;
-    }
-}
-
-@media (max-width: 992px) {
-    .challenge-stats-single-row {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-    
-    .solution-features-single-row {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-    
-    .problem-points-single-row {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .stat-card,
-    .problem-card,
-    .feature-card {
-        min-height: 220px;
-        padding: 18px 12px;
-    }
-    
-    .portfolio-card {
-        min-height: 160px;
-        padding: 18px 14px;
-    }
-}
-
-@media (max-width: 768px) {
-    .challenge-stats-single-row,
-    .solution-features-single-row {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .stat-card,
-    .problem-card,
-    .feature-card {
-        min-height: 200px;
-        padding: 16px 10px;
-    }
-    
-    .portfolio-card {
-        min-height: 140px;
-        padding: 16px 12px;
-    }
-    
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 14px;
-        line-height: 1.5;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 15px;
-        line-height: 1.4;
-    }
-}
-
-/* Cross-platform consistency validation */
-@media (min-width: 768px) and (max-width: 1024px) {
-    /* Tablet landscape - ensure consistency */
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 16px;
-        line-height: 1.35;
-        min-height: 44px;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 16px;
-        line-height: 1.3;
-        min-height: 36px;
-    }
-}
-
-@media (min-width: 1024px) and (max-width: 1440px) {
-    /* Standard desktop - optimal settings */
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 17px;
-        line-height: 1.3;
-        min-height: 46px;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 17px;
-        line-height: 1.25;
-        min-height: 38px;
-    }
-}
-
-/* PHASE 7: PLATFORM DETECTION & ADAPTIVE CSS */
-/* Windows-specific adjustments */
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 17px; /* Even smaller on Windows */
-        line-height: 1.35;
-    }
-    
-    .card-copy-container p {
-        font-size: 14px; /* Smaller on Windows */
-        line-height: 1.4;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 16px;
-        line-height: 1.3;
-    }
-}
-
-/* Firefox-specific adjustments */
-@-moz-document url-prefix() {
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 17px;
-        line-height: 1.3;
-    }
-    
-    .card-copy-container p {
-        font-size: 14px;
-        line-height: 1.4;
-    }
-}
-
-/* Windows Edge/Chrome */
-@supports (-ms-ime-align: auto) {
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 16px;
-        line-height: 1.4;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 16px;
-        line-height: 1.35;
-    }
-}
-
-/* macOS Safari */
-@media not all and (min-resolution: 0.001dpcm) {
-    @supports (-webkit-appearance: none) {
-        .problem-card h4,
-        .feature-card h4 {
-            font-size: 18px;
-            line-height: 1.25;
-        }
-        
-        .portfolio-card h5 {
-            font-size: 17px;
-            line-height: 1.25;
-        }
-    }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .problem-card h4,
-    .feature-card h4 {
-        font-size: 17px;
-        line-height: 1.3;
-    }
-    
-    .portfolio-card h5 {
-        font-size: 16px;
-        line-height: 1.3;
-    }
+.stat-card h3, .problem-card h4, .solution-card h4 {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
 }

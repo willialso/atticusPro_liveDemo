@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atticus Professional - Institutional Bitcoin Options Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <!-- Enhanced Header with Blue Background -->
@@ -47,7 +47,7 @@
             </div>
         </nav>
 
-        <!-- Section 1: Institutional Challenge - Removed X's and "at risk" -->
+        <!-- Section 1: Institutional Challenge - Optimized for consistent formatting -->
         <section id="challenge-section" class="demo-section active">
             <div class="container">
                 <div class="section-header">
@@ -166,26 +166,6 @@
                     <p class="subtitle">Experience institutional-grade Bitcoin options hedging</p>
                 </div>
 
-                <!-- Market Data Bar -->
-                <div class="market-data-bar">
-                    <div class="market-item">
-                        <span class="label">BTC Price</span>
-                        <span id="btc-price" class="value">Loading...</span>
-                    </div>
-                    <div class="market-item">
-                        <span class="label">Volatility</span>
-                        <span id="volatility" class="value">Loading...</span>
-                    </div>
-                    <div class="market-item">
-                        <span class="label">Risk-Free Rate</span>
-                        <span id="risk-rate" class="value">5%</span>
-                    </div>
-                    <div class="market-item">
-                        <span class="label">Status</span>
-                        <span class="value live">LIVE</span>
-                    </div>
-                </div>
-
                 <!-- Demo Workflow -->
                 <div class="demo-workflow">
                     
@@ -231,76 +211,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="divider">OR</div>
-
-                            <div class="custom-position">
-                                <h4>Custom Position</h4>
-                                <div class="custom-inputs">
-                                    <div class="input-group">
-                                        <label>BTC Position Size</label>
-                                        <input type="number" id="custom-size" placeholder="25.0" step="0.01" min="0.1">
-                                        <span class="unit">BTC</span>
-                                    </div>
-                                    <div class="input-group">
-                                        <label>Institution Type</label>
-                                        <select id="custom-type">
-                                            <option value="hedge_fund">Hedge Fund</option>
-                                            <option value="family_office">Family Office</option>
-                                            <option value="corporate_treasury">Corporate Treasury</option>
-                                        </select>
-                                    </div>
-                                    <button class="action-btn" onclick="analyzeCustomPosition()">
-                                        Analyze Custom Position
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step-button-container">
-                            <button class="action-btn" id="analyze-btn" style="display:none">
-                                Continue to Analysis →
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Portfolio Analysis Results -->
-                    <div id="step-2" class="workflow-step">
-                        <h3>Step 2: Portfolio Analysis</h3>
-                        <div id="analysis-results" class="analysis-content">
-                            <!-- Populated by JavaScript -->
-                        </div>
-                        <div class="step-button-container">
-                            <button class="action-btn" id="generate-strategy-btn" onclick="generateStrategy()" style="display:none">
-                                Generate Hedging Strategies →
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Strategy Options -->
-                    <div id="step-3" class="workflow-step">
-                        <h3>Step 3: Smart Hedging Strategies</h3>
-                        <div id="strategy-results" class="strategy-content">
-                            <!-- Populated by JavaScript -->
-                        </div>
-                        <div class="step-button-container">
-                            <button class="action-btn" id="execute-btn" style="display:none">
-                                Execute Selected Strategy →
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Execution Results -->
-                    <div id="step-4" class="workflow-step">
-                        <h3>Step 4: Execution Summary</h3>
-                        <div id="execution-results" class="execution-content">
-                            <!-- Populated by JavaScript -->
-                        </div>
-                        <div class="final-actions">
-                            <button class="secondary-btn" onclick="resetDemo()">New Demo</button>
-                            <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
-                                Contact via Telegram →
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -333,14 +243,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div id="loading" class="loading-overlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loading-text">Processing...</p>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>

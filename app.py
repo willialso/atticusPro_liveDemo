@@ -1493,7 +1493,8 @@ if __name__ == '__main__':
     print("🔴   ✓ Comprehensive error logging and data validation")
     print("🔴 " + "="*80)
     
-    port = int(os.environ.get('PORT', 5000))
-    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    port = int(os.environ.get('PORT', 8080))  # Changed from 5000 to 8080
+    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
     
+    print(f"🔗 Access at: http://localhost:{port}")
     app.run(host='0.0.0.0', port=port, debug=debug_mode)
