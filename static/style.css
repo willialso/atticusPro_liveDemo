@@ -1011,3 +1011,46 @@ body {
     text-align: center;
     line-height: 1.2;
 }
+
+/* === CONTENT OPTIMIZATION ADJUSTMENTS === */
+
+/* Larger text sizes for better readability */
+.stat-card h3 {
+    font-size: 48px !important; /* Larger stat numbers */
+}
+
+.stat-card p {
+    font-size: 16px !important; /* Larger descriptions */
+    font-weight: 600;
+}
+
+.problem-card h4 {
+    font-size: 22px !important; /* Larger problem headings */
+    font-weight: 800;
+}
+
+.problem-card p {
+    font-size: 16px !important; /* Larger problem text */
+    font-weight: 500;
+}
+
+.solution-card h4 {
+    font-size: 20px !important; /* Larger solution headings */
+    font-weight: 800;
+}
+
+.solution-card p {
+    font-size: 15px !important; /* Larger solution text */
+    font-weight: 500;
+}
+
+/* Slightly smaller boxes for tighter layout */
+.stat-card,
+.problem-card,
+.solution-card {
+    padding: 36px !important; /* Reduced from 48px */
+}
+
+.problem-card {
+    padding: 32px !important; /* Reduced from 40px */
+}
