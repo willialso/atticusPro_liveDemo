@@ -663,7 +663,7 @@ body {
 /* FIXED STRATEGIES GRID - Auto-fit for Desktop */
 .strategies-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 24px;
     margin-top: 40px;
     width: 100%;
@@ -993,4 +993,21 @@ body {
     .strategies-grid {
         grid-template-columns: repeat(3, 1fr); /* 3 strategies in a row on large screens */
     }
+}
+
+/* UNIFORM LAYOUT FIXES */
+.stat-card, .problem-card, .solution-card {
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stat-card h3, .problem-card h4, .solution-card h4 {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
 }
