@@ -522,6 +522,9 @@ body {
     margin-bottom: 80px;
     backdrop-filter: blur(12px);
     width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 .pricing-transparency h3 {
