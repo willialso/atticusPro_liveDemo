@@ -321,7 +321,8 @@ class AttticusProfessionalDemo {
             
             <div class="analysis-card">
                 <h4>Risk Analysis (Live Data)</h4>
-                <div class="metrics-grid metrics-grid-four">
+                <p class="risk-analysis-subtitle">Volatility: <span style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span></p>
+                <div class="metrics-grid metrics-grid-three">
                     <div class="metric-item">
                         <span class="metric-label">1-Day VaR<br>(95%)</span>
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_1d_95)}</span>
@@ -329,10 +330,6 @@ class AttticusProfessionalDemo {
                     <div class="metric-item">
                         <span class="metric-label">30-Day VaR<br>(95%)</span>
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_30d_95)}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Volatility</span>
-                        <span class="metric-value" style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span>
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Max Drawdown<br>(30%)</span>
