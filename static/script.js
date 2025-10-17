@@ -321,21 +321,21 @@ class AttticusProfessionalDemo {
             
             <div class="analysis-card">
                 <h4>Risk Analysis (Live Data)</h4>
-                <div class="metrics-grid">
+                <div class="metrics-grid metrics-grid-four">
                     <div class="metric-item">
-                        <span class="metric-label">1-Day VaR (95%)</span>
+                        <span class="metric-label">1-Day VaR<br>(95%)</span>
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_1d_95)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">30-Day VaR (95%)</span>
+                        <span class="metric-label">30-Day VaR<br>(95%)</span>
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.var_30d_95)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Live Volatility</span>
+                        <span class="metric-label">Volatility</span>
                         <span class="metric-value" style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Max Drawdown (30%)</span>
+                        <span class="metric-label">Max Drawdown<br>(30%)</span>
                         <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.max_drawdown_30pct)}</span>
                     </div>
                 </div>
@@ -369,7 +369,7 @@ class AttticusProfessionalDemo {
                         <span class="metric-value">${Math.round(analysis.hedge_recommendation.hedge_size_btc)} BTC</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Available Strategies</span>
+                        <span class="metric-label">Strategies</span>
                         <span class="metric-value">${analysis.hedge_recommendation.preferred_strategies?.length || 1} Options</span>
                     </div>
                 </div>

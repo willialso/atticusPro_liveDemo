@@ -208,10 +208,9 @@ body {
     height: 10px;
     background: var(--success);
     border-radius: 50%;
-    position: absolute;
-    right: -18px; /* Positioned to the right of text */
-    top: 50%;
-    transform: translateY(-50%);
+    display: inline-block;
+    margin-left: 8px; /* Space after LIVE text */
+    vertical-align: middle;
     animation: pulse 2s infinite;
     box-shadow: 0 0 10px var(--success);
 }
@@ -449,7 +448,7 @@ body {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
     border: 2px solid var(--secondary);
     border-radius: 16px; /* Smaller radius */
-    padding: 24px; /* Equal padding on all sides */
+    padding: 24px 24px 28px 24px; /* More bottom padding for clean spacing */
     text-align: center;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
@@ -459,8 +458,9 @@ body {
     max-height: 240px;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center content */
+    justify-content: space-between; /* Distribute space evenly */
     align-items: center;
+    gap: 8px; /* Uniform spacing between elements */
     
     /* Prevent content overflow */
     overflow: hidden;
@@ -478,7 +478,7 @@ body {
 }
 
 .feature-icon {
-    font-size: 64px;
+    font-size: 56px; /* Reduced from 64px for better spacing */
     margin-bottom: 12px;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
@@ -489,20 +489,21 @@ body {
     font-weight: 700;
     color: var(--warning-light);
     margin: 0;
-    line-height: var(--line-height-windows); /* Platform-specific */
+    line-height: 1.3;
     text-align: center;
     word-break: keep-all;
     hyphens: none;
-    min-height: 48px; /* Fixed minimum height */
+    min-height: 44px; /* Slightly reduced for tighter fit */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-shrink: 0; /* Prevent title from shrinking */
 }
 
 .feature-card p {
     color: var(--text-bright);
-    line-height: var(--line-height-normal);
+    line-height: 1.4;
     font-size: 15px; /* Reduced from 17px */
     text-align: center;
     margin: 0;
@@ -511,6 +512,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-grow: 1; /* Allow description to take available space */
 }
 
 /* FIXED PRICING GRID - 2x2 Layout */
@@ -1036,6 +1038,11 @@ body {
 .metrics-grid-three {
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+}
+
+.metrics-grid-four {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 .metric-item {
