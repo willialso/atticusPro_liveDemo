@@ -1403,7 +1403,7 @@ def execute_strategy():
         net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
         platform_state['net_platform_exposure_btc'] = net_exposure
         
-        platform_hedge = {'status': 'no_hedge_needed'}
+        platform_hedge = {'status': 'N/A'}
         if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
             hedge_size = abs(net_exposure) * 1.1
             platform_state['total_platform_hedges_btc'] += hedge_size

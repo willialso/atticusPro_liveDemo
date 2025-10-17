@@ -441,9 +441,8 @@ body {
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
     
-    /* Improved height system */
-    min-height: 200px;
-    max-height: 280px; /* Increased to accommodate content */
+    /* Fixed height system for uniform appearance */
+    height: 240px; /* Fixed height for all feature boxes */
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Start from top for uniform spacing */
