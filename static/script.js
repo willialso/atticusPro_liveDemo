@@ -355,11 +355,8 @@ class AttticusProfessionalDemo {
             
             <div class="analysis-card">
                 <h4>Hedge Recommendation</h4>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Risk Tolerance</span>
-                        <span class="metric-value">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</span>
-                    </div>
+                <p class="risk-tolerance-subtitle">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</p>
+                <div class="metrics-grid metrics-grid-three">
                     <div class="metric-item">
                         <span class="metric-label">Recommended<br>Hedge Ratio</span>
                         <span class="metric-value">${this.formatPercentage(analysis.hedge_recommendation.hedge_ratio * 100)}</span>
