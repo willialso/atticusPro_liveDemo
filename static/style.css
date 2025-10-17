@@ -202,14 +202,14 @@ body {
     position: relative;
 }
 
-.status-item .value.live::before {
+.status-item .value.live::after {
     content: '';
     width: 10px; /* Slightly smaller for compact design */
     height: 10px;
     background: var(--success);
     border-radius: 50%;
     position: absolute;
-    left: -18px; /* Adjusted for smaller dot */
+    right: -18px; /* Positioned to the right of text */
     top: 50%;
     transform: translateY(-50%);
     animation: pulse 2s infinite;
@@ -449,7 +449,7 @@ body {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
     border: 2px solid var(--secondary);
     border-radius: 16px; /* Smaller radius */
-    padding: 24px 20px; /* Better border padding */
+    padding: 24px; /* Equal padding on all sides */
     text-align: center;
     backdrop-filter: blur(12px);
     transition: all 0.3s ease;
@@ -688,7 +688,7 @@ body {
 .portfolio-card h5 {
     font-size: 17px; /* Reduced from 19px */
     font-weight: 700;
-    margin: 0 0 12px 0;
+    margin: 0 0 6px 0; /* Reduced from 12px for tighter spacing */
     color: var(--warning-light);
     line-height: var(--line-height-windows);
     min-height: 40px;
@@ -758,6 +758,27 @@ body {
     outline: none;
     border-color: var(--warning);
     box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
+}
+
+/* Input with unit inside */
+.input-with-unit {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-unit input {
+    padding-right: 60px; /* Space for BTC label */
+}
+
+.input-unit {
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--warning-light);
+    font-size: 16px;
+    font-weight: 600;
+    pointer-events: none;
 }
 
 /* Step Button Containers */
@@ -996,6 +1017,15 @@ body {
     color: var(--warning-light); /* Rich yellow for headings */
 }
 
+.institution-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-top: -16px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1003,10 +1033,16 @@ body {
     width: 100%;
 }
 
+.metrics-grid-three {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
 .metric-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px; /* Prevent label and value from running together */
     padding: 18px 22px;
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
     border-radius: 12px;
@@ -1017,6 +1053,7 @@ body {
     color: var(--text-light);
     font-size: 16px;
     font-weight: 500;
+    flex-shrink: 0; /* Prevent label from shrinking */
 }
 
 .metric-value {

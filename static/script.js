@@ -301,12 +301,9 @@ class AttticusProfessionalDemo {
             </div>
             
             <div class="analysis-card">
-                <h4>Portfolio Overview</h4>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Institution</span>
-                        <span class="metric-value">${analysis.profile.name}</span>
-                    </div>
+                <h4>Position Overview</h4>
+                <p class="institution-subtitle">${analysis.profile.name}</p>
+                <div class="metrics-grid metrics-grid-three">
                     <div class="metric-item">
                         <span class="metric-label">BTC Position</span>
                         <span class="metric-value">${Math.round(analysis.positions.btc_size)} BTC</span>
@@ -364,7 +361,7 @@ class AttticusProfessionalDemo {
                         <span class="metric-value">${analysis.profile.risk_tolerance?.toUpperCase() || 'MODERATE'}</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-label">Recommended Hedge Ratio</span>
+                        <span class="metric-label">Recommended<br>Hedge Ratio</span>
                         <span class="metric-value">${this.formatPercentage(analysis.hedge_recommendation.hedge_ratio * 100)}</span>
                     </div>
                     <div class="metric-item">
