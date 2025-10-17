@@ -598,7 +598,7 @@ class AttticusProfessionalDemo {
                 <h4>Platform Exposure Management</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
-                        <span class="metric-label">Total Client Positions</span>
+                        <span class="metric-label">Client Positions</span>
                         <span class="metric-value">${this.formatBTC(execution.platform_exposure.client_positions_btc)}</span>
                     </div>
                     <div class="metric-item">
