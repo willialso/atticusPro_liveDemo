@@ -81,11 +81,19 @@ def log_detailed_error(operation, error, response=None):
     print("   " + "="*80)
 
 class LiveMarketDataService:
-    """LIVE MARKET DATA ONLY with Real API Keys and Detailed Logging"""
+    """LIVE MARKET DATA ONLY with Real API Keys, Multi-Source, and Caching"""
     
     def __init__(self):
-        print("🔴 CRITICAL: LiveMarketDataService initialized - LIVE DATA ONLY")
-        print("🔴 Using REAL API keys - NO fallback, mock, synthetic, or cached data")
+        print("🔴 CRITICAL: LiveMarketDataService initialized - MULTI-SOURCE LIVE DATA + CACHING")
+        print("🔴 Using REAL API keys with intelligent caching - NO synthetic fallback data")
+        
+        # Initialize cache for risk-free rate
+        self._risk_free_rate_cache = {
+            'rate': None,
+            'timestamp': None,
+            'source': None,
+            'ttl_hours': 6  # Treasury rates update daily, 6-hour cache is safe
+        }
         
         # Test API connectivity on startup
         self.test_api_connectivity()
@@ -188,6 +196,31 @@ class LiveMarketDataService:
                 print(f"⚠️ FRED API returned {response.status_code}: {response.text}")
         except Exception as e:
             log_detailed_error("FRED Test", e)
+    
+    def _get_cached_risk_free_rate(self):
+        """Check if we have valid cached risk-free rate"""
+        if self._risk_free_rate_cache['rate'] is None or self._risk_free_rate_cache['timestamp'] is None:
+            return None
+        
+        age = datetime.now() - self._risk_free_rate_cache['timestamp']
+        age_hours = age.total_seconds() / 3600
+        
+        if age_hours < self._risk_free_rate_cache['ttl_hours']:
+            print(f"✅ [CACHE] Using cached risk-free rate: {self._risk_free_rate_cache['rate']:.4f}")
+            print(f"   Source: {self._risk_free_rate_cache['source']}")
+            print(f"   Age: {age_hours:.2f} hours (TTL: {self._risk_free_rate_cache['ttl_hours']} hours)")
+            return self._risk_free_rate_cache['rate']
+        else:
+            print(f"⚠️ [CACHE] Cached rate expired (age: {age_hours:.2f} hours)")
+            return None
+    
+    def _cache_risk_free_rate(self, rate, source):
+        """Cache the risk-free rate with timestamp and source"""
+        self._risk_free_rate_cache['rate'] = rate
+        self._risk_free_rate_cache['timestamp'] = datetime.now()
+        self._risk_free_rate_cache['source'] = source
+        print(f"💾 [CACHE] Cached risk-free rate: {rate:.4f} from {source}")
+        print(f"   Cache valid for {self._risk_free_rate_cache['ttl_hours']} hours")
         
     def get_live_btc_price(self):
         """Get LIVE BTC price with detailed logging - FAIL if no real data available"""
@@ -410,12 +443,10 @@ class LiveMarketDataService:
         print("🚨 [CRITICAL] LIVE VOLATILITY DATA UNAVAILABLE")
         raise Exception("LIVE_DATA_UNAVAILABLE: Live volatility calculation failed")
     
-    def get_live_risk_free_rate(self):
-        """Get LIVE risk-free rate with detailed logging"""
-        print("📊 [LIVE] Fetching risk-free rate from FRED API...")
-        
+    def _fetch_from_fred_api(self):
+        """Fetch risk-free rate from FRED API - returns rate or None"""
         try:
-            print("🔄 Using FRED API with real authentication...")
+            print("🔄 [PRIMARY] Trying FRED API...")
             
             end_date = datetime.now().strftime('%Y-%m-%d')
             start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
@@ -436,68 +467,119 @@ class LiveMarketDataService:
                 'Accept': 'application/json'
             }
             
-            print(f"   URL: {url}")
-            print(f"   Params: {params}")
-            print(f"   Date Range: {start_date} to {end_date}")
-            
-            response = requests.get(
-                url,
-                params=params,
-                headers=headers,
-                timeout=15
-            )
-            
-            print(f"   Response Status: {response.status_code}")
-            print(f"   Response Headers: {dict(response.headers)}")
+            response = requests.get(url, params=params, headers=headers, timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                print(f"   Response Keys: {list(data.keys())}")
                 
                 if 'observations' in data:
                     observations = data['observations']
-                    print(f"   Observations Count: {len(observations)}")
                     
                     # Find first valid observation
                     for obs in observations:
-                        print(f"   Observation: {obs}")
-                        
                         if obs.get('value') and obs['value'] != '.' and obs['value'] != 'null':
                             try:
                                 rate_percent = float(obs['value'])
                                 rate_decimal = rate_percent / 100  # Convert percentage to decimal
-                                print(f"   Parsed Rate: {rate_percent}% -> {rate_decimal:.4f}")
                                 
                                 if 0.0 <= rate_decimal <= 0.25:  # Reasonable rate range
-                                    print(f"✅ [SUCCESS] Live risk-free rate: {rate_decimal:.4f} ({rate_percent:.2f}%)")
-                                    print(f"   Date: {obs.get('date', 'unknown')}")
+                                    print(f"✅ [PRIMARY:FRED] Got rate: {rate_decimal:.4f} ({rate_percent:.2f}%) from {obs.get('date')}")
                                     return rate_decimal
-                                else:
-                                    print(f"❌ [INVALID] Rate out of range: {rate_decimal}")
-                            except ValueError as ve:
-                                print(f"❌ [PARSE_ERROR] Cannot parse rate '{obs['value']}': {ve}")
-                        else:
-                            print(f"⚠️ [MISSING] No valid value in observation: {obs.get('value')}")
+                            except ValueError:
+                                continue
                     
-                    print(f"❌ [NO_VALID] No valid observations found")
-                else:
-                    print(f"❌ [MISSING] No 'observations' field in response")
-                    print(f"   Available fields: {list(data.keys())}")
-            else:
-                print(f"❌ [HTTP_ERROR] Status {response.status_code}")
-                print(f"   Response Text: {response.text[:500]}")
-                
-                if response.status_code == 400:
-                    print("⚠️ [BAD_REQUEST] Invalid FRED API request")
-                elif response.status_code == 403:
-                    print("⚠️ [FORBIDDEN] Invalid FRED API key")
+            print(f"❌ [PRIMARY:FRED] Failed - Status: {response.status_code}")
+            return None
                     
         except Exception as e:
-            log_detailed_error("FRED Risk-Free Rate API", e)
+            print(f"❌ [PRIMARY:FRED] Exception: {e}")
+            return None
+    
+    def _fetch_from_treasury_gov_api(self):
+        """Fetch risk-free rate from Treasury.gov as secondary source - returns rate or None"""
+        try:
+            print("🔄 [SECONDARY] Trying Treasury.gov API...")
+            
+            # Use CSV endpoint which is more reliable
+            # Treasury daily bill rates: https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2024/all
+            url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView"
+            params = {
+                'type': 'daily_treasury_bill_rates',
+                'field_tdr_date_value': datetime.now().year,
+                'page': '&_format=json'
+            }
+            
+            headers = {
+                'User-Agent': 'Atticus-Professional/1.0',
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(url, params=params, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    # Treasury.gov JSON structure varies, try to find 13-week (3-month) rate
+                    # This is a fallback source, so we're being flexible with parsing
+                    
+                    # Try common JSON structures
+                    if isinstance(data, list) and len(data) > 0:
+                        latest = data[0]
+                        # Look for 13-week field (approx 3-month)
+                        for key in ['field_bc_13week', '13_week', 'bc_13week']:
+                            if key in latest and latest[key]:
+                                rate_percent = float(latest[key])
+                                rate_decimal = rate_percent / 100
+                                if 0.0 <= rate_decimal <= 0.25:
+                                    print(f"✅ [SECONDARY:Treasury.gov] Got rate: {rate_decimal:.4f} ({rate_percent:.2f}%)")
+                                    return rate_decimal
+                    
+                except (ValueError, KeyError, TypeError) as e:
+                    print(f"⚠️ [SECONDARY:Treasury.gov] Parse error: {e}")
+            
+            print(f"❌ [SECONDARY:Treasury.gov] Failed - Status: {response.status_code}")
+            return None
+            
+        except Exception as e:
+            print(f"❌ [SECONDARY:Treasury.gov] Exception: {e}")
+            return None
+    
+    def get_live_risk_free_rate(self):
+        """Get LIVE risk-free rate with multi-source fallback and caching
         
-        # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
+        Flow:
+        1. Try PRIMARY (FRED API) - if success, cache and return
+        2. Try SECONDARY (Treasury.gov API) - if success, cache and return
+        3. Try CACHE (if available and valid) - if valid, return
+        4. FAIL - No synthetic fallback data, raise exception
+        """
+        print("📊 [LIVE] Fetching risk-free rate (Multi-Source + Caching)...")
+        
+        # 1. Try PRIMARY: FRED API
+        fred_rate = self._fetch_from_fred_api()
+        if fred_rate is not None:
+            self._cache_risk_free_rate(fred_rate, 'FRED')
+            return fred_rate
+        
+        # 2. Try SECONDARY: Treasury.gov API
+        treasury_rate = self._fetch_from_treasury_gov_api()
+        if treasury_rate is not None:
+            self._cache_risk_free_rate(treasury_rate, 'Treasury.gov')
+            return treasury_rate
+        
+        # 3. Try CACHE (fallback to last known good data)
+        cached_rate = self._get_cached_risk_free_rate()
+        if cached_rate is not None:
+            print("⚠️ [WARNING] Using cached data as both live sources failed")
+            return cached_rate
+        
+        # 4. FAIL - No live data available and no valid cache
         print("🚨 [CRITICAL] LIVE RISK-FREE RATE UNAVAILABLE")
-        raise Exception("LIVE_DATA_UNAVAILABLE: Live risk-free rate unavailable")
+        print("   - PRIMARY (FRED) failed")
+        print("   - SECONDARY (Treasury.gov) failed")
+        print("   - CACHE empty or expired")
+        print("   - NO SYNTHETIC FALLBACK DATA USED")
+        raise Exception("LIVE_DATA_UNAVAILABLE: All risk-free rate sources failed and no valid cache")
 
 class PortfolioAnalyzer:
     """Portfolio analysis with LIVE data only - enhanced logging"""
@@ -1171,9 +1253,15 @@ def health():
         print("   Testing live risk-free rate...")
         risk_rate = market_service.get_live_risk_free_rate()
         
+        # Get cache status
+        cache_info = market_service._risk_free_rate_cache
+        cache_age_hours = None
+        if cache_info['timestamp']:
+            cache_age_hours = (datetime.now() - cache_info['timestamp']).total_seconds() / 3600
+        
         health_data = {
             'status': 'healthy',
-            'version': 'v17.5-LIVE-DATA-ONLY-REAL-KEYS',
+            'version': 'v18.0-MULTI-SOURCE-CACHING',
             'timestamp': datetime.now().isoformat(),
             'services': {
                 'live_market_data': 'operational',
@@ -1191,8 +1279,15 @@ def health():
                 'fred_key_length': len(REAL_FRED_API_KEY),
                 'coingecko_key_length': len(REAL_COINGECKO_API_KEY)
             },
-            'data_source': 'LIVE_MARKET_DATA',
-            'warning': 'LIVE DATA ONLY - NO FALLBACKS'
+            'cache_status': {
+                'risk_free_rate_cached': cache_info['rate'] is not None,
+                'cache_source': cache_info['source'],
+                'cache_age_hours': round(cache_age_hours, 2) if cache_age_hours else None,
+                'cache_ttl_hours': cache_info['ttl_hours'],
+                'cache_valid': cache_age_hours < cache_info['ttl_hours'] if cache_age_hours else False
+            },
+            'data_source': 'MULTI_SOURCE_LIVE_DATA',
+            'sources': 'FRED (primary) → Treasury.gov (secondary) → Cache (fallback)'
         }
         
         print(f"✅ [HEALTH] All systems operational: {health_data}")
