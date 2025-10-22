@@ -81,19 +81,11 @@ def log_detailed_error(operation, error, response=None):
     print("   " + "="*80)
 
 class LiveMarketDataService:
-    """LIVE MARKET DATA ONLY with Real API Keys, Multi-Source, and Caching"""
+    """LIVE MARKET DATA ONLY with Real API Keys and Detailed Logging"""
     
     def __init__(self):
-        print("🔴 CRITICAL: LiveMarketDataService initialized - MULTI-SOURCE LIVE DATA + CACHING")
-        print("🔴 Using REAL API keys with intelligent caching - NO synthetic fallback data")
-        
-        # Initialize cache for risk-free rate
-        self._risk_free_rate_cache = {
-            'rate': None,
-            'timestamp': None,
-            'source': None,
-            'ttl_hours': 6  # Treasury rates update daily, 6-hour cache is safe
-        }
+        print("🔴 CRITICAL: LiveMarketDataService initialized - LIVE DATA ONLY")
+        print("🔴 Using REAL API keys - NO fallback, mock, synthetic, or cached data")
         
         # Test API connectivity on startup
         self.test_api_connectivity()
@@ -196,31 +188,6 @@ class LiveMarketDataService:
                 print(f"⚠️ FRED API returned {response.status_code}: {response.text}")
         except Exception as e:
             log_detailed_error("FRED Test", e)
-    
-    def _get_cached_risk_free_rate(self):
-        """Check if we have valid cached risk-free rate"""
-        if self._risk_free_rate_cache['rate'] is None or self._risk_free_rate_cache['timestamp'] is None:
-            return None
-        
-        age = datetime.now() - self._risk_free_rate_cache['timestamp']
-        age_hours = age.total_seconds() / 3600
-        
-        if age_hours < self._risk_free_rate_cache['ttl_hours']:
-            print(f"✅ [CACHE] Using cached risk-free rate: {self._risk_free_rate_cache['rate']:.4f}")
-            print(f"   Source: {self._risk_free_rate_cache['source']}")
-            print(f"   Age: {age_hours:.2f} hours (TTL: {self._risk_free_rate_cache['ttl_hours']} hours)")
-            return self._risk_free_rate_cache['rate']
-        else:
-            print(f"⚠️ [CACHE] Cached rate expired (age: {age_hours:.2f} hours)")
-            return None
-    
-    def _cache_risk_free_rate(self, rate, source):
-        """Cache the risk-free rate with timestamp and source"""
-        self._risk_free_rate_cache['rate'] = rate
-        self._risk_free_rate_cache['timestamp'] = datetime.now()
-        self._risk_free_rate_cache['source'] = source
-        print(f"💾 [CACHE] Cached risk-free rate: {rate:.4f} from {source}")
-        print(f"   Cache valid for {self._risk_free_rate_cache['ttl_hours']} hours")
         
     def get_live_btc_price(self):
         """Get LIVE BTC price with detailed logging - FAIL if no real data available"""
@@ -443,10 +410,12 @@ class LiveMarketDataService:
         print("🚨 [CRITICAL] LIVE VOLATILITY DATA UNAVAILABLE")
         raise Exception("LIVE_DATA_UNAVAILABLE: Live volatility calculation failed")
     
-    def _fetch_from_fred_api(self):
-        """Fetch risk-free rate from FRED API - returns rate or None"""
+    def get_live_risk_free_rate(self):
+        """Get LIVE risk-free rate with detailed logging"""
+        print("📊 [LIVE] Fetching risk-free rate from FRED API...")
+        
         try:
-            print("🔄 [PRIMARY] Trying FRED API...")
+            print("🔄 Using FRED API with real authentication...")
             
             end_date = datetime.now().strftime('%Y-%m-%d')
             start_date = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
@@ -467,119 +436,68 @@ class LiveMarketDataService:
                 'Accept': 'application/json'
             }
             
-            response = requests.get(url, params=params, headers=headers, timeout=10)
+            print(f"   URL: {url}")
+            print(f"   Params: {params}")
+            print(f"   Date Range: {start_date} to {end_date}")
+            
+            response = requests.get(
+                url,
+                params=params,
+                headers=headers,
+                timeout=15
+            )
+            
+            print(f"   Response Status: {response.status_code}")
+            print(f"   Response Headers: {dict(response.headers)}")
             
             if response.status_code == 200:
                 data = response.json()
+                print(f"   Response Keys: {list(data.keys())}")
                 
                 if 'observations' in data:
                     observations = data['observations']
+                    print(f"   Observations Count: {len(observations)}")
                     
                     # Find first valid observation
                     for obs in observations:
+                        print(f"   Observation: {obs}")
+                        
                         if obs.get('value') and obs['value'] != '.' and obs['value'] != 'null':
                             try:
                                 rate_percent = float(obs['value'])
                                 rate_decimal = rate_percent / 100  # Convert percentage to decimal
+                                print(f"   Parsed Rate: {rate_percent}% -> {rate_decimal:.4f}")
                                 
                                 if 0.0 <= rate_decimal <= 0.25:  # Reasonable rate range
-                                    print(f"✅ [PRIMARY:FRED] Got rate: {rate_decimal:.4f} ({rate_percent:.2f}%) from {obs.get('date')}")
+                                    print(f"✅ [SUCCESS] Live risk-free rate: {rate_decimal:.4f} ({rate_percent:.2f}%)")
+                                    print(f"   Date: {obs.get('date', 'unknown')}")
                                     return rate_decimal
-                            except ValueError:
-                                continue
+                                else:
+                                    print(f"❌ [INVALID] Rate out of range: {rate_decimal}")
+                            except ValueError as ve:
+                                print(f"❌ [PARSE_ERROR] Cannot parse rate '{obs['value']}': {ve}")
+                        else:
+                            print(f"⚠️ [MISSING] No valid value in observation: {obs.get('value')}")
                     
-            print(f"❌ [PRIMARY:FRED] Failed - Status: {response.status_code}")
-            return None
+                    print(f"❌ [NO_VALID] No valid observations found")
+                else:
+                    print(f"❌ [MISSING] No 'observations' field in response")
+                    print(f"   Available fields: {list(data.keys())}")
+            else:
+                print(f"❌ [HTTP_ERROR] Status {response.status_code}")
+                print(f"   Response Text: {response.text[:500]}")
+                
+                if response.status_code == 400:
+                    print("⚠️ [BAD_REQUEST] Invalid FRED API request")
+                elif response.status_code == 403:
+                    print("⚠️ [FORBIDDEN] Invalid FRED API key")
                     
         except Exception as e:
-            print(f"❌ [PRIMARY:FRED] Exception: {e}")
-            return None
-    
-    def _fetch_from_treasury_gov_api(self):
-        """Fetch risk-free rate from Treasury.gov as secondary source - returns rate or None"""
-        try:
-            print("🔄 [SECONDARY] Trying Treasury.gov API...")
-            
-            # Use CSV endpoint which is more reliable
-            # Treasury daily bill rates: https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2024/all
-            url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView"
-            params = {
-                'type': 'daily_treasury_bill_rates',
-                'field_tdr_date_value': datetime.now().year,
-                'page': '&_format=json'
-            }
-            
-            headers = {
-                'User-Agent': 'Atticus-Professional/1.0',
-                'Accept': 'application/json'
-            }
-            
-            response = requests.get(url, params=params, headers=headers, timeout=10)
-            
-            if response.status_code == 200:
-                try:
-                    data = response.json()
-                    # Treasury.gov JSON structure varies, try to find 13-week (3-month) rate
-                    # This is a fallback source, so we're being flexible with parsing
-                    
-                    # Try common JSON structures
-                    if isinstance(data, list) and len(data) > 0:
-                        latest = data[0]
-                        # Look for 13-week field (approx 3-month)
-                        for key in ['field_bc_13week', '13_week', 'bc_13week']:
-                            if key in latest and latest[key]:
-                                rate_percent = float(latest[key])
-                                rate_decimal = rate_percent / 100
-                                if 0.0 <= rate_decimal <= 0.25:
-                                    print(f"✅ [SECONDARY:Treasury.gov] Got rate: {rate_decimal:.4f} ({rate_percent:.2f}%)")
-                                    return rate_decimal
-                    
-                except (ValueError, KeyError, TypeError) as e:
-                    print(f"⚠️ [SECONDARY:Treasury.gov] Parse error: {e}")
-            
-            print(f"❌ [SECONDARY:Treasury.gov] Failed - Status: {response.status_code}")
-            return None
-            
-        except Exception as e:
-            print(f"❌ [SECONDARY:Treasury.gov] Exception: {e}")
-            return None
-    
-    def get_live_risk_free_rate(self):
-        """Get LIVE risk-free rate with multi-source fallback and caching
+            log_detailed_error("FRED Risk-Free Rate API", e)
         
-        Flow:
-        1. Try PRIMARY (FRED API) - if success, cache and return
-        2. Try SECONDARY (Treasury.gov API) - if success, cache and return
-        3. Try CACHE (if available and valid) - if valid, return
-        4. FAIL - No synthetic fallback data, raise exception
-        """
-        print("📊 [LIVE] Fetching risk-free rate (Multi-Source + Caching)...")
-        
-        # 1. Try PRIMARY: FRED API
-        fred_rate = self._fetch_from_fred_api()
-        if fred_rate is not None:
-            self._cache_risk_free_rate(fred_rate, 'FRED')
-            return fred_rate
-        
-        # 2. Try SECONDARY: Treasury.gov API
-        treasury_rate = self._fetch_from_treasury_gov_api()
-        if treasury_rate is not None:
-            self._cache_risk_free_rate(treasury_rate, 'Treasury.gov')
-            return treasury_rate
-        
-        # 3. Try CACHE (fallback to last known good data)
-        cached_rate = self._get_cached_risk_free_rate()
-        if cached_rate is not None:
-            print("⚠️ [WARNING] Using cached data as both live sources failed")
-            return cached_rate
-        
-        # 4. FAIL - No live data available and no valid cache
+        # CRITICAL: NO FALLBACK - FAIL GRACEFULLY
         print("🚨 [CRITICAL] LIVE RISK-FREE RATE UNAVAILABLE")
-        print("   - PRIMARY (FRED) failed")
-        print("   - SECONDARY (Treasury.gov) failed")
-        print("   - CACHE empty or expired")
-        print("   - NO SYNTHETIC FALLBACK DATA USED")
-        raise Exception("LIVE_DATA_UNAVAILABLE: All risk-free rate sources failed and no valid cache")
+        raise Exception("LIVE_DATA_UNAVAILABLE: Live risk-free rate unavailable")
 
 class PortfolioAnalyzer:
     """Portfolio analysis with LIVE data only - enhanced logging"""
@@ -622,16 +540,12 @@ class PortfolioAnalyzer:
         }
         print("✅ PortfolioAnalyzer initialized with LIVE data requirement")
     
-    def analyze(self, portfolio_type=None, custom_params=None, mode='institutional'):
+    def analyze(self, portfolio_type=None, custom_params=None):
         """Analyze portfolio using LIVE market data ONLY with detailed logging"""
         try:
             print(f"📊 [ANALYSIS] Starting portfolio analysis - LIVE DATA REQUIRED")
-            print(f"   Mode: {mode}")
             
-            if mode == 'lending':
-                print(f"   Using lending protection analysis")
-                return self._analyze_lending(custom_params)
-            elif custom_params:
+            if custom_params:
                 print(f"   Using custom parameters: {custom_params}")
                 return self._analyze_custom(custom_params)
             
@@ -797,130 +711,6 @@ class PortfolioAnalyzer:
         except Exception as e:
             print(f"❌ Scenario generation error: {e}")
             raise Exception(f"Scenario generation failed: {str(e)}")
-    
-    def _analyze_lending(self, loan_params):
-        """Analyze lending position with LIVE data and logging"""
-        try:
-            print("📊 [LENDING] Analyzing lending protection with LIVE data...")
-            print(f"   Loan parameters: {loan_params}")
-            
-            # CRITICAL: Get LIVE data - FAIL if unavailable
-            print("   Getting live BTC price...")
-            btc_price = self.market.get_live_btc_price()
-            print(f"   ✅ Live BTC Price: ${btc_price:,.2f}")
-            
-            print("   Getting live volatility...")
-            volatility = self.market.get_live_volatility()
-            print(f"   ✅ Live Volatility: {volatility:.4f}")
-            
-            # Extract loan parameters
-            loan_amount = float(loan_params.get('loan_amount', 0))
-            loan_term = int(loan_params.get('loan_term', 90))
-            ltv_ratio = float(loan_params.get('ltv_ratio', 70))
-            protection_type = loan_params.get('protection_type', 'downside')
-            
-            print(f"   Lending Calculations:")
-            print(f"     Loan Amount: ${loan_amount:,.2f}")
-            print(f"     Loan Term: {loan_term} days")
-            print(f"     LTV Ratio: {ltv_ratio}%")
-            print(f"     Protection Type: {protection_type}")
-            
-            # Calculate collateral requirements
-            collateral_value = loan_amount / (ltv_ratio / 100)
-            collateral_btc = collateral_value / btc_price
-            
-            print(f"     Collateral Required: {collateral_btc:.4f} BTC (${collateral_value:,.2f})")
-            
-            # Calculate lending-specific risk metrics
-            liquidation_risk_30pct = collateral_value * 0.30  # 30% BTC decline liquidation risk
-            max_loss_no_protection = collateral_value - loan_amount  # Max loss if no protection
-            
-            # Generate lending scenarios
-            scenarios = self._generate_lending_scenarios(collateral_btc, btc_price, loan_amount)
-            
-            # Determine protection strategy based on type
-            if protection_type == 'downside':
-                preferred_strategies = ['protective_put', 'put_spread']
-                hedge_ratio = 0.85  # 85% protection for downside
-            elif protection_type == 'upside':
-                preferred_strategies = ['covered_call', 'call_protection']
-                hedge_ratio = 0.75  # 75% protection for upside
-            else:  # collar
-                preferred_strategies = ['collar', 'put_spread']
-                hedge_ratio = 0.80  # 80% protection for collar
-            
-            result = {
-                'profile': {
-                    'name': f'BTC Lending Protection ({protection_type.title()})',
-                    'protection_type': protection_type,
-                    'loan_amount': loan_amount,
-                    'loan_term': loan_term,
-                    'ltv_ratio': ltv_ratio
-                },
-                'positions': {
-                    'loan_amount': round(loan_amount, 2),
-                    'btc_size': round(collateral_btc, 4),
-                    'btc_value': round(collateral_value, 2),
-                    'current_price': round(btc_price, 2),
-                    'ltv_ratio': ltv_ratio
-                },
-                'risk_metrics': {
-                    'volatility': volatility,
-                    'liquidation_risk_30pct': round(liquidation_risk_30pct, 2),
-                    'protection_coverage': round(collateral_value, 2),
-                    'max_loss_no_protection': round(max_loss_no_protection, 2),
-                    'var_1d_95': round(self._calculate_var(collateral_btc, btc_price, volatility, 1), 2),
-                    'var_30d_95': round(self._calculate_var(collateral_btc, btc_price, volatility, 30), 2)
-                },
-                'scenarios': scenarios,
-                'hedge_recommendation': {
-                    'hedge_ratio': hedge_ratio,
-                    'hedge_size_btc': round(collateral_btc * hedge_ratio, 4),
-                    'preferred_strategies': preferred_strategies
-                },
-                'data_timestamp': datetime.now().isoformat(),
-                'data_source': 'LIVE_MARKET_DATA'
-            }
-            
-            print(f"✅ [SUCCESS] Lending analysis completed: {loan_amount} USD loan")
-            return result
-            
-        except Exception as e:
-            print(f"🚨 [FAILURE] Lending analysis FAILED: {e}")
-            raise Exception(f"Lending analysis failed: {str(e)}")
-    
-    def _generate_lending_scenarios(self, collateral_btc, btc_price, loan_amount):
-        """Generate lending-specific scenarios"""
-        scenarios = []
-        try:
-            collateral_value = collateral_btc * btc_price
-            for pct in [-30, -20, -10, 0, 10, 20, 30]:
-                new_price = btc_price * (1 + pct/100)
-                new_collateral_value = collateral_btc * new_price
-                pnl = new_collateral_value - collateral_value
-                
-                # Lending-specific scenario analysis
-                if pct <= -20:
-                    scenario_type = 'liquidation_risk'
-                elif pct <= -10:
-                    scenario_type = 'margin_call_risk'
-                elif pct >= 20:
-                    scenario_type = 'upside_opportunity'
-                else:
-                    scenario_type = 'normal'
-                
-                scenarios.append({
-                    'change_pct': pct,
-                    'btc_price': round(new_price, 2),
-                    'collateral_value': round(new_collateral_value, 2),
-                    'pnl': round(pnl, 2),
-                    'type': scenario_type,
-                    'loan_coverage_ratio': round(new_collateral_value / loan_amount, 2)
-                })
-            return scenarios
-        except Exception as e:
-            print(f"❌ Lending scenario generation error: {e}")
-            raise Exception(f"Lending scenario generation failed: {str(e)}")
 
 class LivePricingEngine:
     """Options pricing engine using LIVE data only with enhanced logging"""
@@ -960,15 +750,7 @@ class LivePricingEngine:
             current_price = positions['current_price']
             hedge_size = hedge_rec['hedge_size_btc']
             preferred_strategies = hedge_rec.get('preferred_strategies', ['protective_put'])
-            
-            # Check if this is lending protection
-            is_lending = 'protection_type' in profile
-            if is_lending:
-                protection_type = profile.get('protection_type', 'downside')
-                risk_tolerance = 'conservative'  # Lending protection is always conservative
-                print(f"   Lending Protection Mode: {protection_type}")
-            else:
-                risk_tolerance = profile.get('risk_tolerance', 'moderate')
+            risk_tolerance = profile.get('risk_tolerance', 'moderate')
             
             print(f"   Pricing Parameters:")
             print(f"     Current Price: ${current_price:,.2f}")
@@ -983,22 +765,13 @@ class LivePricingEngine:
                 try:
                     print(f"   [{i+1}/{len(preferred_strategies)}] Pricing {strategy_type}...")
                     
-                    if is_lending:
-                        strategy = self._price_lending_strategy(
-                            strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate, protection_type
-                        )
-                    else:
-                        strategy = self._price_single_strategy(
-                            strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate
-                        )
-                    
+                    strategy = self._price_single_strategy(
+                        strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate
+                    )
                     strategy['recommended'] = (i == 0)
                     strategy['risk_tolerance_match'] = risk_tolerance
                     strategy['pricing_timestamp'] = datetime.now().isoformat()
                     strategy['data_source'] = 'LIVE_MARKET_DATA'
-                    if is_lending:
-                        strategy['lending_protection'] = True
-                        strategy['protection_type'] = protection_type
                     strategies.append(strategy)
                     
                     print(f"   ✅ {strategy_type} priced successfully")
@@ -1240,250 +1013,6 @@ class LivePricingEngine:
         except Exception as e:
             raise Exception(f"Covered call pricing failed: {str(e)}")
     
-    def _price_lending_strategy(self, strategy_type, size, S, risk_tolerance, r, protection_type):
-        """Price lending protection strategy with live data"""
-        try:
-            print(f"     Getting live volatility for lending {strategy_type}...")
-            # Get LIVE volatility
-            vol = self.market.get_live_volatility()
-            T = 45 / 365.0  # 45 days to expiry
-            
-            print(f"     Lending pricing inputs: S=${S}, vol={vol:.4f}, T={T:.4f}, r={r:.4f}")
-            print(f"     Protection type: {protection_type}")
-            
-            if strategy_type == 'protective_put':
-                return self._price_lending_protective_put(size, S, vol, T, r, protection_type)
-            elif strategy_type == 'put_spread':
-                return self._price_lending_put_spread(size, S, vol, T, r, protection_type)
-            elif strategy_type == 'covered_call':
-                return self._price_lending_covered_call(size, S, vol, T, r, protection_type)
-            elif strategy_type == 'collar':
-                return self._price_lending_collar(size, S, vol, T, r, protection_type)
-            else:
-                return self._price_lending_protective_put(size, S, vol, T, r, protection_type)
-                
-        except Exception as e:
-            print(f"❌ Lending strategy pricing error: {e}")
-            raise Exception(f"Lending strategy pricing failed: {str(e)}")
-    
-    def _price_lending_protective_put(self, size, S, vol, T, r, protection_type):
-        """Price lending protective put with live data"""
-        try:
-            # Lending-specific strike adjustments (more conservative)
-            if protection_type == 'downside':
-                strike_adj = -5  # 5% below current price for downside protection
-            elif protection_type == 'upside':
-                strike_adj = 10  # 10% above current price for upside protection
-            else:  # collar
-                strike_adj = -3  # 3% below for collar downside
-            
-            K = S * (1 + strike_adj/100)
-            put_price = self._black_scholes_put(S, K, T, r, vol)
-            
-            base_premium = size * put_price
-            markup_amount = max(
-                base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100),
-                PLATFORM_CONFIG['min_markup_dollars'] * size
-            )
-            
-            total_premium = base_premium + markup_amount
-            exec_fee = PLATFORM_CONFIG['execution_fee']
-            total_cost = total_premium + exec_fee
-            
-            return {
-                'strategy_type': 'protective_put',
-                'strategy_name': f'Lending {protection_type.title()} Protection',
-                'strategy_description': f'BTC lending protection against {protection_type} risk using live market data.',
-                'position_size': size,
-                'strike_price': round(K, 2),
-                'premium_per_contract_base': round(put_price, 2),
-                'base_premium_total': round(base_premium, 2),
-                'platform_markup': round(markup_amount, 2),
-                'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(max(0, (S - K) * size) + total_cost, 2),
-                'breakeven': round(K - (total_cost / size), 2),
-                'protection_level': round(K, 2),
-                'upside_participation': '100%',
-                'time_to_expiry_days': 45,
-                'key_benefits': [
-                    f'Protection against {protection_type} risk',
-                    'Live market data pricing',
-                    'Professional lending execution',
-                    'Collateral protection'
-                ],
-                'risk_profile': 'conservative',
-                'complexity': 'Low',
-                'live_volatility_used': vol,
-                'live_risk_free_rate_used': r,
-                'lending_protection': True,
-                'protection_type': protection_type
-            }
-        except Exception as e:
-            raise Exception(f"Lending protective put pricing failed: {str(e)}")
-    
-    def _price_lending_put_spread(self, size, S, vol, T, r, protection_type):
-        """Price lending put spread with live data"""
-        try:
-            # Lending-specific spread adjustments
-            if protection_type == 'downside':
-                long_adj = -5
-                short_adj = -12
-            else:  # collar or upside
-                long_adj = -3
-                short_adj = -8
-            
-            long_strike = S * (1 + long_adj/100)
-            short_strike = S * (1 + short_adj/100)
-            
-            long_put = self._black_scholes_put(S, long_strike, T, r, vol)
-            short_put = self._black_scholes_put(S, short_strike, T, r, vol)
-            
-            net_premium = size * (long_put - short_put)
-            markup_amount = net_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
-            total_premium = net_premium + markup_amount
-            exec_fee = PLATFORM_CONFIG['execution_fee']
-            total_cost = total_premium + exec_fee
-            
-            max_payout = size * (long_strike - short_strike)
-            
-            return {
-                'strategy_type': 'put_spread',
-                'strategy_name': f'Lending {protection_type.title()} Spread',
-                'strategy_description': f'Cost-efficient lending protection against {protection_type} risk.',
-                'position_size': size,
-                'long_strike': round(long_strike, 2),
-                'short_strike': round(short_strike, 2),
-                'net_premium_base': round(net_premium, 2),
-                'platform_markup': round(markup_amount, 2),
-                'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(total_cost, 2),
-                'max_payout': round(max_payout, 2),
-                'breakeven': round(long_strike - (total_cost / size), 2),
-                'protection_level': round(long_strike, 2),
-                'upside_participation': '100%',
-                'time_to_expiry_days': 45,
-                'key_benefits': [
-                    f'Lower cost {protection_type} protection',
-                    'Live market data pricing',
-                    'Professional lending execution',
-                    'Defined risk and reward'
-                ],
-                'risk_profile': 'conservative',
-                'complexity': 'Medium',
-                'live_volatility_used': vol,
-                'live_risk_free_rate_used': r,
-                'lending_protection': True,
-                'protection_type': protection_type
-            }
-        except Exception as e:
-            raise Exception(f"Lending put spread pricing failed: {str(e)}")
-    
-    def _price_lending_covered_call(self, size, S, vol, T, r, protection_type):
-        """Price lending covered call with live data"""
-        try:
-            # Lending-specific call strike adjustments
-            call_adj = 8  # 8% above current price for lending
-            call_strike = S * (1 + call_adj/100)
-            
-            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
-            
-            gross_premium = size * call_price
-            markup_amount = gross_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
-            net_premium_received = gross_premium - markup_amount
-            exec_fee = PLATFORM_CONFIG['execution_fee']
-            total_net_received = net_premium_received - exec_fee
-            
-            return {
-                'strategy_type': 'covered_call',
-                'strategy_name': f'Lending {protection_type.title()} Income',
-                'strategy_description': f'Generate income from BTC lending collateral using live market data.',
-                'position_size': size,
-                'call_strike': round(call_strike, 2),
-                'premium_received_gross': round(gross_premium, 2),
-                'platform_markup': round(markup_amount, 2),
-                'execution_fee': exec_fee,
-                'total_net_received': round(total_net_received, 2),
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'income_percentage': round((total_net_received / (size * S)) * 100, 2),
-                'max_upside': round(call_strike, 2),
-                'breakeven': round(S - (total_net_received / size), 2),
-                'upside_participation': f"100% up to ${call_strike:,.0f}",
-                'time_to_expiry_days': 45,
-                'key_benefits': [
-                    'Generate income from BTC collateral',
-                    'Live market data pricing',
-                    'Professional lending execution',
-                    'Reduce lending costs'
-                ],
-                'risk_profile': 'conservative',
-                'complexity': 'Low-Medium',
-                'live_volatility_used': vol,
-                'live_risk_free_rate_used': r,
-                'lending_protection': True,
-                'protection_type': protection_type
-            }
-        except Exception as e:
-            raise Exception(f"Lending covered call pricing failed: {str(e)}")
-    
-    def _price_lending_collar(self, size, S, vol, T, r, protection_type):
-        """Price lending collar with live data"""
-        try:
-            # Lending-specific collar adjustments
-            put_adj = -5  # 5% below for downside protection
-            call_adj = 12  # 12% above for upside cap
-            
-            put_strike = S * (1 + put_adj/100)
-            call_strike = S * (1 + call_adj/100)
-            
-            put_price = self._black_scholes_put(S, put_strike, T, r, vol)
-            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
-            
-            net_premium = size * (put_price - call_price)
-            markup_amount = abs(net_premium) * (PLATFORM_CONFIG['markup_percentage'] / 100)
-            total_premium = net_premium + markup_amount if net_premium >= 0 else net_premium - markup_amount
-            exec_fee = PLATFORM_CONFIG['execution_fee']
-            total_cost = abs(total_premium) + exec_fee
-            
-            return {
-                'strategy_type': 'collar',
-                'strategy_name': f'Lending {protection_type.title()} Collar',
-                'strategy_description': f'Balanced lending protection with capped upside using live market data.',
-                'position_size': size,
-                'put_strike': round(put_strike, 2),
-                'call_strike': round(call_strike, 2),
-                'net_premium_base': round(net_premium, 2),
-                'platform_markup': round(markup_amount, 2),
-                'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(max(0, (S - put_strike) * size) + total_cost, 2),
-                'max_upside': round(call_strike, 2),
-                'upside_participation': f"100% up to ${call_strike:,.0f}",
-                'protection_level': round(put_strike, 2),
-                'time_to_expiry_days': 45,
-                'key_benefits': [
-                    'Balanced lending protection',
-                    'Live market data pricing',
-                    'Professional lending execution',
-                    'Cost-effective hedging'
-                ],
-                'risk_profile': 'conservative',
-                'complexity': 'Medium',
-                'live_volatility_used': vol,
-                'live_risk_free_rate_used': r,
-                'lending_protection': True,
-                'protection_type': protection_type
-            }
-        except Exception as e:
-            raise Exception(f"Lending collar pricing failed: {str(e)}")
-    
     def _black_scholes_put(self, S, K, T, r, sigma):
         """Black-Scholes put option pricing"""
         try:
@@ -1642,15 +1171,9 @@ def health():
         print("   Testing live risk-free rate...")
         risk_rate = market_service.get_live_risk_free_rate()
         
-        # Get cache status
-        cache_info = market_service._risk_free_rate_cache
-        cache_age_hours = None
-        if cache_info['timestamp']:
-            cache_age_hours = (datetime.now() - cache_info['timestamp']).total_seconds() / 3600
-        
         health_data = {
             'status': 'healthy',
-            'version': 'v18.0-MULTI-SOURCE-CACHING',
+            'version': 'v17.5-LIVE-DATA-ONLY-REAL-KEYS',
             'timestamp': datetime.now().isoformat(),
             'services': {
                 'live_market_data': 'operational',
@@ -1668,15 +1191,8 @@ def health():
                 'fred_key_length': len(REAL_FRED_API_KEY),
                 'coingecko_key_length': len(REAL_COINGECKO_API_KEY)
             },
-            'cache_status': {
-                'risk_free_rate_cached': cache_info['rate'] is not None,
-                'cache_source': cache_info['source'],
-                'cache_age_hours': round(cache_age_hours, 2) if cache_age_hours else None,
-                'cache_ttl_hours': cache_info['ttl_hours'],
-                'cache_valid': cache_age_hours < cache_info['ttl_hours'] if cache_age_hours else False
-            },
-            'data_source': 'MULTI_SOURCE_LIVE_DATA',
-            'sources': 'FRED (primary) → Treasury.gov (secondary) → Cache (fallback)'
+            'data_source': 'LIVE_MARKET_DATA',
+            'warning': 'LIVE DATA ONLY - NO FALLBACKS'
         }
         
         print(f"✅ [HEALTH] All systems operational: {health_data}")
@@ -1751,24 +1267,15 @@ def analyze_portfolio():
     """Analyze portfolio using LIVE data only with logging"""
     try:
         data = request.get_json() or {}
-        mode = data.get('mode', 'institutional')  # NEW: Support lending mode
         portfolio_type = data.get('type', 'pension_fund')
         custom_params = data.get('custom_params')
-        loan_params = data.get('loan_params')  # NEW: Lending parameters
         
         print(f"📊 [API] Portfolio analysis request: {portfolio_type}")
-        print(f"   Mode: {mode}")
         if custom_params:
             print(f"   Custom parameters: {custom_params}")
-        if loan_params:
-            print(f"   Loan parameters: {loan_params}")
         
         # CRITICAL: Analysis uses LIVE data only
-        if mode == 'lending':
-            analysis = portfolio_analyzer.analyze(mode=mode, custom_params=loan_params)
-        else:
-            analysis = portfolio_analyzer.analyze(portfolio_type, custom_params, mode)
-        
+        analysis = portfolio_analyzer.analyze(portfolio_type, custom_params)
         session['portfolio_analysis'] = analysis
         
         print(f"✅ [API] Analysis completed successfully")
@@ -1794,36 +1301,18 @@ def generate_strategies():
         if not analysis:
             return jsonify({'success': False, 'error': 'No portfolio analysis found'}), 400
         
-        # Check if this is lending protection
-        is_lending = 'protection_type' in analysis['profile']
-        if is_lending:
-            print(f"💰 [API] Generating LENDING strategies with LIVE data for {analysis['profile']['name']}")
-            print(f"   Protection Type: {analysis['profile'].get('protection_type', 'downside')}")
-        else:
-            print(f"💰 [API] Generating INSTITUTIONAL strategies with LIVE data for {analysis['profile']['name']}")
+        print(f"💰 [API] Generating strategies with LIVE data for {analysis['profile']['name']}")
         
         # CRITICAL: Strategy pricing uses LIVE data only
         strategies = live_pricing_engine.price_all_strategies(analysis)
         session['available_strategies'] = strategies
         
-        # Build context based on mode
-        if is_lending:
-            context = {
-                'institution': analysis['profile']['name'],
-                'position_size': analysis['positions']['btc_size'],
-                'risk_tolerance': 'conservative',  # Lending is always conservative
-                'data_source': 'LIVE_MARKET_DATA',
-                'lending_protection': True,
-                'protection_type': analysis['profile'].get('protection_type', 'downside'),
-                'loan_amount': analysis['positions'].get('loan_amount', 0)
-            }
-        else:
-            context = {
-                'institution': analysis['profile']['name'],
-                'position_size': analysis['positions']['btc_size'],
-                'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate'),
-                'data_source': 'LIVE_MARKET_DATA'
-            }
+        context = {
+            'institution': analysis['profile']['name'],
+            'position_size': analysis['positions']['btc_size'],
+            'risk_tolerance': analysis['profile'].get('risk_tolerance', 'moderate'),
+            'data_source': 'LIVE_MARKET_DATA'
+        }
         
         print(f"✅ [API] {len(strategies)} strategies generated successfully")
         return jsonify({
@@ -1871,25 +1360,12 @@ def select_strategy():
         # Add portfolio context
         analysis = session.get('portfolio_analysis')
         if analysis:
-            # Check if this is lending protection
-            is_lending = 'protection_type' in analysis['profile']
-            if is_lending:
-                selected_strategy['portfolio_context'] = {
-                    'institution': analysis['profile']['name'],
-                    'position_size_btc': analysis['positions']['btc_size'],
-                    'loan_amount': analysis['positions'].get('loan_amount', 0),
-                    'protection_type': analysis['profile'].get('protection_type', 'downside'),
-                    'liquidation_risk_before': analysis['risk_metrics']['liquidation_risk_30pct'],
-                    'liquidation_risk_after_estimated': analysis['risk_metrics']['liquidation_risk_30pct'] * 0.25,
-                    'lending_protection': True
-                }
-            else:
-                selected_strategy['portfolio_context'] = {
-                    'institution': analysis['profile']['name'],
-                    'position_size_btc': analysis['positions']['btc_size'],
-                    'var_before': analysis['risk_metrics']['var_30d_95'],
-                    'var_after_estimated': analysis['risk_metrics']['var_30d_95'] * 0.25
-                }
+            selected_strategy['portfolio_context'] = {
+                'institution': analysis['profile']['name'],
+                'position_size_btc': analysis['positions']['btc_size'],
+                'var_before': analysis['risk_metrics']['var_30d_95'],
+                'var_after_estimated': analysis['risk_metrics']['var_30d_95'] * 0.25
+            }
         
         session['selected_strategy'] = selected_strategy
         
@@ -1941,69 +1417,33 @@ def execute_strategy():
             }
             print(f"   Platform hedge executed: {hedge_size} BTC")
         
-        # Build results based on strategy type
-        if strategy.get('lending_protection'):
-            # Lending protection execution results
-            results = {
-                'execution_summary': {
-                    'status': 'completed',
-                    'strategy_name': strategy['strategy_name'],
-                    'contracts_filled': size,
-                    'total_premium_client': strategy.get('total_client_cost', strategy.get('total_net_received', 0)),
-                    'platform_revenue': strategy.get('platform_revenue', 0),
-                    'execution_venues': execution_plan,
-                    'execution_timestamp': datetime.now().isoformat(),
-                    'data_source': 'LIVE_MARKET_DATA',
-                    'lending_protection': True,
-                    'protection_type': strategy.get('protection_type', 'downside')
+        results = {
+            'execution_summary': {
+                'status': 'completed',
+                'strategy_name': strategy['strategy_name'],
+                'contracts_filled': size,
+                'total_premium_client': strategy.get('total_client_cost', strategy.get('total_net_received', 0)),
+                'platform_revenue': strategy.get('platform_revenue', 0),
+                'execution_venues': execution_plan,
+                'execution_timestamp': datetime.now().isoformat(),
+                'data_source': 'LIVE_MARKET_DATA'
+            },
+            'portfolio_impact': {
+                'institution': strategy['portfolio_context']['institution'],
+                'var_reduction': {
+                    'before': strategy['portfolio_context']['var_before'],
+                    'after': strategy['portfolio_context']['var_after_estimated'],
+                    'reduction_pct': 75
                 },
-                'lending_impact': {
-                    'institution': strategy['portfolio_context']['institution'],
-                    'loan_amount': strategy['portfolio_context']['loan_amount'],
-                    'liquidation_risk_reduction': {
-                        'before': strategy['portfolio_context']['liquidation_risk_before'],
-                        'after': strategy['portfolio_context']['liquidation_risk_after_estimated'],
-                        'reduction_pct': 75
-                    },
-                    'protection_active': True,
-                    'collateral_protected': size
-                },
-                'platform_exposure': {
-                    'client_positions_btc': platform_state['total_client_exposure_btc'],
-                    'platform_hedges_btc': platform_state['total_platform_hedges_btc'],
-                    'net_exposure_btc': platform_state['net_platform_exposure_btc'],
-                    'platform_hedge_action': platform_hedge
-                }
+                'protection_active': True
+            },
+            'platform_exposure': {
+                'client_positions_btc': platform_state['total_client_exposure_btc'],
+                'platform_hedges_btc': platform_state['total_platform_hedges_btc'],
+                'net_exposure_btc': platform_state['net_platform_exposure_btc'],
+                'platform_hedge_action': platform_hedge
             }
-        else:
-            # Institutional execution results
-            results = {
-                'execution_summary': {
-                    'status': 'completed',
-                    'strategy_name': strategy['strategy_name'],
-                    'contracts_filled': size,
-                    'total_premium_client': strategy.get('total_client_cost', strategy.get('total_net_received', 0)),
-                    'platform_revenue': strategy.get('platform_revenue', 0),
-                    'execution_venues': execution_plan,
-                    'execution_timestamp': datetime.now().isoformat(),
-                    'data_source': 'LIVE_MARKET_DATA'
-                },
-                'portfolio_impact': {
-                    'institution': strategy['portfolio_context']['institution'],
-                    'var_reduction': {
-                        'before': strategy['portfolio_context']['var_before'],
-                        'after': strategy['portfolio_context']['var_after_estimated'],
-                        'reduction_pct': 75
-                    },
-                    'protection_active': True
-                },
-                'platform_exposure': {
-                    'client_positions_btc': platform_state['total_client_exposure_btc'],
-                    'platform_hedges_btc': platform_state['total_platform_hedges_btc'],
-                    'net_exposure_btc': platform_state['net_platform_exposure_btc'],
-                    'platform_hedge_action': platform_hedge
-                }
-            }
+        }
         
         print(f"✅ [API] Strategy execution completed successfully")
         return jsonify({'success': True, 'execution': results})

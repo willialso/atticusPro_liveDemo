@@ -7,6 +7,7 @@ class AttticusProfessionalDemo {
         this.selectedStrategy = null;
         this.marketData = null;
         this.liveDataAvailable = false;
+        this.currentMode = 'institutional'; // NEW: Track current protection mode
         
         this.init();
     }
@@ -29,6 +30,20 @@ class AttticusProfessionalDemo {
                 this.hideLoading();
             }
         });
+        
+        // NEW: Setup lending form event listeners
+        this.setupLendingFormListeners();
+    }
+    
+    setupLendingFormListeners() {
+        // Update loan summary when inputs change
+        const loanAmount = document.getElementById('loan-amount');
+        const ltvRatio = document.getElementById('ltv-ratio');
+        
+        if (loanAmount && ltvRatio) {
+            loanAmount.addEventListener('input', () => this.updateLendingSummary());
+            ltvRatio.addEventListener('input', () => this.updateLendingSummary());
+        }
     }
     
     async loadMarketData() {
@@ -543,11 +558,13 @@ class AttticusProfessionalDemo {
     displayExecutionResults(execution) {
         const container = document.getElementById('execution-results');
         const timestamp = new Date(execution.execution_summary.execution_timestamp).toLocaleString();
+        const isLending = execution.execution_summary.lending_protection;
         
-        const html = `
+        let html = `
             <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 24px; margin-bottom: 32px; text-align: center;">
                 <h5 style="color: var(--success); margin-bottom: 8px; font-size: 18px;">✅ LIVE DATA EXECUTION COMPLETED</h5>
                 <p style="color: var(--text-bright); font-size: 14px;">Execution Time: ${timestamp} | Data Source: ${execution.execution_summary.data_source}</p>
+                ${isLending ? `<p style="color: var(--warning-light); font-size: 14px; margin-top: 8px;">Lending Protection: ${execution.execution_summary.protection_type.toUpperCase()}</p>` : ''}
             </div>
             
             <div class="analysis-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); border-color: var(--success);">
@@ -571,29 +588,69 @@ class AttticusProfessionalDemo {
                     </div>
                 </div>
             </div>
-            
-            <div class="analysis-card">
-                <h4>Portfolio Impact</h4>
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="metric-label">Institution</span>
-                        <span class="metric-value">${execution.portfolio_impact.institution}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">VaR Before</span>
-                        <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.before)}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">VaR After</span>
-                        <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.after)}</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Risk Reduction</span>
-                        <span class="metric-value" style="color: var(--success);">${execution.portfolio_impact.var_reduction.reduction_pct}%</span>
+        `;
+        
+        if (isLending) {
+            // Lending protection results
+            html += `
+                <div class="analysis-card">
+                    <h4>Lending Protection Impact</h4>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-label">Institution</span>
+                            <span class="metric-value">${execution.lending_impact.institution}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Loan Amount</span>
+                            <span class="metric-value">${this.formatCurrency(execution.lending_impact.loan_amount)}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Liquidation Risk Before</span>
+                            <span class="metric-value">${this.formatCurrency(execution.lending_impact.liquidation_risk_reduction.before)}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Liquidation Risk After</span>
+                            <span class="metric-value">${this.formatCurrency(execution.lending_impact.liquidation_risk_reduction.after)}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Risk Reduction</span>
+                            <span class="metric-value" style="color: var(--success);">${execution.lending_impact.liquidation_risk_reduction.reduction_pct}%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Collateral Protected</span>
+                            <span class="metric-value">${this.formatBTC(execution.lending_impact.collateral_protected)}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
+            `;
+        } else {
+            // Institutional results
+            html += `
+                <div class="analysis-card">
+                    <h4>Portfolio Impact</h4>
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-label">Institution</span>
+                            <span class="metric-value">${execution.portfolio_impact.institution}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">VaR Before</span>
+                            <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.before)}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">VaR After</span>
+                            <span class="metric-value">${this.formatCurrency(execution.portfolio_impact.var_reduction.after)}</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Risk Reduction</span>
+                            <span class="metric-value" style="color: var(--success);">${execution.portfolio_impact.var_reduction.reduction_pct}%</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `
             <div class="analysis-card">
                 <h4>Platform Exposure Management</h4>
                 <div class="metrics-grid">
@@ -681,6 +738,208 @@ class AttticusProfessionalDemo {
     hideLoading() {
         document.getElementById('loading').classList.remove('active');
     }
+    
+    // NEW: Mode switching functionality
+    switchProtectionMode(mode) {
+        console.log(`🔄 Switching to ${mode} protection mode`);
+        this.currentMode = mode;
+        
+        // Update mode buttons
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+        
+        // Update step title
+        const stepTitle = document.getElementById('step-1-title');
+        if (mode === 'lending') {
+            stepTitle.textContent = 'Step 1: Configure Lending Protection';
+        } else {
+            stepTitle.textContent = 'Step 1: Select Portfolio Type';
+        }
+        
+        // Show/hide appropriate forms
+        const institutionalSelection = document.getElementById('institutional-selection');
+        const lendingSelection = document.getElementById('lending-selection');
+        
+        if (mode === 'lending') {
+            institutionalSelection.style.display = 'none';
+            lendingSelection.style.display = 'block';
+            this.updateLendingSummary(); // Update summary with current BTC price
+        } else {
+            institutionalSelection.style.display = 'block';
+            lendingSelection.style.display = 'none';
+        }
+        
+        // Reset demo state when switching modes
+        this.resetDemo();
+    }
+    
+    // NEW: Update lending summary with current BTC price
+    updateLendingSummary() {
+        if (this.currentMode !== 'lending' || !this.marketData) return;
+        
+        const loanAmount = parseFloat(document.getElementById('loan-amount').value) || 0;
+        const ltvRatio = parseFloat(document.getElementById('ltv-ratio').value) || 70;
+        const btcPrice = this.marketData.btc_price;
+        
+        if (loanAmount > 0 && btcPrice > 0) {
+            // Calculate collateral required (loan amount / LTV ratio)
+            const collateralValue = loanAmount / (ltvRatio / 100);
+            const collateralBTC = collateralValue / btcPrice;
+            
+            // Calculate protection coverage (collateral value)
+            const protectionCoverage = collateralValue;
+            
+            // Update display
+            document.getElementById('collateral-required').textContent = 
+                `${collateralBTC.toFixed(4)} BTC (${this.formatCurrency(collateralValue)})`;
+            document.getElementById('protection-coverage').textContent = 
+                this.formatCurrency(protectionCoverage);
+        } else {
+            document.getElementById('collateral-required').textContent = 'Enter loan amount';
+            document.getElementById('protection-coverage').textContent = 'Enter loan amount';
+        }
+    }
+    
+    // NEW: Analyze lending position
+    async analyzeLendingPosition() {
+        // Check live data availability
+        if (!this.liveDataAvailable) {
+            alert('🚨 LIVE DATA REQUIRED: Lending analysis requires live market data. Please wait for data connection or try again.');
+            return;
+        }
+        
+        // Validate inputs
+        const loanAmount = parseFloat(document.getElementById('loan-amount').value);
+        const loanTerm = parseInt(document.getElementById('loan-term').value);
+        const ltvRatio = parseFloat(document.getElementById('ltv-ratio').value);
+        const protectionType = document.getElementById('protection-type').value;
+        
+        if (!loanAmount || loanAmount <= 0) {
+            alert('Please enter a valid loan amount.');
+            return;
+        }
+        
+        if (!ltvRatio || ltvRatio < 20 || ltvRatio > 90) {
+            alert('Please enter a valid LTV ratio (20-90%).');
+            return;
+        }
+        
+        this.showLoading('Analyzing lending protection with LIVE market data...');
+        
+        try {
+            const response = await fetch('/api/analyze-portfolio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mode: 'lending',
+                    loan_params: {
+                        loan_amount: loanAmount,
+                        loan_term: loanTerm,
+                        ltv_ratio: ltvRatio,
+                        protection_type: protectionType,
+                        btc_price: this.marketData.btc_price
+                    }
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success && data.analysis.data_source === 'LIVE_MARKET_DATA') {
+                this.portfolioAnalysis = data.analysis;
+                this.displayLendingAnalysisResults(data.analysis);
+                this.showStep(2);
+            } else {
+                const errorMsg = data.error || 'Lending analysis failed';
+                if (data.error_type === 'LIVE_DATA_REQUIRED') {
+                    alert('🚨 LIVE DATA ERROR: ' + errorMsg);
+                } else {
+                    alert('Lending Analysis Error: ' + errorMsg);
+                }
+            }
+        } catch (error) {
+            console.error('Lending analysis error:', error);
+            alert('🚨 CRITICAL ERROR: Lending analysis failed. Live market data may be unavailable.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+    
+    // NEW: Display lending analysis results
+    displayLendingAnalysisResults(analysis) {
+        const container = document.getElementById('analysis-results');
+        
+        // Add live data timestamp
+        const timestamp = new Date(analysis.data_timestamp).toLocaleString();
+        
+        const html = `
+            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 20px; margin-bottom: 32px; text-align: center;">
+                <h5 style="color: var(--success); margin-bottom: 8px; font-size: 16px;">✅ LIVE LENDING PROTECTION ANALYSIS</h5>
+                <p style="color: var(--text-bright); font-size: 14px;">Data Source: ${analysis.data_source} | Timestamp: ${timestamp}</p>
+            </div>
+            
+            <div class="analysis-card">
+                <h4>Lending Position Overview</h4>
+                <p class="institution-subtitle">${analysis.profile.name}</p>
+                <div class="metrics-grid metrics-grid-three">
+                    <div class="metric-item">
+                        <span class="metric-label">Loan Amount</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.positions.loan_amount)}</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Collateral Required</span>
+                        <span class="metric-value">${Math.round(analysis.positions.btc_size)} BTC</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">LTV Ratio</span>
+                        <span class="metric-value">${analysis.positions.ltv_ratio}%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-card">
+                <h4>Risk Analysis (Live Data)</h4>
+                <p class="risk-analysis-subtitle">Volatility: <span style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span></p>
+                <div class="metrics-grid metrics-grid-three">
+                    <div class="metric-item">
+                        <span class="metric-label">Liquidation Risk<br>(30%)</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.liquidation_risk_30pct)}</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Protection Coverage</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.protection_coverage)}</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Max Loss<br>(No Protection)</span>
+                        <span class="metric-value">${this.formatCurrency(analysis.risk_metrics.max_loss_no_protection)}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-card">
+                <h4>Protection Recommendation</h4>
+                <p class="risk-tolerance-subtitle">${analysis.profile.protection_type?.toUpperCase() || 'DOWNSIDE PROTECTION'}</p>
+                <div class="metrics-grid metrics-grid-three">
+                    <div class="metric-item">
+                        <span class="metric-label">Recommended<br>Protection Level</span>
+                        <span class="metric-value">${this.formatPercentage(analysis.hedge_recommendation.hedge_ratio * 100)}</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Protection Size</span>
+                        <span class="metric-value">${Math.round(analysis.hedge_recommendation.hedge_size_btc)} BTC</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Strategies</span>
+                        <span class="metric-value">${analysis.hedge_recommendation.preferred_strategies?.length || 1} Options</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+        document.getElementById('generate-strategy-btn').style.display = 'inline-block';
+    }
 }
 
 // Global functions
@@ -689,6 +948,10 @@ function analyzePortfolio(type) { demo.analyzePortfolio(type); }
 function analyzeCustomPosition() { demo.analyzeCustomPosition(); }
 function generateStrategy() { demo.generateStrategies(); }
 function resetDemo() { demo.resetDemo(); }
+
+// NEW: Lending protection functions
+function switchProtectionMode(mode) { demo.switchProtectionMode(mode); }
+function analyzeLendingPosition() { demo.analyzeLendingPosition(); }
 
 // Initialize
 let demo;
