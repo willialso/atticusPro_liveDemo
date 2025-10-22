@@ -423,69 +423,192 @@ class AttticusProfessionalDemo {
     displayStrategies(strategies, context) {
         const container = document.getElementById('strategy-results');
         
+        // Check if this is lending protection mode
+        const isLending = context.lending_protection || false;
+        
         let html = `
             <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border-radius: 20px; border: 2px solid var(--success);">
                 <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ LIVE DATA STRATEGIES for ${context.institution}</h4>
                 <p style="color: var(--text-bright); font-size: 18px;">Based on ${context.risk_tolerance} risk tolerance and ${Math.round(context.position_size)} BTC position</p>
                 <p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">All strategies priced with live market data and real-time volatility</p>
             </div>
-            
-            <div class="strategies-grid">
         `;
         
-        strategies.forEach((strategy, index) => {
-            const isRecommended = strategy.recommended || index === 0;
-            const timestamp = new Date(strategy.pricing_timestamp).toLocaleString();
+        if (isLending) {
+            // Group strategies by category for lending protection
+            const incomeStrategies = strategies.filter(s => s.income_focused);
+            const protectionStrategies = strategies.filter(s => s.protection_focused);
             
             html += `
-                <div class="strategy-option ${isRecommended ? 'recommended' : ''}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
-                    <div class="strategy-header">
-                        <div class="strategy-name">${strategy.strategy_name}</div>
-                        <div class="strategy-cost">${Math.round(strategy.cost_percentage || strategy.income_percentage || 0)}%</div>
-                    </div>
-                    
-                    <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                        <div style="font-size: 12px; color: var(--success); font-weight: 700;">✅ LIVE DATA PRICING</div>
-                        <div style="font-size: 11px; color: var(--text-light);">${timestamp}</div>
-                    </div>
-                    
-                    <div class="strategy-description">${strategy.strategy_description}</div>
-                    
-                    <div class="strategy-metrics">
-                        <div class="strategy-metric">
-                            <span class="metric-label">Total Cost/Income</span>
-                            <span class="metric-value">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</span>
+                <div class="strategy-categories">
+                    ${incomeStrategies.length > 0 ? `
+                        <div class="strategy-category">
+                            <h4 class="category-header income">💰 Yield Strategy (Limits Gains)</h4>
+                            <div class="strategies-grid">
+                                ${incomeStrategies.map(strategy => this.renderStrategyCard(strategy)).join('')}
+                            </div>
                         </div>
-                        <div class="strategy-metric">
-                            <span class="metric-label">Max Loss/Upside</span>
-                            <span class="metric-value">${this.formatCurrency(strategy.max_loss || strategy.max_upside || 0)}</span>
-                        </div>
-                        <div class="strategy-metric">
-                            <span class="metric-label">Protection Level</span>
-                            <span class="metric-value">${this.formatCurrency(strategy.protection_level || strategy.strike_price || strategy.call_strike || 0)}</span>
-                        </div>
-                        <div class="strategy-metric">
-                            <span class="metric-label">Complexity</span>
-                            <span class="metric-value">${strategy.complexity || 'Low'}</span>
-                        </div>
-                    </div>
+                    ` : ''}
                     
-                    <div style="margin-top: 20px;">
-                        <h6 style="color: var(--success); margin-bottom: 10px; font-size: 15px; font-weight: 700;">Key Benefits:</h6>
-                        <ul style="color: var(--text-bright); font-size: 15px; margin-left: 18px; line-height: 1.4;">
-                            ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 6px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
-                        </ul>
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(16,185,129,0.4);">
-                        <span style="color: var(--success); font-weight: 700; font-size: 15px;">Select Live-Priced Strategy</span>
-                    </div>
+                    ${protectionStrategies.length > 0 ? `
+                        <div class="strategy-category">
+                            <h4 class="category-header protection">🛡️ True Upside Protection</h4>
+                            <div class="strategies-grid">
+                                ${protectionStrategies.map(strategy => this.renderStrategyCard(strategy)).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             `;
-        });
+        } else {
+            // Standard institutional display
+            html += `
+                <div class="strategies-grid">
+                    ${strategies.map(strategy => this.renderStrategyCard(strategy)).join('')}
+                </div>
+            `;
+        }
         
-        html += '</div>';
         container.innerHTML = html;
+    }
+    
+    renderStrategyCard(strategy) {
+        const isRecommended = strategy.recommended || false;
+        const timestamp = new Date(strategy.pricing_timestamp).toLocaleString();
+        
+        return `
+            <div class="strategy-option ${isRecommended ? 'recommended' : ''}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
+                <div class="strategy-header">
+                    <div class="strategy-name">${strategy.strategy_name}</div>
+                    ${strategy.strategy_subtitle ? `<div class="strategy-subtitle">${strategy.strategy_subtitle}</div>` : ''}
+                    <div class="strategy-cost">
+                        ${strategy.bundled_protection ? 
+                            `<span class="discounted-price">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</span>
+                             <span class="original-price">${this.formatCurrency(strategy.original_premium || strategy.original_net_received || 0)}</span>
+                             <span class="discount-badge">${strategy.discount_percentage}% OFF</span>` :
+                            this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)
+                        }
+                    </div>
+                </div>
+                
+                <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: var(--success); font-weight: 700;">✅ LIVE DATA PRICING</div>
+                    <div style="font-size: 11px; color: var(--text-light);">${timestamp}</div>
+                </div>
+                
+                ${strategy.bundled_protection ? this.renderDiscountInfo(strategy) : ''}
+                
+                ${strategy.option_details ? this.renderOptionDetails(strategy.option_details) : ''}
+                
+                <div class="strategy-description">${strategy.strategy_description}</div>
+                
+                <div class="strategy-metrics">
+                    <div class="strategy-metric">
+                        <span class="metric-label">Total Cost/Income</span>
+                        <span class="metric-value">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</span>
+                    </div>
+                    <div class="strategy-metric">
+                        <span class="metric-label">Max Loss/Upside</span>
+                        <span class="metric-value">${this.formatCurrency(strategy.max_loss || strategy.max_upside || 0)}</span>
+                    </div>
+                    <div class="strategy-metric">
+                        <span class="metric-label">Protection Level</span>
+                        <span class="metric-value">${this.formatCurrency(strategy.protection_level || strategy.strike_price || strategy.call_strike || 0)}</span>
+                    </div>
+                    <div class="strategy-metric">
+                        <span class="metric-label">Complexity</span>
+                        <span class="metric-value">${strategy.complexity || 'Low'}</span>
+                    </div>
+                </div>
+                
+                ${strategy.scenario_analysis ? this.renderScenarioTable(strategy.scenario_analysis) : ''}
+                
+                <div style="margin-top: 20px;">
+                    <h6 style="color: var(--success); margin-bottom: 10px; font-size: 15px; font-weight: 700;">Key Benefits:</h6>
+                    <ul style="color: var(--text-bright); font-size: 15px; margin-left: 18px; line-height: 1.4;">
+                        ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 6px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
+                    </ul>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(16,185,129,0.4);">
+                    <span style="color: var(--success); font-weight: 700; font-size: 15px;">Select Live-Priced Strategy</span>
+                </div>
+            </div>
+        `;
+    }
+    
+    renderDiscountInfo(strategy) {
+        return `
+            <div class="discount-info">
+                <div class="discount-header">
+                    <span class="discount-label">🎁 Bundled Protection Discount</span>
+                    <span class="discount-amount">Save ${this.formatCurrency(strategy.discount_applied)}</span>
+                </div>
+                <div class="pricing-breakdown">
+                    <div class="price-line">
+                        <span>Platform premium:</span>
+                        <span>${this.formatCurrency(strategy.original_premium || strategy.original_net_received || 0)}</span>
+                    </div>
+                    <div class="price-line discount">
+                        <span>Your bundled protection price:</span>
+                        <span>${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)} (${strategy.discount_percentage}% discount applied)</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    renderOptionDetails(optionDetails) {
+        return `
+            <div class="option-details">
+                <h6>Option Specifications</h6>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="label">Strike Price</span>
+                        <span class="value">${this.formatCurrency(optionDetails.strike_price)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Expiry</span>
+                        <span class="value">${optionDetails.option_expiry_days} days</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Notional</span>
+                        <span class="value">${optionDetails.option_notional} BTC</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">APR Equivalent</span>
+                        <span class="value">${optionDetails.apr_equivalent}%</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    renderScenarioTable(scenarioAnalysis) {
+        const scenarios = scenarioAnalysis.btc_scenarios;
+        const outcomes = scenarioAnalysis.borrower_outcomes;
+        
+        return `
+            <div class="scenario-analysis">
+                <h6>Scenario Analysis</h6>
+                <div class="scenario-table">
+                    <div class="scenario-header">
+                        <div class="scenario-col">BTC Price</div>
+                        <div class="scenario-col">Protection Payout</div>
+                        <div class="scenario-col">Net Outcome</div>
+                        <div class="scenario-col">Max Gain</div>
+                    </div>
+                    ${outcomes.map((outcome, index) => `
+                        <div class="scenario-row">
+                            <div class="scenario-col">${this.formatCurrency(outcome.btc_price)}</div>
+                            <div class="scenario-col">${this.formatCurrency(outcome.protection_payout)}</div>
+                            <div class="scenario-col ${outcome.net_outcome >= 0 ? 'positive' : 'negative'}">${this.formatCurrency(outcome.net_outcome)}</div>
+                            <div class="scenario-col">${this.formatCurrency(outcome.max_gain)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
     }
     
     async selectStrategy(strategyType) {

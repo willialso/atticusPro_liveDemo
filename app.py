@@ -49,7 +49,10 @@ PLATFORM_CONFIG = {
     'execution_fee': 25,
     'hedge_reserve_ratio': 1.1,
     'max_single_institution_btc': 10000,
-    'platform_hedge_threshold': 5.0
+    'platform_hedge_threshold': 5.0,
+    # Lending discount configuration
+    'lending_discount_rate': 0.15,  # 15% discount for lending protection
+    'lending_discount_enabled': True
 }
 
 # Global platform state
@@ -929,6 +932,44 @@ class LivePricingEngine:
         self.market = market_service
         print("✅ LivePricingEngine initialized - LIVE DATA ONLY")
     
+    def _apply_lending_discount(self, base_premium, is_lending_origination=True):
+        """Apply bundled discount for lending protection at origination"""
+        if not is_lending_origination or not PLATFORM_CONFIG['lending_discount_enabled']:
+            return base_premium, 0.0
+        
+        discount_rate = PLATFORM_CONFIG['lending_discount_rate']
+        discount_amount = base_premium * discount_rate
+        discounted_premium = base_premium - discount_amount
+        
+        return round(discounted_premium, 2), round(discount_amount, 2)
+    
+    def _calculate_borrower_outcome(self, btc_price, strike, size, premium, strategy_type='protective_put'):
+        """Calculate borrower outcome at different BTC prices"""
+        if strategy_type == 'protective_put':
+            if btc_price < strike:
+                protection_payout = (strike - btc_price) * size
+                net_outcome = protection_payout - premium
+            else:
+                net_outcome = -premium  # Just lose the premium
+        elif strategy_type == 'covered_call':
+            if btc_price > strike:
+                # BTC gets called away at strike, but borrower keeps premium
+                net_outcome = premium
+            else:
+                # BTC stays, borrower keeps premium
+                net_outcome = premium
+        else:
+            # For spreads and collars, simplified calculation
+            net_outcome = -premium if premium > 0 else premium
+        
+        return {
+            'btc_price': btc_price,
+            'protection_payout': max(0, (strike - btc_price) * size) if strategy_type == 'protective_put' else 0,
+            'net_outcome': net_outcome,
+            'max_gain': max(0, (btc_price - strike) * size - premium) if strategy_type == 'protective_put' else premium,
+            'max_loss': abs(premium)
+        }
+    
     def price_all_strategies(self, analysis_data):
         """Price strategies using LIVE market data with detailed logging"""
         try:
@@ -1290,9 +1331,38 @@ class LivePricingEngine:
             exec_fee = PLATFORM_CONFIG['execution_fee']
             total_cost = total_premium + exec_fee
             
+            # Apply lending discount
+            discounted_premium, discount_amount = self._apply_lending_discount(total_premium, is_lending_origination=True)
+            discounted_total_cost = discounted_premium + exec_fee
+            
+            # Calculate comprehensive option data
+            option_details = {
+                'strike_price': round(K, 2),
+                'option_expiry_days': int(T * 365),
+                'option_notional': round(size, 4),
+                'total_cost_original': round(total_premium, 2),
+                'total_cost_discounted': round(discounted_premium, 2),
+                'apr_equivalent': round((discounted_premium / (size * S)) * 365 / (T * 365) * 100, 2)
+            }
+            
+            # Calculate scenario analysis
+            btc_scenarios = [S * 0.8, S, S * 1.2, S * 1.5]  # -20%, spot, +20%, moon
+            scenario_analysis = {
+                'btc_scenarios': btc_scenarios,
+                'borrower_outcomes': [
+                    self._calculate_borrower_outcome(btc_scenarios[0], K, size, discounted_premium, 'protective_put'),
+                    self._calculate_borrower_outcome(btc_scenarios[1], K, size, discounted_premium, 'protective_put'),
+                    self._calculate_borrower_outcome(btc_scenarios[2], K, size, discounted_premium, 'protective_put'),
+                    self._calculate_borrower_outcome(btc_scenarios[3], K, size, discounted_premium, 'protective_put')
+                ]
+            }
+            
             return {
                 'strategy_type': 'protective_put',
                 'strategy_name': f'Lending {protection_type.title()} Protection',
+                'strategy_category': 'Protection Strategy',
+                'strategy_subtitle': 'Long Call (Upside Protection)' if protection_type == 'upside' else 'Protective Put (Downside Protection)',
+                'protection_focused': True,
                 'strategy_description': f'BTC lending protection against {protection_type} risk using live market data.',
                 'position_size': size,
                 'strike_price': round(K, 2),
@@ -1300,19 +1370,26 @@ class LivePricingEngine:
                 'base_premium_total': round(base_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
+                'total_client_cost': round(discounted_total_cost, 2),
+                'original_premium': round(total_premium, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': round(PLATFORM_CONFIG['lending_discount_rate'] * 100, 1),
+                'bundled_protection': True,
                 'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(max(0, (S - K) * size) + total_cost, 2),
-                'breakeven': round(K - (total_cost / size), 2),
+                'cost_percentage': round((discounted_total_cost / (size * S)) * 100, 2),
+                'max_loss': round(max(0, (S - K) * size) + discounted_total_cost, 2),
+                'breakeven': round(K - (discounted_total_cost / size), 2),
                 'protection_level': round(K, 2),
                 'upside_participation': '100%',
                 'time_to_expiry_days': 45,
+                'option_details': option_details,
+                'scenario_analysis': scenario_analysis,
                 'key_benefits': [
                     f'Protection against {protection_type} risk',
                     'Live market data pricing',
                     'Professional lending execution',
-                    'Collateral protection'
+                    'Collateral protection',
+                    f'{PLATFORM_CONFIG["lending_discount_rate"]*100:.0f}% bundled discount'
                 ],
                 'risk_profile': 'conservative',
                 'complexity': 'Low',
@@ -1347,11 +1424,18 @@ class LivePricingEngine:
             exec_fee = PLATFORM_CONFIG['execution_fee']
             total_cost = total_premium + exec_fee
             
+            # Apply lending discount
+            discounted_premium, discount_amount = self._apply_lending_discount(total_premium, is_lending_origination=True)
+            discounted_total_cost = discounted_premium + exec_fee
+            
             max_payout = size * (long_strike - short_strike)
             
             return {
                 'strategy_type': 'put_spread',
                 'strategy_name': f'Lending {protection_type.title()} Spread',
+                'strategy_category': 'Protection Strategy',
+                'strategy_subtitle': 'Put Spread (Cost-Efficient Protection)',
+                'protection_focused': True,
                 'strategy_description': f'Cost-efficient lending protection against {protection_type} risk.',
                 'position_size': size,
                 'long_strike': round(long_strike, 2),
@@ -1359,12 +1443,16 @@ class LivePricingEngine:
                 'net_premium_base': round(net_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
+                'total_client_cost': round(discounted_total_cost, 2),
+                'original_premium': round(total_premium, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': round(PLATFORM_CONFIG['lending_discount_rate'] * 100, 1),
+                'bundled_protection': True,
                 'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(total_cost, 2),
+                'cost_percentage': round((discounted_total_cost / (size * S)) * 100, 2),
+                'max_loss': round(discounted_total_cost, 2),
                 'max_payout': round(max_payout, 2),
-                'breakeven': round(long_strike - (total_cost / size), 2),
+                'breakeven': round(long_strike - (discounted_total_cost / size), 2),
                 'protection_level': round(long_strike, 2),
                 'upside_participation': '100%',
                 'time_to_expiry_days': 45,
@@ -1399,27 +1487,39 @@ class LivePricingEngine:
             exec_fee = PLATFORM_CONFIG['execution_fee']
             total_net_received = net_premium_received - exec_fee
             
+            # Apply lending discount (for income strategies, discount the platform markup)
+            discounted_markup, discount_amount = self._apply_lending_discount(markup_amount, is_lending_origination=True)
+            enhanced_net_received = gross_premium - discounted_markup - exec_fee
+            
             return {
                 'strategy_type': 'covered_call',
                 'strategy_name': f'Lending {protection_type.title()} Income',
+                'strategy_category': 'Income Strategy',
+                'strategy_subtitle': 'Covered Call (Yield, Caps Upside)',
+                'income_focused': True,
                 'strategy_description': f'Generate income from BTC lending collateral using live market data.',
                 'position_size': size,
                 'call_strike': round(call_strike, 2),
                 'premium_received_gross': round(gross_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
-                'total_net_received': round(total_net_received, 2),
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'income_percentage': round((total_net_received / (size * S)) * 100, 2),
+                'total_net_received': round(enhanced_net_received, 2),
+                'original_net_received': round(total_net_received, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': round(PLATFORM_CONFIG['lending_discount_rate'] * 100, 1),
+                'bundled_protection': True,
+                'platform_revenue': round(discounted_markup + exec_fee, 2),
+                'income_percentage': round((enhanced_net_received / (size * S)) * 100, 2),
                 'max_upside': round(call_strike, 2),
-                'breakeven': round(S - (total_net_received / size), 2),
+                'breakeven': round(S - (enhanced_net_received / size), 2),
                 'upside_participation': f"100% up to ${call_strike:,.0f}",
                 'time_to_expiry_days': 45,
                 'key_benefits': [
                     'Generate income from BTC collateral',
                     'Live market data pricing',
                     'Professional lending execution',
-                    'Reduce lending costs'
+                    'Reduce lending costs',
+                    f'{PLATFORM_CONFIG["lending_discount_rate"]*100:.0f}% enhanced income'
                 ],
                 'risk_profile': 'conservative',
                 'complexity': 'Low-Medium',
@@ -1450,9 +1550,16 @@ class LivePricingEngine:
             exec_fee = PLATFORM_CONFIG['execution_fee']
             total_cost = abs(total_premium) + exec_fee
             
+            # Apply lending discount
+            discounted_premium, discount_amount = self._apply_lending_discount(abs(total_premium), is_lending_origination=True)
+            discounted_total_cost = discounted_premium + exec_fee
+            
             return {
                 'strategy_type': 'collar',
                 'strategy_name': f'Lending {protection_type.title()} Collar',
+                'strategy_category': 'Protection Strategy',
+                'strategy_subtitle': 'Collar (Balanced Protection)',
+                'protection_focused': True,
                 'strategy_description': f'Balanced lending protection with capped upside using live market data.',
                 'position_size': size,
                 'put_strike': round(put_strike, 2),
@@ -1460,10 +1567,14 @@ class LivePricingEngine:
                 'net_premium_base': round(net_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
-                'total_client_cost': round(total_cost, 2),
+                'total_client_cost': round(discounted_total_cost, 2),
+                'original_premium': round(total_cost, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': round(PLATFORM_CONFIG['lending_discount_rate'] * 100, 1),
+                'bundled_protection': True,
                 'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((total_cost / (size * S)) * 100, 2),
-                'max_loss': round(max(0, (S - put_strike) * size) + total_cost, 2),
+                'cost_percentage': round((discounted_total_cost / (size * S)) * 100, 2),
+                'max_loss': round(max(0, (S - put_strike) * size) + discounted_total_cost, 2),
                 'max_upside': round(call_strike, 2),
                 'upside_participation': f"100% up to ${call_strike:,.0f}",
                 'protection_level': round(put_strike, 2),
@@ -1472,7 +1583,8 @@ class LivePricingEngine:
                     'Balanced lending protection',
                     'Live market data pricing',
                     'Professional lending execution',
-                    'Cost-effective hedging'
+                    'Cost-effective hedging',
+                    f'{PLATFORM_CONFIG["lending_discount_rate"]*100:.0f}% bundled discount'
                 ],
                 'risk_profile': 'conservative',
                 'complexity': 'Medium',
