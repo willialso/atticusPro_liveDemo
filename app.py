@@ -62,7 +62,14 @@ platform_state = {
     'net_platform_exposure_btc': 0.0,
     'active_institutions': [],
     'total_premium_collected': 0.0,
-    'total_hedge_cost': 0.0
+    'total_hedge_cost': 0.0,
+    # Platform pooling state
+    'active_lending_positions': [],
+    'pooled_hedge_positions': [],
+    'pooling_efficiency_ratio': 0.0,
+    'total_individual_cost': 0.0,
+    'total_pooled_cost': 0.0,
+    'platform_savings': 0.0
 }
 
 def log_detailed_error(operation, error, response=None):
@@ -1293,113 +1300,145 @@ class LivePricingEngine:
             print(f"     Protection type: {protection_type}")
             
             if strategy_type == 'protective_put':
-                return self._price_lending_protective_put(size, S, vol, T, r, protection_type)
+                # Use new tier-based generation for protective puts
+                return self._generate_lending_protection_tiers(size, S, vol, T, r, {'ltv_ratio': 70})
+            elif strategy_type == 'moonshot_call':
+                # Generate moonshot protection
+                return [self._generate_moonshot_protection(size, S, vol, T, r)]
             elif strategy_type == 'put_spread':
-                return self._price_lending_put_spread(size, S, vol, T, r, protection_type)
+                return [self._price_lending_put_spread(size, S, vol, T, r, protection_type)]
             elif strategy_type == 'covered_call':
-                return self._price_lending_covered_call(size, S, vol, T, r, protection_type)
+                return [self._price_lending_covered_call(size, S, vol, T, r, protection_type)]
             elif strategy_type == 'collar':
-                return self._price_lending_collar(size, S, vol, T, r, protection_type)
+                return [self._price_lending_collar(size, S, vol, T, r, protection_type)]
             else:
-                return self._price_lending_protective_put(size, S, vol, T, r, protection_type)
+                return [self._price_lending_protective_put(size, S, vol, T, r, protection_type)]
                 
         except Exception as e:
             print(f"❌ Lending strategy pricing error: {e}")
             raise Exception(f"Lending strategy pricing failed: {str(e)}")
     
-    def _price_lending_protective_put(self, size, S, vol, T, r, protection_type):
-        """Price lending protective put with live data"""
+    def _generate_lending_protection_tiers(self, size, S, vol, T, r, loan_params):
+        """Generate realistic protection tiers for lending"""
         try:
-            # Lending-specific strike adjustments (more conservative)
-            if protection_type == 'downside':
-                strike_adj = -5  # 5% below current price for downside protection
-            elif protection_type == 'upside':
-                strike_adj = 10  # 10% above current price for upside protection
-            else:  # collar
-                strike_adj = -3  # 3% below for collar downside
+            ltv_ratio = loan_params.get('ltv_ratio', 70)
+            liquidation_price = S * (ltv_ratio/100 - 0.1)  # 10% buffer above liquidation
             
-            K = S * (1 + strike_adj/100)
-            put_price = self._black_scholes_put(S, K, T, r, vol)
-            
-            base_premium = size * put_price
-            markup_amount = max(
-                base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100),
-                PLATFORM_CONFIG['min_markup_dollars'] * size
-            )
-            
-            total_premium = base_premium + markup_amount
-            exec_fee = PLATFORM_CONFIG['execution_fee']
-            total_cost = total_premium + exec_fee
-            
-            # Apply lending discount
-            discounted_premium, discount_amount = self._apply_lending_discount(total_premium, is_lending_origination=True)
-            discounted_total_cost = discounted_premium + exec_fee
-            
-            # Calculate comprehensive option data
-            option_details = {
-                'strike_price': round(K, 2),
-                'option_expiry_days': int(T * 365),
-                'option_notional': round(size, 4),
-                'total_cost_original': round(total_premium, 2),
-                'total_cost_discounted': round(discounted_premium, 2),
-                'apr_equivalent': round((discounted_premium / (size * S)) * 365 / (T * 365) * 100, 2)
+            # Three realistic protection tiers
+            protection_tiers = {
+                'catastrophe': {
+                    'strike_price': liquidation_price,
+                    'description': 'Catastrophe Protection (Near Liquidation)',
+                    'discount_rate': 0.20,
+                    'apr_target': '<2%'
+                },
+                'moderate': {
+                    'strike_price': S * 0.85,  # 15% below spot
+                    'description': 'Balanced Protection (15% Below Spot)',
+                    'discount_rate': 0.25,
+                    'apr_target': '<5%'
+                },
+                'complete': {
+                    'strike_price': S * 0.95,  # 5% below spot
+                    'description': 'Complete Protection (5% Below Spot)',
+                    'discount_rate': 0.30,
+                    'apr_target': '<10%'
+                }
             }
             
-            # Calculate scenario analysis
-            btc_scenarios = [S * 0.8, S, S * 1.2, S * 1.5]  # -20%, spot, +20%, moon
-            scenario_analysis = {
-                'btc_scenarios': btc_scenarios,
-                'borrower_outcomes': [
-                    self._calculate_borrower_outcome(btc_scenarios[0], K, size, discounted_premium, 'protective_put'),
-                    self._calculate_borrower_outcome(btc_scenarios[1], K, size, discounted_premium, 'protective_put'),
-                    self._calculate_borrower_outcome(btc_scenarios[2], K, size, discounted_premium, 'protective_put'),
-                    self._calculate_borrower_outcome(btc_scenarios[3], K, size, discounted_premium, 'protective_put')
-                ]
-            }
+            strategies = []
+            for tier_name, config in protection_tiers.items():
+                K = config['strike_price']
+                put_price = self._black_scholes_put(S, K, T, r, vol)
+                
+                # Calculate pricing
+                base_premium = size * put_price
+                markup_amount = max(
+                    base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100),
+                    PLATFORM_CONFIG['min_markup_dollars'] * size
+                )
+                total_premium = base_premium + markup_amount + PLATFORM_CONFIG['execution_fee']
+                
+                # Apply tier-specific discount
+                discount_amount = total_premium * config['discount_rate']
+                discounted_premium = total_premium - discount_amount
+                
+                # Calculate APR equivalent
+                apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100
+                
+                # Calculate scenario analysis
+                btc_scenarios = [S * 0.8, S, S * 1.2, S * 1.5]  # -20%, spot, +20%, moon
+                scenario_analysis = {
+                    'btc_scenarios': btc_scenarios,
+                    'borrower_outcomes': [
+                        self._calculate_borrower_outcome(btc_scenarios[0], K, size, discounted_premium, 'protective_put'),
+                        self._calculate_borrower_outcome(btc_scenarios[1], K, size, discounted_premium, 'protective_put'),
+                        self._calculate_borrower_outcome(btc_scenarios[2], K, size, discounted_premium, 'protective_put'),
+                        self._calculate_borrower_outcome(btc_scenarios[3], K, size, discounted_premium, 'protective_put')
+                    ]
+                }
+                
+                strategy = {
+                    'strategy_type': f'protective_put_{tier_name}',
+                    'strategy_name': f'Lending {config["description"]}',
+                    'strategy_category': 'Protection Strategy',
+                    'strategy_subtitle': config['description'],
+                    'protection_focused': True,
+                    'tier_level': tier_name,
+                    'position_size': size,
+                    'strike_price': round(K, 2),
+                    'premium_per_contract_base': round(put_price, 2),
+                    'base_premium_total': round(base_premium, 2),
+                    'platform_markup': round(markup_amount, 2),
+                    'execution_fee': PLATFORM_CONFIG['execution_fee'],
+                    'total_client_cost': round(discounted_premium, 2),
+                    'original_premium': round(total_premium, 2),
+                    'discount_applied': round(discount_amount, 2),
+                    'discount_percentage': round(config['discount_rate'] * 100, 1),
+                    'bundled_protection': True,
+                    'platform_revenue': round(markup_amount + PLATFORM_CONFIG['execution_fee'], 2),
+                    'cost_percentage': round((discounted_premium / (size * S)) * 100, 2),
+                    'max_loss': round(max(0, (S - K) * size) + discounted_premium, 2),
+                    'breakeven': round(K - (discounted_premium / size), 2),
+                    'protection_level': round(K, 2),
+                    'upside_participation': '100%',
+                    'time_to_expiry_days': int(T * 365),
+                    'option_notional': round(size, 4),
+                    'apr_equivalent': round(apr_equivalent, 2),
+                    'option_details': {
+                        'strike_price': round(K, 2),
+                        'option_expiry_days': int(T * 365),
+                        'option_notional': round(size, 4),
+                        'total_cost_original': round(total_premium, 2),
+                        'total_cost_discounted': round(discounted_premium, 2),
+                        'apr_equivalent': round(apr_equivalent, 2)
+                    },
+                    'scenario_analysis': scenario_analysis,
+                    'key_benefits': [
+                        f'Protection against {tier_name} risk',
+                        f'{config["discount_rate"]*100:.0f}% bundled discount',
+                        f'APR: {apr_equivalent:.1f}% (Target: {config["apr_target"]})',
+                        'Live market data pricing',
+                        'Professional lending execution'
+                    ],
+                    'risk_profile': 'conservative',
+                    'complexity': 'Low',
+                    'live_volatility_used': vol,
+                    'live_risk_free_rate_used': r,
+                    'lending_protection': True,
+                    'protection_type': 'downside'
+                }
+                strategies.append(strategy)
             
-            return {
-                'strategy_type': 'protective_put',
-                'strategy_name': f'Lending {protection_type.title()} Protection',
-                'strategy_category': 'Protection Strategy',
-                'strategy_subtitle': 'Long Call (Upside Protection)' if protection_type == 'upside' else 'Protective Put (Downside Protection)',
-                'protection_focused': True,
-                'strategy_description': f'BTC lending protection against {protection_type} risk using live market data.',
-                'position_size': size,
-                'strike_price': round(K, 2),
-                'premium_per_contract_base': round(put_price, 2),
-                'base_premium_total': round(base_premium, 2),
-                'platform_markup': round(markup_amount, 2),
-                'execution_fee': exec_fee,
-                'total_client_cost': round(discounted_total_cost, 2),
-                'original_premium': round(total_premium, 2),
-                'discount_applied': round(discount_amount, 2),
-                'discount_percentage': round(PLATFORM_CONFIG['lending_discount_rate'] * 100, 1),
-                'bundled_protection': True,
-                'platform_revenue': round(markup_amount + exec_fee, 2),
-                'cost_percentage': round((discounted_total_cost / (size * S)) * 100, 2),
-                'max_loss': round(max(0, (S - K) * size) + discounted_total_cost, 2),
-                'breakeven': round(K - (discounted_total_cost / size), 2),
-                'protection_level': round(K, 2),
-                'upside_participation': '100%',
-                'time_to_expiry_days': 45,
-                'option_details': option_details,
-                'scenario_analysis': scenario_analysis,
-                'key_benefits': [
-                    f'Protection against {protection_type} risk',
-                    'Live market data pricing',
-                    'Professional lending execution',
-                    'Collateral protection',
-                    f'{PLATFORM_CONFIG["lending_discount_rate"]*100:.0f}% bundled discount'
-                ],
-                'risk_profile': 'conservative',
-                'complexity': 'Low',
-                'live_volatility_used': vol,
-                'live_risk_free_rate_used': r,
-                'lending_protection': True,
-                'protection_type': protection_type
-            }
+            return strategies
+            
         except Exception as e:
-            raise Exception(f"Lending protective put pricing failed: {str(e)}")
+            raise Exception(f"Lending protection tiers generation failed: {str(e)}")
+    
+    def _price_lending_protective_put(self, size, S, vol, T, r, protection_type):
+        """Price lending protective put with live data - DEPRECATED, use _generate_lending_protection_tiers"""
+        # This method is kept for backward compatibility but now redirects to tier generation
+        return self._generate_lending_protection_tiers(size, S, vol, T, r, {'ltv_ratio': 70})
     
     def _price_lending_put_spread(self, size, S, vol, T, r, protection_type):
         """Price lending put spread with live data"""
@@ -1596,6 +1635,88 @@ class LivePricingEngine:
         except Exception as e:
             raise Exception(f"Lending collar pricing failed: {str(e)}")
     
+    def _generate_moonshot_protection(self, size, S, vol, T, r):
+        """Generate moonshot upside protection (deep OTM calls)"""
+        try:
+            # Deep OTM call - 40% above spot
+            call_strike = S * 1.4
+            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
+            
+            base_premium = size * call_price
+            markup_amount = base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            total_premium = base_premium + markup_amount + PLATFORM_CONFIG['execution_fee']
+            
+            # Apply moonshot discount (40%)
+            discount_amount = total_premium * 0.40
+            discounted_premium = total_premium - discount_amount
+            
+            apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100
+            
+            # Calculate scenario analysis
+            btc_scenarios = [S * 0.8, S, S * 1.2, S * 1.5, S * 1.8]  # -20%, spot, +20%, +50%, +80%
+            scenario_analysis = {
+                'btc_scenarios': btc_scenarios,
+                'borrower_outcomes': [
+                    self._calculate_borrower_outcome(btc_scenarios[0], call_strike, size, discounted_premium, 'moonshot_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[1], call_strike, size, discounted_premium, 'moonshot_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[2], call_strike, size, discounted_premium, 'moonshot_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[3], call_strike, size, discounted_premium, 'moonshot_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[4], call_strike, size, discounted_premium, 'moonshot_call')
+                ]
+            }
+            
+            return {
+                'strategy_type': 'moonshot_call',
+                'strategy_name': 'Moonshot Upside Protection',
+                'strategy_category': 'Upside Strategy',
+                'strategy_subtitle': 'Deep OTM Call (40% Above Spot)',
+                'upside_focused': True,
+                'position_size': size,
+                'call_strike': round(call_strike, 2),
+                'premium_per_contract_base': round(call_price, 2),
+                'base_premium_total': round(base_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': PLATFORM_CONFIG['execution_fee'],
+                'total_client_cost': round(discounted_premium, 2),
+                'original_premium': round(total_premium, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': 40.0,
+                'bundled_protection': True,
+                'platform_revenue': round(markup_amount + PLATFORM_CONFIG['execution_fee'], 2),
+                'cost_percentage': round((discounted_premium / (size * S)) * 100, 2),
+                'max_gain': round((call_strike * 2 - call_strike) * size - discounted_premium, 2),  # Assume 2x strike max
+                'breakeven': round(call_strike + (discounted_premium / size), 2),
+                'protection_level': round(call_strike, 2),
+                'upside_participation': 'Unlimited above strike',
+                'time_to_expiry_days': int(T * 365),
+                'option_notional': round(size, 4),
+                'apr_equivalent': round(apr_equivalent, 2),
+                'option_details': {
+                    'call_strike': round(call_strike, 2),
+                    'option_expiry_days': int(T * 365),
+                    'option_notional': round(size, 4),
+                    'total_cost_original': round(total_premium, 2),
+                    'total_cost_discounted': round(discounted_premium, 2),
+                    'apr_equivalent': round(apr_equivalent, 2)
+                },
+                'scenario_analysis': scenario_analysis,
+                'key_benefits': [
+                    'Optional moonshot protection for 40%+ BTC rallies',
+                    '40% bundled discount',
+                    f'APR: {apr_equivalent:.1f}%',
+                    'Minimal cost upside participation',
+                    'Live market data pricing'
+                ],
+                'risk_profile': 'aggressive',
+                'complexity': 'Low',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r,
+                'lending_protection': True,
+                'protection_type': 'upside'
+            }
+        except Exception as e:
+            raise Exception(f"Moonshot protection generation failed: {str(e)}")
+    
     def _black_scholes_put(self, S, K, T, r, sigma):
         """Black-Scholes put option pricing"""
         try:
@@ -1710,6 +1831,101 @@ class PlatformRiskManager:
                 'total_hedge_cost': 0.0,
                 'net_revenue': 0.0
             }
+    
+    def calculate_pooling_efficiency(self):
+        """Calculate platform pooling efficiency metrics"""
+        try:
+            active_positions = platform_state['active_lending_positions']
+            if not active_positions:
+                return {
+                    'active_positions': 0,
+                    'total_individual_cost': 0.0,
+                    'total_pooled_cost': 0.0,
+                    'platform_savings': 0.0,
+                    'efficiency_ratio': 0.0,
+                    'net_exposure_btc': 0.0,
+                    'pooling_benefits': []
+                }
+            
+            # Calculate individual costs (sum of all individual hedges)
+            total_individual_cost = sum(pos.get('individual_hedge_cost', 0) for pos in active_positions)
+            
+            # Calculate pooled hedge cost (net exposure hedge)
+            net_exposure = sum(pos.get('position_size', 0) for pos in active_positions)
+            pooled_hedge_cost = self._calculate_pooled_hedge_cost(net_exposure)
+            
+            # Calculate savings
+            platform_savings = max(0, total_individual_cost - pooled_hedge_cost)
+            efficiency_ratio = (platform_savings / total_individual_cost * 100) if total_individual_cost > 0 else 0
+            
+            # Update platform state
+            platform_state['total_individual_cost'] = total_individual_cost
+            platform_state['total_pooled_cost'] = pooled_hedge_cost
+            platform_state['platform_savings'] = platform_savings
+            platform_state['pooling_efficiency_ratio'] = efficiency_ratio
+            
+            pooling_data = {
+                'active_positions': len(active_positions),
+                'total_individual_cost': round(total_individual_cost, 2),
+                'total_pooled_cost': round(pooled_hedge_cost, 2),
+                'platform_savings': round(platform_savings, 2),
+                'efficiency_ratio': round(efficiency_ratio, 1),
+                'net_exposure_btc': round(net_exposure, 4),
+                'pooling_benefits': [
+                    f'Net exposure: {net_exposure:.2f} BTC',
+                    f'Individual hedge cost: ${total_individual_cost:,.0f}',
+                    f'Pooled hedge cost: ${pooled_hedge_cost:,.0f}',
+                    f'Platform savings: ${platform_savings:,.0f} ({efficiency_ratio:.1f}%)'
+                ]
+            }
+            
+            print(f"🔄 [POOLING] Efficiency calculated: {pooling_data}")
+            return pooling_data
+            
+        except Exception as e:
+            print(f"⚠️ Pooling calculation error: {e}")
+            return {
+                'active_positions': 0,
+                'total_individual_cost': 0.0,
+                'total_pooled_cost': 0.0,
+                'platform_savings': 0.0,
+                'efficiency_ratio': 0.0,
+                'net_exposure_btc': 0.0,
+                'pooling_benefits': []
+            }
+    
+    def _calculate_pooled_hedge_cost(self, net_exposure):
+        """Calculate cost of hedging net exposure (simplified model)"""
+        try:
+            # Simplified pooled hedge cost calculation
+            # In reality, this would use live market data and bulk pricing
+            base_cost_per_btc = 2000  # Base cost per BTC for hedging
+            bulk_discount = 0.15  # 15% discount for bulk hedging
+            
+            individual_cost = net_exposure * base_cost_per_btc
+            pooled_cost = individual_cost * (1 - bulk_discount)
+            
+            return pooled_cost
+            
+        except Exception as e:
+            print(f"⚠️ Pooled hedge cost calculation error: {e}")
+            return net_exposure * 2000  # Fallback cost
+    
+    def add_lending_position(self, position_data):
+        """Add a new lending position to platform pooling"""
+        try:
+            # Add position to active lending positions
+            platform_state['active_lending_positions'].append(position_data)
+            
+            # Recalculate pooling efficiency
+            pooling_data = self.calculate_pooling_efficiency()
+            
+            print(f"➕ [POOLING] Added lending position: {position_data.get('strategy_name', 'Unknown')}")
+            return pooling_data
+            
+        except Exception as e:
+            print(f"⚠️ Error adding lending position: {e}")
+            return None
 
 # Initialize services with LIVE data requirement and enhanced logging
 print("🔴 " + "="*80)
@@ -2036,6 +2252,17 @@ def execute_strategy():
         platform_state['total_client_exposure_btc'] += size
         platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
         
+        # Add to pooling if lending protection
+        if strategy.get('lending_protection'):
+            position_data = {
+                'strategy_name': strategy['strategy_name'],
+                'position_size': size,
+                'individual_hedge_cost': strategy.get('total_client_cost', 0),
+                'timestamp': datetime.now().isoformat(),
+                'tier_level': strategy.get('tier_level', 'standard')
+            }
+            platform_risk_manager.add_lending_position(position_data)
+        
         net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
         platform_state['net_platform_exposure_btc'] = net_exposure
         
@@ -2147,6 +2374,31 @@ def platform_exposure():
             'total_platform_hedges_btc': 0.0,
             'net_exposure_btc': 0.0,
             'hedge_coverage_ratio': 0.0
+        }}), 500
+
+@app.route('/api/platform-pooling')
+def platform_pooling():
+    """Get platform pooling efficiency data"""
+    try:
+        print("🔄 [API] Platform pooling request...")
+        pooling_data = platform_risk_manager.calculate_pooling_efficiency()
+        
+        print(f"✅ [API] Platform pooling data served")
+        return jsonify({'success': True, 'pooling': pooling_data})
+        
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ [API] Pooling error: {error_msg}")
+        log_detailed_error("Platform Pooling API", e)
+        
+        return jsonify({'success': False, 'pooling': {
+            'active_positions': 0,
+            'total_individual_cost': 0.0,
+            'total_pooled_cost': 0.0,
+            'platform_savings': 0.0,
+            'efficiency_ratio': 0.0,
+            'net_exposure_btc': 0.0,
+            'pooling_benefits': []
         }}), 500
 
 if __name__ == '__main__':

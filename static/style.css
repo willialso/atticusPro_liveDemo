@@ -1802,3 +1802,299 @@ body {
     font-size: 14px;
     margin-left: 8px;
 }
+
+/* Protection Tier Styles */
+.protection-tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.protection-tier {
+    background: var(--card-bg);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.protection-tier:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.protection-tier.catastrophe {
+    border-color: var(--warning);
+}
+
+.protection-tier.moderate {
+    border-color: var(--info);
+}
+
+.protection-tier.complete {
+    border-color: var(--success);
+}
+
+.tier-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.tier-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin: 0;
+}
+
+.tier-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.discounted-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--success);
+}
+
+.original-price {
+    font-size: 14px;
+    color: var(--text-light);
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background: var(--success);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tier-details {
+    margin-bottom: 20px;
+}
+
+.strike-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.strike-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.strike-item .label {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.strike-item .value {
+    font-size: 16px;
+    color: var(--text-bright);
+    font-weight: 600;
+}
+
+.protection-description {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.tier-benefits h6 {
+    font-size: 14px;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.tier-benefits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tier-benefits li {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    padding-left: 16px;
+    position: relative;
+}
+
+.tier-benefits li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: 600;
+}
+
+.tier-action {
+    text-align: center;
+}
+
+.select-tier-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.select-tier-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Moonshot Option Styles */
+.moonshot-section {
+    margin-top: 20px;
+}
+
+.moonshot-option {
+    background: linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(139,92,246,0.1) 100%);
+    border: 2px solid var(--purple);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.moonshot-option:hover {
+    border-color: var(--purple-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168,85,247,0.2);
+}
+
+.moonshot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.moonshot-header h5 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin: 0;
+}
+
+.moonshot-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.moonshot-details {
+    margin-bottom: 20px;
+}
+
+.moonshot-description {
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.moonshot-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.moonshot-metrics .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.moonshot-metrics .label {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.moonshot-metrics .value {
+    font-size: 16px;
+    color: var(--text-bright);
+    font-weight: 600;
+}
+
+.moonshot-benefits h6 {
+    font-size: 14px;
+    color: var(--text-bright);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.moonshot-benefits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.moonshot-benefits li {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    padding-left: 16px;
+    position: relative;
+}
+
+.moonshot-benefits li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--purple);
+    font-weight: 600;
+}
+
+.moonshot-action {
+    text-align: center;
+}
+
+.add-moonshot-btn {
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-moonshot-btn:hover {
+    background: var(--purple-dark);
+    transform: translateY(-1px);
+}

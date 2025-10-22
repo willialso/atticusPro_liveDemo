@@ -438,23 +438,42 @@ class AttticusProfessionalDemo {
             // Group strategies by category for lending protection
             const incomeStrategies = strategies.filter(s => s.income_focused);
             const protectionStrategies = strategies.filter(s => s.protection_focused);
+            const upsideStrategies = strategies.filter(s => s.upside_focused);
             
             html += `
                 <div class="strategy-categories">
+                    ${protectionStrategies.length > 0 ? `
+                        <div class="strategy-category">
+                            <div class="category-header protection">
+                                <h4>🛡️ Protection Strategies</h4>
+                                <p>Choose your protection level</p>
+                            </div>
+                            <div class="protection-tiers-grid">
+                                ${protectionStrategies.map(strategy => this.renderProtectionTier(strategy)).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
                     ${incomeStrategies.length > 0 ? `
                         <div class="strategy-category">
-                            <h4 class="category-header income">💰 Yield Strategy (Limits Gains)</h4>
+                            <div class="category-header income">
+                                <h4>💰 Income Strategies</h4>
+                                <p>Generate income from your collateral</p>
+                            </div>
                             <div class="strategies-grid">
                                 ${incomeStrategies.map(strategy => this.renderStrategyCard(strategy)).join('')}
                             </div>
                         </div>
                     ` : ''}
                     
-                    ${protectionStrategies.length > 0 ? `
+                    ${upsideStrategies.length > 0 ? `
                         <div class="strategy-category">
-                            <h4 class="category-header protection">🛡️ True Upside Protection</h4>
-                            <div class="strategies-grid">
-                                ${protectionStrategies.map(strategy => this.renderStrategyCard(strategy)).join('')}
+                            <div class="category-header upside">
+                                <h4>🚀 Optional: Moonshot Protection</h4>
+                                <p>Add upside protection for BTC rallies</p>
+                            </div>
+                            <div class="moonshot-section">
+                                ${upsideStrategies.map(strategy => this.renderMoonshotOption(strategy)).join('')}
                             </div>
                         </div>
                     ` : ''}
@@ -470,6 +489,104 @@ class AttticusProfessionalDemo {
         }
         
         container.innerHTML = html;
+    }
+    
+    renderProtectionTier(strategy) {
+        const tierLevel = strategy.tier_level || 'standard';
+        const tierClass = `protection-tier ${tierLevel}`;
+        
+        return `
+            <div class="${tierClass}" onclick="demo.selectStrategy('${strategy.strategy_type}')">
+                <div class="tier-header">
+                    <h5 class="tier-name">${strategy.strategy_name}</h5>
+                    <div class="tier-pricing">
+                        <span class="discounted-price">${this.formatCurrency(strategy.total_client_cost)}</span>
+                        <span class="original-price">${this.formatCurrency(strategy.original_premium)}</span>
+                        <span class="discount-badge">${strategy.discount_percentage}% OFF</span>
+                    </div>
+                </div>
+                
+                <div class="tier-details">
+                    <div class="strike-info">
+                        <div class="strike-item">
+                            <span class="label">Strike Price:</span>
+                            <span class="value">${this.formatCurrency(strategy.strike_price)}</span>
+                        </div>
+                        <div class="strike-item">
+                            <span class="label">APR Equivalent:</span>
+                            <span class="value">${strategy.apr_equivalent}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="protection-description">
+                        ${this.getProtectionDescription(tierLevel)}
+                    </div>
+                    
+                    <div class="tier-benefits">
+                        <h6>Key Benefits:</h6>
+                        <ul>
+                            ${strategy.key_benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="tier-action">
+                    <button class="select-tier-btn">Select This Protection</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    renderMoonshotOption(strategy) {
+        return `
+            <div class="moonshot-option" onclick="demo.selectStrategy('${strategy.strategy_type}')">
+                <div class="moonshot-header">
+                    <h5>${strategy.strategy_name}</h5>
+                    <div class="moonshot-pricing">
+                        <span class="discounted-price">${this.formatCurrency(strategy.total_client_cost)}</span>
+                        <span class="original-price">${this.formatCurrency(strategy.original_premium)}</span>
+                        <span class="discount-badge">${strategy.discount_percentage}% OFF</span>
+                    </div>
+                </div>
+                
+                <div class="moonshot-details">
+                    <div class="moonshot-description">
+                        <p>Optional moonshot protection for 40%+ BTC rallies at minimal cost</p>
+                    </div>
+                    
+                    <div class="moonshot-metrics">
+                        <div class="metric">
+                            <span class="label">Call Strike:</span>
+                            <span class="value">${this.formatCurrency(strategy.call_strike)}</span>
+                        </div>
+                        <div class="metric">
+                            <span class="label">APR:</span>
+                            <span class="value">${strategy.apr_equivalent}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="moonshot-benefits">
+                        <h6>Benefits:</h6>
+                        <ul>
+                            ${strategy.key_benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="moonshot-action">
+                    <button class="add-moonshot-btn">+ Add Moonshot Protection</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    getProtectionDescription(tierLevel) {
+        const descriptions = {
+            'catastrophe': 'Protects against catastrophic losses near liquidation. Lowest cost, basic protection.',
+            'moderate': 'Balanced protection against moderate declines. Good value for most borrowers.',
+            'complete': 'Comprehensive protection against most market declines. Premium coverage.'
+        };
+        return descriptions[tierLevel] || 'Professional lending protection.';
     }
     
     renderStrategyCard(strategy) {
