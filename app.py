@@ -853,7 +853,7 @@ class PortfolioAnalyzer:
                 preferred_strategies = ['protective_put', 'put_spread']
                 hedge_ratio = 0.85  # 85% protection for downside
             elif protection_type == 'upside':
-                preferred_strategies = ['covered_call', 'call_protection']
+                preferred_strategies = ['otm_call', 'call_spread', 'moonshot_call', 'covered_call']
                 hedge_ratio = 0.75  # 75% protection for upside
             else:  # collar
                 preferred_strategies = ['collar', 'put_spread']
@@ -1305,13 +1305,10 @@ class LivePricingEngine:
         except Exception as e:
             raise Exception(f"Covered call pricing failed: {str(e)}")
     
-    def _price_lending_strategy(self, strategy_type, size, S, risk_tolerance, r, protection_type):
+    def _price_lending_strategy(self, strategy_type, size, S, vol, T, r, protection_type):
         """Price lending protection strategy with live data"""
         try:
-            print(f"     Getting live volatility for lending {strategy_type}...")
-            # Get LIVE volatility
-            vol = self.market.get_live_volatility()
-            T = 45 / 365.0  # 45 days to expiry
+            print(f"     Pricing lending {strategy_type} with live data...")
             
             print(f"     Lending pricing inputs: S=${S}, vol={vol:.4f}, T={T:.4f}, r={r:.4f}")
             print(f"     Protection type: {protection_type}")
@@ -1322,6 +1319,12 @@ class LivePricingEngine:
             elif strategy_type == 'moonshot_call':
                 # Generate moonshot protection
                 return [self._generate_moonshot_protection(size, S, vol, T, r)]
+            elif strategy_type == 'otm_call':
+                # Generate OTM call protection (+25% strike)
+                return [self._generate_otm_call_protection(size, S, vol, T, r)]
+            elif strategy_type == 'call_spread':
+                # Generate call spread protection (+20%/+35%)
+                return [self._generate_call_spread_protection(size, S, vol, T, r)]
             elif strategy_type == 'put_spread':
                 return [self._price_lending_put_spread(size, S, vol, T, r, protection_type)]
             elif strategy_type == 'covered_call':
@@ -1669,6 +1672,11 @@ class LivePricingEngine:
             
             apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100
             
+            # Check for high volatility warning
+            high_vol_warning = ""
+            if vol > 0.8:  # High volatility threshold
+                high_vol_warning = "Premium is high for current market—most borrowers forgo this coverage."
+            
             # Calculate scenario analysis
             btc_scenarios = [S * 0.8, S, S * 1.2, S * 1.5, S * 1.8]  # -20%, spot, +20%, +50%, +80%
             scenario_analysis = {
@@ -1708,6 +1716,7 @@ class LivePricingEngine:
                 'time_to_expiry_days': int(T * 365),
                 'option_notional': round(size, 4),
                 'apr_equivalent': round(apr_equivalent, 2),
+                'high_vol_warning': high_vol_warning,
                 'option_details': {
                     'call_strike': round(call_strike, 2),
                     'option_expiry_days': int(T * 365),
@@ -1733,6 +1742,196 @@ class LivePricingEngine:
             }
         except Exception as e:
             raise Exception(f"Moonshot protection generation failed: {str(e)}")
+    
+    def _generate_otm_call_protection(self, size, S, vol, T, r):
+        """Generate OTM call protection (+25% strike) for upside protection"""
+        try:
+            # OTM call - 25% above spot (as requested)
+            call_strike = S * 1.25
+            call_price = self._black_scholes_call(S, call_strike, T, r, vol)
+            
+            base_premium = size * call_price
+            markup_amount = base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            total_premium = base_premium + markup_amount + PLATFORM_CONFIG['execution_fee']
+            
+            # Apply OTM call discount (25%)
+            discount_amount = total_premium * 0.25
+            discounted_premium = total_premium - discount_amount
+            
+            apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100
+            
+            # Check for high volatility warning
+            high_vol_warning = ""
+            if vol > 0.8:  # High volatility threshold
+                high_vol_warning = "Premium is high for current market—most borrowers forgo this coverage."
+            
+            # Calculate scenario analysis
+            btc_scenarios = [S * 0.8, S, S * 1.1, S * 1.25, S * 1.5]  # -20%, spot, +10%, +25%, +50%
+            scenario_analysis = {
+                'btc_scenarios': btc_scenarios,
+                'borrower_outcomes': [
+                    self._calculate_borrower_outcome(btc_scenarios[0], call_strike, size, discounted_premium, 'otm_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[1], call_strike, size, discounted_premium, 'otm_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[2], call_strike, size, discounted_premium, 'otm_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[3], call_strike, size, discounted_premium, 'otm_call'),
+                    self._calculate_borrower_outcome(btc_scenarios[4], call_strike, size, discounted_premium, 'otm_call')
+                ]
+            }
+            
+            return {
+                'strategy_type': 'otm_call',
+                'strategy_name': 'OTM Call Protection (+25% Strike)',
+                'strategy_category': 'Upside Strategy',
+                'strategy_subtitle': 'OTM Call (25% Above Spot)',
+                'upside_focused': True,
+                'position_size': size,
+                'call_strike': round(call_strike, 2),
+                'premium_per_contract_base': round(call_price, 2),
+                'base_premium_total': round(base_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': PLATFORM_CONFIG['execution_fee'],
+                'total_client_cost': round(discounted_premium, 2),
+                'original_premium': round(total_premium, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': 25.0,
+                'bundled_protection': True,
+                'platform_revenue': round(markup_amount + PLATFORM_CONFIG['execution_fee'], 2),
+                'cost_percentage': round((discounted_premium / (size * S)) * 100, 2),
+                'max_gain': round((call_strike * 2 - call_strike) * size - discounted_premium, 2),
+                'breakeven': round(call_strike + (discounted_premium / size), 2),
+                'protection_level': round(call_strike, 2),
+                'upside_participation': 'Unlimited above strike',
+                'time_to_expiry_days': int(T * 365),
+                'option_notional': round(size, 4),
+                'apr_equivalent': round(apr_equivalent, 2),
+                'high_vol_warning': high_vol_warning,
+                'option_details': {
+                    'call_strike': round(call_strike, 2),
+                    'option_expiry_days': int(T * 365),
+                    'option_notional': round(size, 4),
+                    'total_cost_original': round(total_premium, 2),
+                    'total_cost_discounted': round(discounted_premium, 2),
+                    'apr_equivalent': round(apr_equivalent, 2)
+                },
+                'scenario_analysis': scenario_analysis,
+                'key_benefits': [
+                    'Upside protection for 25%+ BTC rallies',
+                    '25% bundled discount',
+                    f'APR: {apr_equivalent:.1f}%',
+                    'Reasonable cost upside participation',
+                    'Live market data pricing'
+                ],
+                'risk_profile': 'moderate',
+                'complexity': 'Low',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r,
+                'lending_protection': True,
+                'protection_type': 'upside'
+            }
+        except Exception as e:
+            raise Exception(f"OTM call protection generation failed: {str(e)}")
+    
+    def _generate_call_spread_protection(self, size, S, vol, T, r):
+        """Generate call spread protection (+20% buy, +35% sell) for upside protection"""
+        try:
+            # Call spread: Buy +20% call, Sell +35% call
+            buy_strike = S * 1.20  # +20% call
+            sell_strike = S * 1.35  # +35% call
+            
+            buy_call_price = self._black_scholes_call(S, buy_strike, T, r, vol)
+            sell_call_price = self._black_scholes_call(S, sell_strike, T, r, vol)
+            
+            # Net premium (buy - sell)
+            net_premium_per_contract = buy_call_price - sell_call_price
+            base_premium = size * net_premium_per_contract
+            markup_amount = base_premium * (PLATFORM_CONFIG['markup_percentage'] / 100)
+            total_premium = base_premium + markup_amount + PLATFORM_CONFIG['execution_fee']
+            
+            # Apply call spread discount (30%)
+            discount_amount = total_premium * 0.30
+            discounted_premium = total_premium - discount_amount
+            
+            apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100
+            
+            # Check for high volatility warning
+            high_vol_warning = ""
+            if vol > 0.8:  # High volatility threshold
+                high_vol_warning = "Premium is high for current market—most borrowers forgo this coverage."
+            
+            # Calculate scenario analysis
+            btc_scenarios = [S * 0.8, S, S * 1.1, S * 1.2, S * 1.35, S * 1.5]  # -20%, spot, +10%, +20%, +35%, +50%
+            scenario_analysis = {
+                'btc_scenarios': btc_scenarios,
+                'borrower_outcomes': [
+                    self._calculate_borrower_outcome(btc_scenarios[0], buy_strike, size, discounted_premium, 'call_spread'),
+                    self._calculate_borrower_outcome(btc_scenarios[1], buy_strike, size, discounted_premium, 'call_spread'),
+                    self._calculate_borrower_outcome(btc_scenarios[2], buy_strike, size, discounted_premium, 'call_spread'),
+                    self._calculate_borrower_outcome(btc_scenarios[3], buy_strike, size, discounted_premium, 'call_spread'),
+                    self._calculate_borrower_outcome(btc_scenarios[4], buy_strike, size, discounted_premium, 'call_spread'),
+                    self._calculate_borrower_outcome(btc_scenarios[5], buy_strike, size, discounted_premium, 'call_spread')
+                ]
+            }
+            
+            # Calculate max gain (capped at sell strike)
+            max_gain = (sell_strike - buy_strike) * size - discounted_premium
+            
+            return {
+                'strategy_type': 'call_spread',
+                'strategy_name': 'Call Spread Protection (+20%/+35%)',
+                'strategy_category': 'Upside Strategy',
+                'strategy_subtitle': 'Call Spread (Buy +20%, Sell +35%)',
+                'upside_focused': True,
+                'position_size': size,
+                'buy_strike': round(buy_strike, 2),
+                'sell_strike': round(sell_strike, 2),
+                'buy_call_price': round(buy_call_price, 2),
+                'sell_call_price': round(sell_call_price, 2),
+                'net_premium_per_contract': round(net_premium_per_contract, 2),
+                'base_premium_total': round(base_premium, 2),
+                'platform_markup': round(markup_amount, 2),
+                'execution_fee': PLATFORM_CONFIG['execution_fee'],
+                'total_client_cost': round(discounted_premium, 2),
+                'original_premium': round(total_premium, 2),
+                'discount_applied': round(discount_amount, 2),
+                'discount_percentage': 30.0,
+                'bundled_protection': True,
+                'platform_revenue': round(markup_amount + PLATFORM_CONFIG['execution_fee'], 2),
+                'cost_percentage': round((discounted_premium / (size * S)) * 100, 2),
+                'max_gain': round(max_gain, 2),
+                'max_gain_capped': True,
+                'breakeven': round(buy_strike + (discounted_premium / size), 2),
+                'protection_level': round(sell_strike, 2),
+                'upside_participation': f'Capped at ${sell_strike:,.0f}',
+                'time_to_expiry_days': int(T * 365),
+                'option_notional': round(size, 4),
+                'apr_equivalent': round(apr_equivalent, 2),
+                'high_vol_warning': high_vol_warning,
+                'option_details': {
+                    'buy_strike': round(buy_strike, 2),
+                    'sell_strike': round(sell_strike, 2),
+                    'option_expiry_days': int(T * 365),
+                    'option_notional': round(size, 4),
+                    'total_cost_original': round(total_premium, 2),
+                    'total_cost_discounted': round(discounted_premium, 2),
+                    'apr_equivalent': round(apr_equivalent, 2)
+                },
+                'scenario_analysis': scenario_analysis,
+                'key_benefits': [
+                    'Lower cost upside protection',
+                    'Capped risk with defined max gain',
+                    '30% bundled discount',
+                    f'APR: {apr_equivalent:.1f}%',
+                    'Live market data pricing'
+                ],
+                'risk_profile': 'moderate',
+                'complexity': 'Medium',
+                'live_volatility_used': vol,
+                'live_risk_free_rate_used': r,
+                'lending_protection': True,
+                'protection_type': 'upside'
+            }
+        except Exception as e:
+            raise Exception(f"Call spread protection generation failed: {str(e)}")
     
     def _black_scholes_put(self, S, K, T, r, sigma):
         """Black-Scholes put option pricing"""
