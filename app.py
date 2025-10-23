@@ -69,6 +69,13 @@ platform_state = {
     'lending_exposure_btc': 0.0,
     'institutional_hedges_btc': 0.0,
     'lending_hedges_btc': 0.0,
+    # Options risk tracking (for lending protection API)
+    'options_positions': [],
+    'total_options_delta': 0.0,
+    'total_options_gamma': 0.0,
+    'total_options_vega': 0.0,
+    'options_hedge_positions': [],
+    'net_options_delta': 0.0,
     # Platform pooling state
     'active_lending_positions': [],
     'pooled_hedge_positions': [],
@@ -2159,6 +2166,59 @@ class PlatformRiskManager:
         except Exception as e:
             print(f"⚠️ Error adding lending position: {e}")
             return None
+    
+    def add_options_position(self, options_data):
+        """Add a new options position to platform risk tracking"""
+        try:
+            # Add position to options positions
+            platform_state['options_positions'].append(options_data)
+            
+            # Update options risk metrics
+            platform_state['total_options_delta'] += options_data.get('delta_exposure', 0)
+            platform_state['net_options_delta'] = platform_state['total_options_delta']
+            
+            # Check if hedging is needed
+            if abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']:
+                self._hedge_options_risk()
+            
+            print(f"📊 [OPTIONS] Added options position: {options_data.get('strategy_name', 'Unknown')}")
+            print(f"   Delta exposure: {options_data.get('delta_exposure', 0):.4f}")
+            print(f"   Total options delta: {platform_state['total_options_delta']:.4f}")
+            
+            return {
+                'options_positions': len(platform_state['options_positions']),
+                'total_delta': platform_state['total_options_delta'],
+                'net_delta': platform_state['net_options_delta'],
+                'hedge_needed': abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']
+            }
+            
+        except Exception as e:
+            print(f"⚠️ Error adding options position: {e}")
+            return None
+    
+    def _hedge_options_risk(self):
+        """Hedge options risk by buying offsetting options"""
+        try:
+            net_delta = platform_state['net_options_delta']
+            hedge_size = abs(net_delta)
+            
+            # Create hedge position
+            hedge_position = {
+                'hedge_type': 'delta_hedge',
+                'hedge_size': hedge_size,
+                'direction': 'long' if net_delta < 0 else 'short',
+                'timestamp': datetime.now().isoformat(),
+                'cost': hedge_size * 0.02  # Simplified hedge cost
+            }
+            
+            platform_state['options_hedge_positions'].append(hedge_position)
+            platform_state['net_options_delta'] = 0.0  # Delta-neutral after hedge
+            platform_state['total_hedge_cost'] += hedge_position['cost']
+            
+            print(f"🛡️ [HEDGE] Options risk hedged: {hedge_size:.4f} delta")
+            
+        except Exception as e:
+            print(f"⚠️ Error hedging options risk: {e}")
 
 # Initialize services with LIVE data requirement and enhanced logging
 print("🔴 " + "="*80)
@@ -2483,83 +2543,90 @@ def execute_strategy():
         
         # Update platform state based on strategy type
         if strategy.get('lending_protection'):
-            # Lending positions create platform exposure that needs hedging
-            platform_state['total_client_exposure_btc'] += size
-            platform_state['lending_exposure_btc'] += size
+            # Lending protection: Platform sells options to external platforms
+            # Platform does NOT hold BTC collateral - external platforms do
+            # Platform only has options risk (short puts sold)
             platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
             
-            # Lending protection strategies hedge that exposure
-            platform_state['total_platform_hedges_btc'] += size
-            platform_state['lending_hedges_btc'] += size
-            
-            # Add to lending positions for pooling efficiency
-            position_data = {
+            # Track options risk instead of BTC exposure
+            options_risk = {
                 'strategy_name': strategy['strategy_name'],
-                'position_size': size,
-                'individual_hedge_cost': strategy.get('total_client_cost', 0),
+                'options_sold': size,  # BTC notional of options sold
+                'strike_price': strategy.get('strike_price', 0),
+                'option_type': strategy.get('strategy_type', 'protective_put'),
+                'delta_exposure': size * strategy.get('delta', -0.5),  # Short put delta
+                'premium_collected': strategy.get('platform_revenue', 0),
                 'timestamp': datetime.now().isoformat(),
-                'tier_level': strategy.get('tier_level', 'standard'),
                 'protection_type': strategy.get('protection_type', 'downside'),
                 'lending_protection': True
             }
-            platform_risk_manager.add_lending_position(position_data)
+            platform_risk_manager.add_options_position(options_risk)
             
-            print(f"🛡️ [LENDING] Added lending exposure and hedge: {size} BTC ({strategy['strategy_name']})")
+            print(f"📊 [OPTIONS] Sold options to external platform: {size} BTC notional ({strategy['strategy_name']})")
         else:
-            # Institutional positions are exposure
+            # Institutional positions are exposure (platform holds BTC)
             platform_state['total_client_exposure_btc'] += size
             platform_state['institutional_exposure_btc'] += size
             platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
         
-        # Calculate net exposure: Client exposure - Platform hedges (including lending hedges)
-        net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
-        platform_state['net_platform_exposure_btc'] = net_exposure
-        
-        print(f"📊 [EXPOSURE] Updated platform state:")
-        print(f"   Total Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
-        print(f"   - Institutional: {platform_state['institutional_exposure_btc']} BTC")
-        print(f"   - Lending: {platform_state['lending_exposure_btc']} BTC")
-        print(f"   Total Platform Hedges: {platform_state['total_platform_hedges_btc']} BTC")
-        print(f"   - Institutional: {platform_state['institutional_hedges_btc']} BTC")
-        print(f"   - Lending: {platform_state['lending_hedges_btc']} BTC")
-        print(f"   Net Exposure: {net_exposure} BTC")
+        # Calculate net exposure based on strategy type
+        if strategy.get('lending_protection'):
+            # For lending protection: Net exposure = Options Delta (not BTC)
+            net_exposure = platform_state['net_options_delta']
+            platform_state['net_platform_exposure_btc'] = net_exposure
+            
+            print(f"📊 [OPTIONS] Updated platform state:")
+            print(f"   Options Positions: {len(platform_state['options_positions'])}")
+            print(f"   Total Options Delta: {platform_state['total_options_delta']:.4f}")
+            print(f"   Net Options Delta: {platform_state['net_options_delta']:.4f}")
+            print(f"   Options Hedges: {len(platform_state['options_hedge_positions'])}")
+        else:
+            # For institutional positions: Net exposure = BTC exposure - hedges
+            net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
+            platform_state['net_platform_exposure_btc'] = net_exposure
+            
+            print(f"📊 [EXPOSURE] Updated platform state:")
+            print(f"   Total Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
+            print(f"   - Institutional: {platform_state['institutional_exposure_btc']} BTC")
+            print(f"   Total Platform Hedges: {platform_state['total_platform_hedges_btc']} BTC")
+            print(f"   - Institutional: {platform_state['institutional_hedges_btc']} BTC")
+            print(f"   Net Exposure: {net_exposure} BTC")
         
         platform_hedge = {'status': 'N/A'}
         
-        # Check if additional hedging is needed
-        if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
-            hedge_size = abs(net_exposure) * 1.1
-            platform_state['total_platform_hedges_btc'] += hedge_size
-            platform_state['net_platform_exposure_btc'] = (
-                platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
-            )
-            platform_hedge = {
-                'status': 'hedged',
-                'hedge_size_btc': hedge_size,
-                'coverage': '110%'
-            }
-            print(f"   Platform hedge executed: {hedge_size} BTC")
-        elif strategy.get('lending_protection'):
-            # Lending positions are automatically hedged (already done above)
-            # Check if additional hedging needed for lending positions
-            if size > PLATFORM_CONFIG['lending_hedge_threshold']:
-                additional_hedge = size * 0.1  # 10% additional hedge for large lending positions
-                platform_state['total_platform_hedges_btc'] += additional_hedge
+        # Check if additional hedging is needed based on strategy type
+        if strategy.get('lending_protection'):
+            # For lending protection: Check options delta hedging
+            if abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']:
+                # Options delta hedging is handled in add_options_position
                 platform_hedge = {
-                    'status': 'auto_hedged_enhanced',
-                    'hedge_size_btc': size + additional_hedge,
-                    'coverage': '110%',
-                    'lending_protection': True
+                    'status': 'options_hedged',
+                    'hedge_type': 'delta_hedge',
+                    'net_delta': platform_state['net_options_delta'],
+                    'coverage': 'delta_neutral'
                 }
-                print(f"   Lending position auto-hedged with enhancement: {size + additional_hedge} BTC")
+                print(f"   Options delta hedged: {platform_state['net_options_delta']:.4f}")
             else:
                 platform_hedge = {
-                    'status': 'auto_hedged',
-                    'hedge_size_btc': size,
-                    'coverage': '100%',
-                    'lending_protection': True
+                    'status': 'options_tracked',
+                    'net_delta': platform_state['net_options_delta'],
+                    'coverage': 'delta_tracked'
                 }
-                print(f"   Lending position auto-hedged: {size} BTC")
+                print(f"   Options delta tracked: {platform_state['net_options_delta']:.4f}")
+        else:
+            # For institutional positions: Check BTC hedging
+            if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
+                hedge_size = abs(net_exposure) * 1.1
+                platform_state['total_platform_hedges_btc'] += hedge_size
+                platform_state['net_platform_exposure_btc'] = (
+                    platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
+                )
+                platform_hedge = {
+                    'status': 'hedged',
+                    'hedge_size_btc': hedge_size,
+                    'coverage': '110%'
+                }
+                print(f"   Platform hedge executed: {hedge_size} BTC")
         
         # Build results based on strategy type
         if strategy.get('lending_protection'):
