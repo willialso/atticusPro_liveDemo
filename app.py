@@ -2016,15 +2016,26 @@ class PlatformRiskManager:
     def calculate_net_exposure(self):
         """Calculate platform net exposure"""
         try:
+            # Calculate total exposure (institutional only)
+            total_client_exposure = platform_state['total_client_exposure_btc']
+            total_platform_hedges = platform_state['total_platform_hedges_btc']
+            net_exposure = total_client_exposure - total_platform_hedges
+            
+            # Calculate hedge coverage ratio
+            if total_client_exposure > 0:
+                hedge_coverage_ratio = total_platform_hedges / total_client_exposure
+            elif total_platform_hedges > 0:
+                # If we have hedges but no client exposure (all lending), show as over-hedged
+                hedge_coverage_ratio = total_platform_hedges / total_platform_hedges  # This will be 1.0
+            else:
+                hedge_coverage_ratio = 0.0
+            
             exposure_data = {
-                'total_client_long_btc': platform_state['total_client_exposure_btc'],
-                'total_platform_hedges_btc': platform_state['total_platform_hedges_btc'],
-                'net_exposure_btc': platform_state['net_platform_exposure_btc'],
-                'hedge_coverage_ratio': (
-                    platform_state['total_platform_hedges_btc'] / platform_state['total_client_exposure_btc']
-                    if platform_state['total_client_exposure_btc'] > 0 else 0
-                ),
-                'requires_hedging': abs(platform_state['net_platform_exposure_btc']) > PLATFORM_CONFIG['platform_hedge_threshold'],
+                'total_client_long_btc': total_client_exposure,
+                'total_platform_hedges_btc': total_platform_hedges,
+                'net_exposure_btc': net_exposure,
+                'hedge_coverage_ratio': hedge_coverage_ratio,
+                'requires_hedging': abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold'],
                 'active_institutions': len(platform_state['active_institutions']),
                 'total_premium_collected': platform_state['total_premium_collected'],
                 'total_hedge_cost': platform_state['total_hedge_cost'],
@@ -2464,23 +2475,38 @@ def execute_strategy():
         size = strategy['position_size']
         execution_plan = exchange_manager.calculate_optimal_execution(size)
         
-        # Update platform state
-        platform_state['total_client_exposure_btc'] += size
-        platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
-        
-        # Add to pooling if lending protection
+        # Update platform state based on strategy type
         if strategy.get('lending_protection'):
+            # Lending protection strategies are HEDGES, not exposure
+            platform_state['total_platform_hedges_btc'] += size
+            platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
+            
+            # Add to lending positions for pooling efficiency
             position_data = {
                 'strategy_name': strategy['strategy_name'],
                 'position_size': size,
                 'individual_hedge_cost': strategy.get('total_client_cost', 0),
                 'timestamp': datetime.now().isoformat(),
-                'tier_level': strategy.get('tier_level', 'standard')
+                'tier_level': strategy.get('tier_level', 'standard'),
+                'protection_type': strategy.get('protection_type', 'downside'),
+                'lending_protection': True
             }
             platform_risk_manager.add_lending_position(position_data)
+            
+            print(f"🛡️ [LENDING] Added lending hedge: {size} BTC ({strategy['strategy_name']})")
+        else:
+            # Institutional positions are exposure
+            platform_state['total_client_exposure_btc'] += size
+            platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
         
+        # Calculate net exposure: Client exposure - Platform hedges (including lending hedges)
         net_exposure = platform_state['total_client_exposure_btc'] - platform_state['total_platform_hedges_btc']
         platform_state['net_platform_exposure_btc'] = net_exposure
+        
+        print(f"📊 [EXPOSURE] Updated platform state:")
+        print(f"   Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
+        print(f"   Platform Hedges: {platform_state['total_platform_hedges_btc']} BTC")
+        print(f"   Net Exposure: {net_exposure} BTC")
         
         platform_hedge = {'status': 'N/A'}
         if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
