@@ -50,6 +50,7 @@ PLATFORM_CONFIG = {
     'hedge_reserve_ratio': 1.1,
     'max_single_institution_btc': 10000,
     'platform_hedge_threshold': 5.0,
+    'lending_hedge_threshold': 0.1,  # 0.1 BTC threshold for lending positions
     # Lending discount configuration
     'lending_discount_rate': 0.15,  # 15% discount for lending protection
     'lending_discount_enabled': True
@@ -63,6 +64,11 @@ platform_state = {
     'active_institutions': [],
     'total_premium_collected': 0.0,
     'total_hedge_cost': 0.0,
+    # Separate lending and institutional risk tracking
+    'institutional_exposure_btc': 0.0,
+    'lending_exposure_btc': 0.0,
+    'institutional_hedges_btc': 0.0,
+    'lending_hedges_btc': 0.0,
     # Platform pooling state
     'active_lending_positions': [],
     'pooled_hedge_positions': [],
@@ -2477,9 +2483,14 @@ def execute_strategy():
         
         # Update platform state based on strategy type
         if strategy.get('lending_protection'):
-            # Lending protection strategies are HEDGES, not exposure
-            platform_state['total_platform_hedges_btc'] += size
+            # Lending positions create platform exposure that needs hedging
+            platform_state['total_client_exposure_btc'] += size
+            platform_state['lending_exposure_btc'] += size
             platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
+            
+            # Lending protection strategies hedge that exposure
+            platform_state['total_platform_hedges_btc'] += size
+            platform_state['lending_hedges_btc'] += size
             
             # Add to lending positions for pooling efficiency
             position_data = {
@@ -2493,10 +2504,11 @@ def execute_strategy():
             }
             platform_risk_manager.add_lending_position(position_data)
             
-            print(f"🛡️ [LENDING] Added lending hedge: {size} BTC ({strategy['strategy_name']})")
+            print(f"🛡️ [LENDING] Added lending exposure and hedge: {size} BTC ({strategy['strategy_name']})")
         else:
             # Institutional positions are exposure
             platform_state['total_client_exposure_btc'] += size
+            platform_state['institutional_exposure_btc'] += size
             platform_state['total_premium_collected'] += strategy.get('platform_revenue', 0)
         
         # Calculate net exposure: Client exposure - Platform hedges (including lending hedges)
@@ -2504,11 +2516,17 @@ def execute_strategy():
         platform_state['net_platform_exposure_btc'] = net_exposure
         
         print(f"📊 [EXPOSURE] Updated platform state:")
-        print(f"   Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
-        print(f"   Platform Hedges: {platform_state['total_platform_hedges_btc']} BTC")
+        print(f"   Total Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
+        print(f"   - Institutional: {platform_state['institutional_exposure_btc']} BTC")
+        print(f"   - Lending: {platform_state['lending_exposure_btc']} BTC")
+        print(f"   Total Platform Hedges: {platform_state['total_platform_hedges_btc']} BTC")
+        print(f"   - Institutional: {platform_state['institutional_hedges_btc']} BTC")
+        print(f"   - Lending: {platform_state['lending_hedges_btc']} BTC")
         print(f"   Net Exposure: {net_exposure} BTC")
         
         platform_hedge = {'status': 'N/A'}
+        
+        # Check if additional hedging is needed
         if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
             hedge_size = abs(net_exposure) * 1.1
             platform_state['total_platform_hedges_btc'] += hedge_size
@@ -2521,6 +2539,27 @@ def execute_strategy():
                 'coverage': '110%'
             }
             print(f"   Platform hedge executed: {hedge_size} BTC")
+        elif strategy.get('lending_protection'):
+            # Lending positions are automatically hedged (already done above)
+            # Check if additional hedging needed for lending positions
+            if size > PLATFORM_CONFIG['lending_hedge_threshold']:
+                additional_hedge = size * 0.1  # 10% additional hedge for large lending positions
+                platform_state['total_platform_hedges_btc'] += additional_hedge
+                platform_hedge = {
+                    'status': 'auto_hedged_enhanced',
+                    'hedge_size_btc': size + additional_hedge,
+                    'coverage': '110%',
+                    'lending_protection': True
+                }
+                print(f"   Lending position auto-hedged with enhancement: {size + additional_hedge} BTC")
+            else:
+                platform_hedge = {
+                    'status': 'auto_hedged',
+                    'hedge_size_btc': size,
+                    'coverage': '100%',
+                    'lending_protection': True
+                }
+                print(f"   Lending position auto-hedged: {size} BTC")
         
         # Build results based on strategy type
         if strategy.get('lending_protection'):
