@@ -1032,22 +1032,39 @@ class LivePricingEngine:
                     print(f"   [{i+1}/{len(preferred_strategies)}] Pricing {strategy_type}...")
                     
                     if is_lending:
+                        # Get required parameters for lending strategy pricing
+                        vol = self.market.get_live_volatility()
+                        T = 45 / 365.0  # 45 days to expiry
                         strategy = self._price_lending_strategy(
-                            strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate, protection_type
+                            strategy_type, hedge_size, current_price, vol, T, risk_free_rate, protection_type
                         )
                     else:
                         strategy = self._price_single_strategy(
                             strategy_type, hedge_size, current_price, risk_tolerance, risk_free_rate
                         )
                     
-                    strategy['recommended'] = (i == 0)
-                    strategy['risk_tolerance_match'] = risk_tolerance
-                    strategy['pricing_timestamp'] = datetime.now().isoformat()
-                    strategy['data_source'] = 'LIVE_MARKET_DATA'
-                    if is_lending:
-                        strategy['lending_protection'] = True
-                        strategy['protection_type'] = protection_type
-                    strategies.append(strategy)
+                    # Handle both single strategies and lists of strategies (for tier-based lending)
+                    if isinstance(strategy, list):
+                        # Multiple strategies returned (tier-based lending)
+                        for j, tier_strategy in enumerate(strategy):
+                            tier_strategy['recommended'] = (i == 0 and j == 0)  # First tier of first strategy type
+                            tier_strategy['risk_tolerance_match'] = risk_tolerance
+                            tier_strategy['pricing_timestamp'] = datetime.now().isoformat()
+                            tier_strategy['data_source'] = 'LIVE_MARKET_DATA'
+                            if is_lending:
+                                tier_strategy['lending_protection'] = True
+                                tier_strategy['protection_type'] = protection_type
+                            strategies.append(tier_strategy)
+                    else:
+                        # Single strategy returned (legacy behavior)
+                        strategy['recommended'] = (i == 0)
+                        strategy['risk_tolerance_match'] = risk_tolerance
+                        strategy['pricing_timestamp'] = datetime.now().isoformat()
+                        strategy['data_source'] = 'LIVE_MARKET_DATA'
+                        if is_lending:
+                            strategy['lending_protection'] = True
+                            strategy['protection_type'] = protection_type
+                        strategies.append(strategy)
                     
                     print(f"   ✅ {strategy_type} priced successfully")
                     
