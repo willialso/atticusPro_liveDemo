@@ -2244,8 +2244,24 @@ except Exception as init_error:
 
 # Routes with enhanced error logging
 @app.route('/')
-def index():
+def landing():
+    return render_template('landing.html')
+
+@app.route('/institutional')
+def institutional():
     return render_template('index.html')
+
+@app.route('/lending-router')
+def lending_router():
+    return render_template('lending_router.html')
+
+@app.route('/borrower-demo')
+def borrower_demo():
+    return render_template('borrower_demo.html')
+
+@app.route('/lender-demo')
+def lender_demo():
+    return render_template('lender_demo.html')
 
 @app.route('/api/health')
 def health():

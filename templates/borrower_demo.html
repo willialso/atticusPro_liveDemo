@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atticus Professional - Borrower Protection Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Enhanced Header with Blue Background -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo">
+                <div class="platform-status">
+                    <div class="status-item">
+                        <span class="label">Platform Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Net Exposure</span>
+                        <span id="net-exposure" class="value">0 BTC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Borrower Demo Section -->
+        <section class="borrower-demo">
+            <div class="container">
+                <!-- Back Navigation -->
+                <div class="back-navigation">
+                    <button class="back-btn" onclick="goToLendingRouter()">
+                        ← Back to Lending Solutions
+                    </button>
+                </div>
+
+                <!-- Demo Header -->
+                <div class="demo-header">
+                    <h1>Borrower Protection Demo</h1>
+                    <p class="demo-subtitle">Protect your upside while keeping your loan intact</p>
+                </div>
+
+                <!-- Market Data Bar -->
+                <div class="market-data-bar">
+                    <div class="market-item">
+                        <span class="label">BTC Price</span>
+                        <span id="btc-price" class="value">Loading...</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Volatility</span>
+                        <span id="volatility" class="value">Loading...</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Risk-Free Rate</span>
+                        <span id="risk-rate" class="value">5%</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                </div>
+
+                <!-- Borrower Configuration -->
+                <div class="borrower-config">
+                    <h2>Configure Your Protection</h2>
+                    <div class="config-form">
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Loan Amount (USD)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="loan-amount" placeholder="1000000" step="1000" min="10000">
+                                    <span class="input-unit">USD</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Collateral Amount (BTC)</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="collateral-amount" placeholder="1.0" step="0.01" min="0.1">
+                                    <span class="input-unit">BTC</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label>Loan Duration</label>
+                                <div class="slider-container">
+                                    <input type="range" id="loan-duration" min="28" max="365" value="90" class="duration-slider">
+                                    <div class="slider-labels">
+                                        <span>28 days</span>
+                                        <span id="duration-value">90 days</span>
+                                        <span>365 days</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Current BTC Price</label>
+                                <div class="price-display">
+                                    <span id="current-btc-price" class="price-value">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="loan-summary">
+                            <h3>Loan Summary</h3>
+                            <div class="summary-grid">
+                                <div class="summary-item">
+                                    <span class="label">LTV Ratio</span>
+                                    <span id="ltv-ratio" class="value">Loading...</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Collateral Value</span>
+                                    <span id="collateral-value" class="value">Loading...</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="label">Protection Coverage</span>
+                                    <span id="protection-coverage" class="value">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="generate-btn" onclick="generateBorrowerScenarios()">
+                            Generate Protection Scenarios
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scenario Results -->
+                <div id="scenario-results" class="scenario-results" style="display: none;">
+                    <h2>Protection Scenarios</h2>
+                    <div id="scenarios-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR PLATFORM EXPOSURE DASHBOARD -->
+    <div id="platform-exposure" class="platform-dashboard-sidebar">
+        <div class="sidebar-content">
+            <h4>Platform Exposure Dashboard</h4>
+            <div class="sidebar-metrics">
+                <div class="sidebar-metric">
+                    <span class="metric-label">Client Positions</span>
+                    <span id="client-exposure" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Platform Hedges</span>
+                    <span id="platform-hedges" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Net Exposure</span>
+                    <span id="platform-net" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Coverage Ratio</span>
+                    <span id="coverage-ratio" class="metric-value">N/A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Generating scenarios...</p>
+        </div>
+    </div>
+
+    <script>
+        // Borrower demo functionality
+        class BorrowerDemo {
+            constructor() {
+                this.marketData = null;
+                this.liveDataAvailable = false;
+                this.init();
+            }
+            
+            init() {
+                this.loadMarketData();
+                this.loadPlatformExposure();
+                this.setupEventListeners();
+                
+                // Update live data every 30 seconds
+                setInterval(() => {
+                    this.loadMarketData();
+                    this.loadPlatformExposure();
+                }, 30000);
+            }
+            
+            setupEventListeners() {
+                // Update loan summary when inputs change
+                const loanAmount = document.getElementById('loan-amount');
+                const collateralAmount = document.getElementById('collateral-amount');
+                const durationSlider = document.getElementById('loan-duration');
+                
+                if (loanAmount) loanAmount.addEventListener('input', () => this.updateLoanSummary());
+                if (collateralAmount) collateralAmount.addEventListener('input', () => this.updateLoanSummary());
+                if (durationSlider) {
+                    durationSlider.addEventListener('input', () => {
+                        document.getElementById('duration-value').textContent = `${durationSlider.value} days`;
+                        this.updateLoanSummary();
+                    });
+                }
+            }
+            
+            async loadMarketData() {
+                try {
+                    console.log('📊 Fetching LIVE market data...');
+                    const response = await fetch('/api/market-data');
+                    const data = await response.json();
+                    
+                    if (response.ok && data.status === 'live') {
+                        this.marketData = data;
+                        this.liveDataAvailable = true;
+                        this.updateMarketDisplay(data);
+                        console.log('✅ Live market data loaded successfully');
+                    } else {
+                        throw new Error(data.message || 'Live data unavailable');
+                    }
+                } catch (error) {
+                    console.error('🚨 LIVE DATA ERROR:', error);
+                    this.liveDataAvailable = false;
+                    this.updateMarketDisplay({
+                        btc_price: 'LIVE DATA ERROR',
+                        volatility: 'UNAVAILABLE',
+                        risk_free_rate: 'ERROR'
+                    });
+                }
+            }
+            
+            updateMarketDisplay(data) {
+                const btcPrice = document.getElementById('btc-price');
+                const volatility = document.getElementById('volatility');
+                const currentBtcPrice = document.getElementById('current-btc-price');
+                
+                if (btcPrice) {
+                    btcPrice.textContent = typeof data.btc_price === 'number' 
+                        ? this.formatCurrency(data.btc_price)
+                        : data.btc_price;
+                }
+                
+                if (volatility) {
+                    volatility.textContent = typeof data.volatility === 'number'
+                        ? `${Math.round(data.volatility)}%`
+                        : data.volatility;
+                }
+                
+                if (currentBtcPrice) {
+                    currentBtcPrice.textContent = typeof data.btc_price === 'number'
+                        ? this.formatCurrency(data.btc_price)
+                        : data.btc_price;
+                }
+            }
+            
+            updateLoanSummary() {
+                if (!this.marketData || !this.liveDataAvailable) return;
+                
+                const loanAmount = parseFloat(document.getElementById('loan-amount').value) || 0;
+                const collateralAmount = parseFloat(document.getElementById('collateral-amount').value) || 0;
+                const btcPrice = this.marketData.btc_price;
+                
+                if (loanAmount > 0 && collateralAmount > 0 && btcPrice > 0) {
+                    const collateralValue = collateralAmount * btcPrice;
+                    const ltvRatio = (loanAmount / collateralValue) * 100;
+                    const protectionCoverage = collateralValue;
+                    
+                    document.getElementById('ltv-ratio').textContent = `${ltvRatio.toFixed(1)}%`;
+                    document.getElementById('collateral-value').textContent = this.formatCurrency(collateralValue);
+                    document.getElementById('protection-coverage').textContent = this.formatCurrency(protectionCoverage);
+                } else {
+                    document.getElementById('ltv-ratio').textContent = 'Enter amounts';
+                    document.getElementById('collateral-value').textContent = 'Enter amounts';
+                    document.getElementById('protection-coverage').textContent = 'Enter amounts';
+                }
+            }
+            
+            async loadPlatformExposure() {
+                try {
+                    const response = await fetch('/api/platform-exposure');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.updateExposureDisplay(data.exposure);
+                    }
+                } catch (error) {
+                    console.error('Platform exposure error:', error);
+                }
+            }
+            
+            updateExposureDisplay(exposure) {
+                const elements = {
+                    'client-exposure': exposure.total_client_long_btc || 0,
+                    'platform-hedges': exposure.total_platform_hedges_btc || 0,
+                    'platform-net': exposure.net_exposure_btc || 0,
+                    'net-exposure': exposure.net_exposure_btc || 0,
+                    'coverage-ratio': exposure.hedge_coverage_ratio 
+                        ? `${Math.round(exposure.hedge_coverage_ratio * 100)}%`
+                        : 'N/A'
+                };
+                
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
+                            ? `${Math.round(value)} BTC`
+                            : value;
+                    }
+                });
+            }
+            
+            formatCurrency(value) {
+                if (typeof value !== 'number') return value;
+                return `$${Math.round(value).toLocaleString()}`;
+            }
+            
+            showLoading(message = 'Processing...') {
+                const overlay = document.getElementById('loading');
+                const text = document.getElementById('loading-text');
+                
+                if (text) text.textContent = message;
+                overlay.classList.add('active');
+            }
+            
+            hideLoading() {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+        
+        // Navigation functions
+        function goToLendingRouter() {
+            window.location.href = '/lending-router';
+        }
+        
+        function generateBorrowerScenarios() {
+            if (!demo.liveDataAvailable) {
+                alert('🚨 LIVE DATA REQUIRED: Scenario generation requires live market data. Please wait for data connection or try again.');
+                return;
+            }
+            
+            demo.showLoading('Generating borrower protection scenarios...');
+            
+            // Simulate scenario generation
+            setTimeout(() => {
+                demo.displayBorrowerScenarios();
+                demo.hideLoading();
+            }, 2000);
+        }
+        
+        // Initialize borrower demo
+        let demo;
+        document.addEventListener('DOMContentLoaded', function() {
+            demo = new BorrowerDemo();
+        });
+    </script>
+</body>
+</html>

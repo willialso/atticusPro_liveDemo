@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atticus Professional - Lender Protection Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Enhanced Header with Blue Background -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo">
+                <div class="platform-status">
+                    <div class="status-item">
+                        <span class="label">Platform Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Net Exposure</span>
+                        <span id="net-exposure" class="value">0 BTC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Lender Demo Section -->
+        <section class="lender-demo">
+            <div class="container">
+                <!-- Back Navigation -->
+                <div class="back-navigation">
+                    <button class="back-btn" onclick="goToLendingRouter()">
+                        ← Back to Lending Solutions
+                    </button>
+                </div>
+
+                <!-- Demo Header -->
+                <div class="demo-header">
+                    <h1>Lender Protection Demo</h1>
+                    <p class="demo-subtitle">Protect against defaults and volatility with institutional-grade downside protection</p>
+                </div>
+
+                <!-- Market Data Bar -->
+                <div class="market-data-bar">
+                    <div class="market-item">
+                        <span class="label">BTC Price</span>
+                        <span id="btc-price" class="value">Loading...</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Volatility</span>
+                        <span id="volatility" class="value">Loading...</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Risk-Free Rate</span>
+                        <span id="risk-rate" class="value">5%</span>
+                    </div>
+                    <div class="market-item">
+                        <span class="label">Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                </div>
+
+                <!-- Nexus Mutual Style Layout -->
+                <div class="lender-layout">
+                    <!-- Left Panel - Details -->
+                    <div class="details-panel">
+                        <h2>Protection Details</h2>
+                        
+                        <div class="form-group">
+                            <label>Protection Amount</label>
+                            <div class="amount-input">
+                                <input type="number" id="protection-amount" placeholder="10" step="0.1" min="0.1">
+                                <span class="unit">BTC</span>
+                            </div>
+                            <div class="max-info">
+                                <span>Max: <span id="max-protection">Loading...</span> BTC</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Protection Period</label>
+                            <div class="period-slider-container">
+                                <div class="slider-wrapper">
+                                    <input type="range" id="protection-period" min="28" max="365" value="90" class="period-slider">
+                                    <div class="slider-track"></div>
+                                </div>
+                                <div class="period-labels">
+                                    <span>28 days</span>
+                                    <span id="period-value">90 days</span>
+                                    <span>365 days</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Terms & Conditions</label>
+                            <div class="terms-list">
+                                <div class="term-item">
+                                    <span class="checkmark">✓</span>
+                                    <span>Disaster Protection</span>
+                                </div>
+                                <div class="term-item">
+                                    <span class="checkmark">✓</span>
+                                    <span>Near-ATM Protection</span>
+                                </div>
+                                <div class="term-item">
+                                    <span class="checkmark">✓</span>
+                                    <span>Conservative Protection</span>
+                                </div>
+                                <div class="term-item">
+                                    <span class="checkmark">✓</span>
+                                    <span>Liquidation Protection</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cover Chains</label>
+                            <div class="chain-info">
+                                <span>Bitcoin mainnet only</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel - Overview -->
+                    <div class="overview-panel">
+                        <h2>Protection Overview</h2>
+                        
+                        <div class="overview-content">
+                            <div class="overview-item">
+                                <span class="label">Strategy</span>
+                                <span class="value" id="strategy-name">Bitcoin Lending Protection</span>
+                            </div>
+                            
+                            <div class="overview-item">
+                                <span class="label">Protection</span>
+                                <span class="value" id="protection-display">10 BTC</span>
+                            </div>
+                            
+                            <div class="overview-item">
+                                <span class="label">Period</span>
+                                <span class="value" id="period-display">90 days</span>
+                            </div>
+                            
+                            <div class="overview-item">
+                                <span class="label">Annual Fee</span>
+                                <span class="value" id="annual-fee">1.9%</span>
+                            </div>
+                            
+                            <div class="overview-item">
+                                <span class="label">Premium Cost</span>
+                                <span class="value" id="premium-cost">0.XX BTC</span>
+                            </div>
+                        </div>
+                        
+                        <button class="generate-scenarios-btn" onclick="generateLenderScenarios()">
+                            Generate Scenarios
+                        </button>
+                        
+                        <div class="helper-text">
+                            Configure protection parameters to see pricing
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Results -->
+                <div id="scenario-results" class="scenario-results" style="display: none;">
+                    <h2>Protection Scenarios</h2>
+                    <div id="scenarios-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR PLATFORM EXPOSURE DASHBOARD -->
+    <div id="platform-exposure" class="platform-dashboard-sidebar">
+        <div class="sidebar-content">
+            <h4>Platform Exposure Dashboard</h4>
+            <div class="sidebar-metrics">
+                <div class="sidebar-metric">
+                    <span class="metric-label">Client Positions</span>
+                    <span id="client-exposure" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Platform Hedges</span>
+                    <span id="platform-hedges" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Net Exposure</span>
+                    <span id="platform-net" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Coverage Ratio</span>
+                    <span id="coverage-ratio" class="metric-value">N/A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Generating scenarios...</p>
+        </div>
+    </div>
+
+    <script>
+        // Lender demo functionality
+        class LenderDemo {
+            constructor() {
+                this.marketData = null;
+                this.liveDataAvailable = false;
+                this.init();
+            }
+            
+            init() {
+                this.loadMarketData();
+                this.loadPlatformExposure();
+                this.setupEventListeners();
+                
+                // Update live data every 30 seconds
+                setInterval(() => {
+                    this.loadMarketData();
+                    this.loadPlatformExposure();
+                }, 30000);
+            }
+            
+            setupEventListeners() {
+                // Update overview when inputs change
+                const protectionAmount = document.getElementById('protection-amount');
+                const protectionPeriod = document.getElementById('protection-period');
+                
+                if (protectionAmount) {
+                    protectionAmount.addEventListener('input', () => this.updateOverview());
+                }
+                
+                if (protectionPeriod) {
+                    protectionPeriod.addEventListener('input', () => {
+                        document.getElementById('period-value').textContent = `${protectionPeriod.value} days`;
+                        document.getElementById('period-display').textContent = `${protectionPeriod.value} days`;
+                        this.updateOverview();
+                    });
+                }
+            }
+            
+            async loadMarketData() {
+                try {
+                    console.log('📊 Fetching LIVE market data...');
+                    const response = await fetch('/api/market-data');
+                    const data = await response.json();
+                    
+                    if (response.ok && data.status === 'live') {
+                        this.marketData = data;
+                        this.liveDataAvailable = true;
+                        this.updateMarketDisplay(data);
+                        this.updateMaxProtection(data);
+                        console.log('✅ Live market data loaded successfully');
+                    } else {
+                        throw new Error(data.message || 'Live data unavailable');
+                    }
+                } catch (error) {
+                    console.error('🚨 LIVE DATA ERROR:', error);
+                    this.liveDataAvailable = false;
+                    this.updateMarketDisplay({
+                        btc_price: 'LIVE DATA ERROR',
+                        volatility: 'UNAVAILABLE',
+                        risk_free_rate: 'ERROR'
+                    });
+                }
+            }
+            
+            updateMarketDisplay(data) {
+                const btcPrice = document.getElementById('btc-price');
+                const volatility = document.getElementById('volatility');
+                
+                if (btcPrice) {
+                    btcPrice.textContent = typeof data.btc_price === 'number' 
+                        ? this.formatCurrency(data.btc_price)
+                        : data.btc_price;
+                }
+                
+                if (volatility) {
+                    volatility.textContent = typeof data.volatility === 'number'
+                        ? `${Math.round(data.volatility)}%`
+                        : data.volatility;
+                }
+            }
+            
+            updateMaxProtection(data) {
+                if (data.btc_price && typeof data.btc_price === 'number') {
+                    // Simulate max protection based on available liquidity
+                    const maxProtection = Math.floor(data.btc_price / 1000); // Simplified calculation
+                    document.getElementById('max-protection').textContent = maxProtection;
+                }
+            }
+            
+            updateOverview() {
+                const protectionAmount = parseFloat(document.getElementById('protection-amount').value) || 0;
+                const protectionPeriod = parseInt(document.getElementById('protection-period').value) || 90;
+                
+                if (protectionAmount > 0) {
+                    document.getElementById('protection-display').textContent = `${protectionAmount} BTC`;
+                    
+                    // Calculate annual fee (simplified)
+                    const annualFee = (2.5 + (protectionPeriod / 365) * 0.5).toFixed(1);
+                    document.getElementById('annual-fee').textContent = `${annualFee}%`;
+                    
+                    // Calculate premium cost (simplified)
+                    const premiumCost = (protectionAmount * 0.02 * (protectionPeriod / 365)).toFixed(3);
+                    document.getElementById('premium-cost').textContent = `${premiumCost} BTC`;
+                } else {
+                    document.getElementById('protection-display').textContent = 'Enter amount';
+                    document.getElementById('annual-fee').textContent = '1.9%';
+                    document.getElementById('premium-cost').textContent = '0.XX BTC';
+                }
+            }
+            
+            async loadPlatformExposure() {
+                try {
+                    const response = await fetch('/api/platform-exposure');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.updateExposureDisplay(data.exposure);
+                    }
+                } catch (error) {
+                    console.error('Platform exposure error:', error);
+                }
+            }
+            
+            updateExposureDisplay(exposure) {
+                const elements = {
+                    'client-exposure': exposure.total_client_long_btc || 0,
+                    'platform-hedges': exposure.total_platform_hedges_btc || 0,
+                    'platform-net': exposure.net_exposure_btc || 0,
+                    'net-exposure': exposure.net_exposure_btc || 0,
+                    'coverage-ratio': exposure.hedge_coverage_ratio 
+                        ? `${Math.round(exposure.hedge_coverage_ratio * 100)}%`
+                        : 'N/A'
+                };
+                
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
+                            ? `${Math.round(value)} BTC`
+                            : value;
+                    }
+                });
+            }
+            
+            formatCurrency(value) {
+                if (typeof value !== 'number') return value;
+                return `$${Math.round(value).toLocaleString()}`;
+            }
+            
+            showLoading(message = 'Processing...') {
+                const overlay = document.getElementById('loading');
+                const text = document.getElementById('loading-text');
+                
+                if (text) text.textContent = message;
+                overlay.classList.add('active');
+            }
+            
+            hideLoading() {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+        
+        // Navigation functions
+        function goToLendingRouter() {
+            window.location.href = '/lending-router';
+        }
+        
+        function generateLenderScenarios() {
+            if (!demo.liveDataAvailable) {
+                alert('🚨 LIVE DATA REQUIRED: Scenario generation requires live market data. Please wait for data connection or try again.');
+                return;
+            }
+            
+            demo.showLoading('Generating lender protection scenarios...');
+            
+            // Simulate scenario generation
+            setTimeout(() => {
+                demo.displayLenderScenarios();
+                demo.hideLoading();
+            }, 2000);
+        }
+        
+        // Initialize lender demo
+        let demo;
+        document.addEventListener('DOMContentLoaded', function() {
+            demo = new LenderDemo();
+        });
+    </script>
+</body>
+</html>

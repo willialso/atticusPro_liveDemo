@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atticus Professional - Lending Protection Solutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Enhanced Header with Blue Background -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo">
+                <div class="platform-status">
+                    <div class="status-item">
+                        <span class="label">Platform Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Net Exposure</span>
+                        <span id="net-exposure" class="value">0 BTC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Lending Router Hero Section -->
+        <section class="lending-router-hero">
+            <div class="container">
+                <div class="router-content">
+                    <!-- Back Button -->
+                    <div class="back-navigation">
+                        <button class="back-btn" onclick="goToLanding()">
+                            ← Back to Home
+                        </button>
+                    </div>
+                    
+                    <!-- Hero Text -->
+                    <div class="router-text">
+                        <h1 class="router-title">BTC Lending Protection Solutions</h1>
+                        <p class="router-subtitle">Protect both sides of lending markets with institutional-grade Bitcoin options protection</p>
+                    </div>
+                    
+                    <!-- Problem/Solution Section -->
+                    <div class="problem-solution">
+                        <div class="problem-section">
+                            <h2>Lending Market Challenges</h2>
+                            <div class="challenge-grid">
+                                <div class="challenge-card">
+                                    <div class="challenge-icon">⚠️</div>
+                                    <h3>Borrower Risk</h3>
+                                    <p>Risk liquidation during price surges, missing upside potential</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <div class="challenge-icon">📉</div>
+                                    <h3>Lender Risk</h3>
+                                    <p>Face defaults during market crashes, collateral devaluation</p>
+                                </div>
+                                <div class="challenge-card">
+                                    <div class="challenge-icon">⚡</div>
+                                    <h3>Volatility Risk</h3>
+                                    <p>Bitcoin's extreme volatility affects both sides of lending</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="solution-section">
+                            <h2>Atticus Solution</h2>
+                            <div class="solution-grid">
+                                <div class="solution-card">
+                                    <div class="solution-icon">🛡️</div>
+                                    <h3>Upside Protection</h3>
+                                    <p>Borrowers can capture BTC gains while keeping loans intact</p>
+                                </div>
+                                <div class="solution-card">
+                                    <div class="solution-icon">🔒</div>
+                                    <h3>Downside Protection</h3>
+                                    <p>Lenders protected against defaults and collateral devaluation</p>
+                                </div>
+                                <div class="solution-card">
+                                    <div class="solution-icon">⚡</div>
+                                    <h3>Real-Time Hedging</h3>
+                                    <p>Instant protection with institutional-grade execution</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Type Selection -->
+                    <div class="user-type-selection">
+                        <h2>Choose Your Protection Type</h2>
+                        <div class="user-type-buttons">
+                            <button class="user-type-btn borrower-btn" onclick="navigateToBorrower()">
+                                <span class="btn-icon">👤</span>
+                                <span class="btn-content">
+                                    <span class="btn-title">Borrower Protection</span>
+                                    <span class="btn-description">Protect your upside while keeping your loan</span>
+                                    <span class="btn-features">Calls • Spreads • Collars • Income</span>
+                                </span>
+                            </button>
+                            
+                            <button class="user-type-btn lender-btn" onclick="navigateToLender()">
+                                <span class="btn-icon">🏦</span>
+                                <span class="btn-content">
+                                    <span class="btn-title">Lender Protection</span>
+                                    <span class="btn-description">Protect against defaults and volatility</span>
+                                    <span class="btn-features">Puts • Disaster Protection • Liquidation Coverage</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR PLATFORM EXPOSURE DASHBOARD -->
+    <div id="platform-exposure" class="platform-dashboard-sidebar">
+        <div class="sidebar-content">
+            <h4>Platform Exposure Dashboard</h4>
+            <div class="sidebar-metrics">
+                <div class="sidebar-metric">
+                    <span class="metric-label">Client Positions</span>
+                    <span id="client-exposure" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Platform Hedges</span>
+                    <span id="platform-hedges" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Net Exposure</span>
+                    <span id="platform-net" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Coverage Ratio</span>
+                    <span id="coverage-ratio" class="metric-value">N/A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lending router functionality
+        class LendingRouter {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                this.loadPlatformExposure();
+                // Update live data every 30 seconds
+                setInterval(() => {
+                    this.loadPlatformExposure();
+                }, 30000);
+            }
+            
+            async loadPlatformExposure() {
+                try {
+                    const response = await fetch('/api/platform-exposure');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.updateExposureDisplay(data.exposure);
+                    }
+                } catch (error) {
+                    console.error('Platform exposure error:', error);
+                }
+            }
+            
+            updateExposureDisplay(exposure) {
+                const elements = {
+                    'client-exposure': exposure.total_client_long_btc || 0,
+                    'platform-hedges': exposure.total_platform_hedges_btc || 0,
+                    'platform-net': exposure.net_exposure_btc || 0,
+                    'net-exposure': exposure.net_exposure_btc || 0,
+                    'coverage-ratio': exposure.hedge_coverage_ratio 
+                        ? `${Math.round(exposure.hedge_coverage_ratio * 100)}%`
+                        : 'N/A'
+                };
+                
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
+                            ? `${Math.round(value)} BTC`
+                            : value;
+                    }
+                });
+            }
+        }
+        
+        // Navigation functions
+        function goToLanding() {
+            window.location.href = '/';
+        }
+        
+        function navigateToBorrower() {
+            window.location.href = '/borrower-demo';
+        }
+        
+        function navigateToLender() {
+            window.location.href = '/lender-demo';
+        }
+        
+        // Initialize lending router
+        let router;
+        document.addEventListener('DOMContentLoaded', function() {
+            router = new LendingRouter();
+        });
+    </script>
+</body>
+</html>

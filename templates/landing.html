@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atticus Professional - Institutional Bitcoin Options Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Enhanced Header with Blue Background -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo">
+                <div class="platform-status">
+                    <div class="status-item">
+                        <span class="label">Platform Status</span>
+                        <span class="value live">LIVE</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Net Exposure</span>
+                        <span id="net-exposure" class="value">0 BTC</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Landing Hero Section -->
+        <section class="landing-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <!-- Atticus Logo -->
+                    <div class="hero-logo">
+                        <img src="https://i.ibb.co/qFNCZsWG/attpro.png" alt="Atticus Professional" class="logo-large">
+                    </div>
+                    
+                    <!-- Hero Text -->
+                    <div class="hero-text">
+                        <h1 class="hero-title">Institutional-Grade Bitcoin Options Protection for Portfolios & Lending Platforms</h1>
+                        <p class="hero-subtitle">Real-time hedging with institutional-grade options. Protect your Bitcoin exposure with professional-grade risk management.</p>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="hero-cta">
+                        <button class="cta-btn institutions-btn" onclick="navigateToInstitutional()">
+                            <span class="btn-icon">🏛️</span>
+                            <span class="btn-text">
+                                <span class="btn-title">Institutions</span>
+                                <span class="btn-subtitle">Portfolio Protection</span>
+                            </span>
+                        </button>
+                        
+                        <button class="cta-btn lending-btn" onclick="navigateToLending()">
+                            <span class="btn-icon">💰</span>
+                            <span class="btn-text">
+                                <span class="btn-title">Lending Platforms</span>
+                                <span class="btn-subtitle">Lending Protection</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Preview -->
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-preview">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Real-Time Pricing</h3>
+                        <p>Live market pricing with mathematical precision</p>
+                    </div>
+                    <div class="feature-preview">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Platform Hedging</h3>
+                        <p>110% coverage ratio across all clients</p>
+                    </div>
+                    <div class="feature-preview">
+                        <div class="feature-icon">📊</div>
+                        <h3>Portfolio Analytics</h3>
+                        <p>VaR analysis and risk metrics</p>
+                    </div>
+                    <div class="feature-preview">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Multi-Exchange</h3>
+                        <p>Execution across major venues</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR PLATFORM EXPOSURE DASHBOARD -->
+    <div id="platform-exposure" class="platform-dashboard-sidebar">
+        <div class="sidebar-content">
+            <h4>Platform Exposure Dashboard</h4>
+            <div class="sidebar-metrics">
+                <div class="sidebar-metric">
+                    <span class="metric-label">Client Positions</span>
+                    <span id="client-exposure" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Platform Hedges</span>
+                    <span id="platform-hedges" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Net Exposure</span>
+                    <span id="platform-net" class="metric-value">0 BTC</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Coverage Ratio</span>
+                    <span id="coverage-ratio" class="metric-value">N/A</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Landing page functionality
+        class AtticusLanding {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                this.loadPlatformExposure();
+                // Update live data every 30 seconds
+                setInterval(() => {
+                    this.loadPlatformExposure();
+                }, 30000);
+            }
+            
+            async loadPlatformExposure() {
+                try {
+                    const response = await fetch('/api/platform-exposure');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.updateExposureDisplay(data.exposure);
+                    }
+                } catch (error) {
+                    console.error('Platform exposure error:', error);
+                }
+            }
+            
+            updateExposureDisplay(exposure) {
+                const elements = {
+                    'client-exposure': exposure.total_client_long_btc || 0,
+                    'platform-hedges': exposure.total_platform_hedges_btc || 0,
+                    'platform-net': exposure.net_exposure_btc || 0,
+                    'net-exposure': exposure.net_exposure_btc || 0,
+                    'coverage-ratio': exposure.hedge_coverage_ratio 
+                        ? `${Math.round(exposure.hedge_coverage_ratio * 100)}%`
+                        : 'N/A'
+                };
+                
+                Object.entries(elements).forEach(([id, value]) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
+                            ? `${Math.round(value)} BTC`
+                            : value;
+                    }
+                });
+            }
+        }
+        
+        // Navigation functions
+        function navigateToInstitutional() {
+            window.location.href = '/institutional';
+        }
+        
+        function navigateToLending() {
+            window.location.href = '/lending-router';
+        }
+        
+        // Initialize landing page
+        let landing;
+        document.addEventListener('DOMContentLoaded', function() {
+            landing = new AtticusLanding();
+        });
+    </script>
+</body>
+</html>
