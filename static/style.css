@@ -3136,3 +3136,160 @@ body {
     background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
     transform: translateY(-2px);
 }
+
+
+/* BORROWER SCENARIO CARDS */
+.scenario-card {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
+    border: 2px solid var(--secondary);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.scenario-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--warning);
+    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.2);
+}
+
+.scenario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.scenario-header h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--warning-light);
+    margin: 0;
+}
+
+.scenario-cost {
+    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.scenario-description {
+    margin-bottom: 20px;
+}
+
+.scenario-description p {
+    color: var(--text-bright);
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.scenario-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.scenario-metrics .metric {
+    text-align: center;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.scenario-metrics .label {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    display: block;
+    font-weight: 500;
+}
+
+.scenario-metrics .value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--warning-light);
+    display: block;
+}
+
+.scenario-benefits {
+    margin-bottom: 24px;
+}
+
+.scenario-benefits h4 {
+    font-size: 16px;
+    color: var(--success);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.scenario-benefits ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.scenario-benefits li {
+    font-size: 14px;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.scenario-benefits li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success);
+    font-weight: 700;
+}
+
+.scenario-action {
+    text-align: center;
+}
+
+.select-scenario-btn {
+    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.select-scenario-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Responsive Design for Scenario Cards */
+@media (max-width: 768px) {
+    .scenario-metrics {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .scenario-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .scenario-card {
+        padding: 24px;
+    }
+}

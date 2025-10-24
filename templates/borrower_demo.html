@@ -330,6 +330,109 @@
             hideLoading() {
                 document.getElementById('loading').classList.remove('active');
             }
+            
+            displayBorrowerScenarios() {
+                const container = document.getElementById('scenarios-container');
+                const resultsSection = document.getElementById('scenario-results');
+                
+                if (!container || !resultsSection) return;
+                
+                // Sample borrower scenarios
+                const scenarios = [
+                    {
+                        name: 'Moonshot Protection',
+                        type: 'moonshot_call',
+                        description: 'Capture extreme upside with far OTM calls',
+                        premium: 0.15,
+                        upside: 50,
+                        strike: this.marketData ? this.marketData.btc_price * 1.5 : 150000,
+                        benefits: ['Maximum upside capture', 'Low premium cost', 'Protects against missed rallies']
+                    },
+                    {
+                        name: 'Near ATM Call',
+                        type: 'near_atm_call',
+                        description: 'Balanced upside protection with moderate cost',
+                        premium: 0.25,
+                        upside: 25,
+                        strike: this.marketData ? this.marketData.btc_price * 1.1 : 110000,
+                        benefits: ['Balanced risk/reward', 'Moderate premium', 'Good upside capture']
+                    },
+                    {
+                        name: 'Call Spread',
+                        type: 'call_spread',
+                        description: 'Capped upside with lower premium cost',
+                        premium: 0.18,
+                        upside: 20,
+                        strike: this.marketData ? this.marketData.btc_price * 1.2 : 120000,
+                        benefits: ['Lower premium cost', 'Capped but significant upside', 'Risk management']
+                    },
+                    {
+                        name: 'Collar Strategy',
+                        type: 'collar',
+                        description: 'Limited upside with downside protection',
+                        premium: 0.12,
+                        upside: 15,
+                        strike: this.marketData ? this.marketData.btc_price * 1.15 : 115000,
+                        benefits: ['Downside protection included', 'Lowest net cost', 'Balanced approach']
+                    },
+                    {
+                        name: 'Income Enhancement',
+                        type: 'income',
+                        description: 'Generate premium income with covered calls',
+                        premium: -0.08,
+                        upside: 10,
+                        strike: this.marketData ? this.marketData.btc_price * 1.05 : 105000,
+                        benefits: ['Generates income', 'Reduces net cost', 'Conservative approach']
+                    }
+                ];
+                
+                const html = scenarios.map(scenario => `
+                    <div class="scenario-card" onclick="selectBorrowerScenario('${scenario.type}')">
+                        <div class="scenario-header">
+                            <h3>${scenario.name}</h3>
+                            <div class="scenario-cost">
+                                ${scenario.premium > 0 ? 
+                                    `$${Math.round(scenario.premium * 1000)} premium` : 
+                                    `$${Math.round(Math.abs(scenario.premium) * 1000)} income`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-description">
+                            <p>${scenario.description}</p>
+                        </div>
+                        
+                        <div class="scenario-metrics">
+                            <div class="metric">
+                                <span class="label">Upside Target</span>
+                                <span class="value">+${scenario.upside}%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Strike Price</span>
+                                <span class="value">${this.formatCurrency(scenario.strike)}</span>
+                            </div>
+                            <div class="metric">
+                                <span class="label">Strategy Type</span>
+                                <span class="value">${scenario.type.replace('_', ' ').toUpperCase()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-benefits">
+                            <h4>Key Benefits:</h4>
+                            <ul>
+                                ${scenario.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="scenario-action">
+                            <button class="select-scenario-btn">Select This Strategy</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                container.innerHTML = html;
+                resultsSection.style.display = 'block';
+            }
         }
         
         // Navigation functions
@@ -350,6 +453,10 @@
                 demo.displayBorrowerScenarios();
                 demo.hideLoading();
             }, 2000);
+        }
+        
+        function selectBorrowerScenario(scenarioType) {
+            alert(`Selected ${scenarioType} strategy! This would proceed to execution in a real implementation.`);
         }
         
         // Initialize borrower demo
