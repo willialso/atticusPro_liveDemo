@@ -511,106 +511,68 @@
                 this.loadPlatformExposure();
             }
             
-            displayLenderScenarios() {
+            displayLiveStrategies(strategies, context) {
                 const container = document.getElementById('scenarios-container');
-                
                 if (!container) return;
                 
-                // Sample lender scenarios - using correct API strategy types
-                const scenarios = [
-                    {
-                        name: 'Protective Put Strategy',
-                        type: 'protective_put',
-                        description: 'Maximum downside protection with full upside participation',
-                        premium: 0.15,
-                        protection: 25,
-                        strike: this.marketData ? this.marketData.btc_price * 0.95 : 95000,
-                        benefits: ['Full downside protection below strike price', 'Unlimited upside potential', 'Live market data pricing']
-                    },
-                    {
-                        name: 'Put Spread Strategy',
-                        type: 'put_spread',
-                        description: 'Cost-efficient protection using live volatility data',
-                        premium: 0.12,
-                        protection: 15,
-                        strike: this.marketData ? this.marketData.btc_price * 0.9 : 90000,
-                        benefits: ['Lower premium than outright puts', 'Protection against moderate declines', 'Live market data pricing']
-                    },
-                    {
-                        name: 'Collar Strategy',
-                        type: 'collar',
-                        description: 'Cost-effective protection with capped upside',
-                        premium: 0.08,
-                        protection: 20,
-                        strike: this.marketData ? this.marketData.btc_price * 0.85 : 85000,
-                        benefits: ['Lower cost than outright put protection', 'Downside protection below put strike', 'Live market data pricing']
-                    },
-                    {
-                        name: 'Covered Call Strategy',
-                        type: 'covered_call',
-                        description: 'Generate premium income with downside protection',
-                        premium: -0.05,
-                        protection: 10,
-                        strike: this.marketData ? this.marketData.btc_price * 0.88 : 88000,
-                        benefits: ['Generates income', 'Reduces net cost', 'Conservative approach']
-                    }
-                ];
+                console.log('Displaying LIVE lender strategies from API:', strategies);
                 
-                const html = scenarios.map((scenario, index) => `
-                    <div class="strategy-card ${index === 0 ? 'recommended' : ''}" onclick="selectLenderScenario('${scenario.type}')">
-                        ${index === 0 ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
+                if (!strategies || strategies.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;padding:40px;">No strategies available. Please try again.</p>';
+                    return;
+                }
+                
+                const html = strategies.map((strategy) => `
+                    <div class="strategy-card ${strategy.recommended ? 'recommended' : ''}" onclick="selectLenderScenario('${strategy.strategy_type}')">
+                        ${strategy.recommended ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
                         
                         <div class="strategy-header">
-                            <h3>${scenario.name}</h3>
-                            <div class="strategy-cost">
-                                ${scenario.premium > 0 ? 
-                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
-                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
-                                }
-                            </div>
+                            <h3>${strategy.strategy_name}</h3>
+                            <div class="strategy-cost">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</div>
                         </div>
                         
                         <div class="live-data-pricing">
                             <span class="live-indicator">✓</span>
                             <span class="live-text">LIVE DATA PRICING</span>
-                            <span class="live-timestamp">${new Date().toLocaleString()}</span>
+                            <span class="live-timestamp">${new Date(strategy.pricing_timestamp).toLocaleString()}</span>
                         </div>
                         
-                        <div class="premium-discount">
-                            <span class="discount-badge">PREMIUM DISCOUNT APPLIED</span>
-                            <span class="discount-amount">-15% Platform Fee</span>
-                        </div>
+                        ${strategy.bundled_protection ? `
+                            <div class="premium-discount">
+                                <span class="discount-badge">PREMIUM DISCOUNT APPLIED</span>
+                                <span class="discount-amount">-${strategy.discount_percentage}% Platform Fee</span>
+                            </div>
+                        ` : ''}
                         
                         <div class="strategy-description">
-                            <p>${scenario.description}</p>
+                            <p>${strategy.strategy_subtitle || strategy.strategy_category || 'Professional downside protection strategy'}</p>
                         </div>
                         
                         <div class="strategy-metrics">
                             <div class="metric-card">
-                                <div class="metric-value">${scenario.premium > 0 ? 
-                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
-                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
-                                }</div>
-                                <div class="metric-label">Total Cost/Income</div>
+                                <div class="metric-value">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</div>
+                                <div class="metric-label">Total Cost</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">$${Math.round(scenario.strike * 0.1).toLocaleString()}</div>
-                                <div class="metric-label">Max Loss/Upside</div>
+                                <div class="metric-value">${this.formatCurrency(strategy.strike_price || 0)}</div>
+                                <div class="metric-label">Strike Price</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${scenario.protection}%</div>
-                                <div class="metric-label">Protection Level</div>
+                                <div class="metric-value">${strategy.position_size || '0'} BTC</div>
+                                <div class="metric-label">Position Size</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${scenario.type.includes('spread') || scenario.type.includes('collar') ? 'Medium' : 'Low'}</div>
+                                <div class="metric-value">${strategy.complexity || 'Medium'}</div>
                                 <div class="metric-label">Complexity</div>
                             </div>
                         </div>
                         
                         <div class="strategy-benefits">
-                            <h4>Key Benefits:</h4>
+                            <h4>Key Details:</h4>
                             <ul>
-                                ${scenario.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                                <li>Live Market Data from ${strategy.data_source}</li>
+                                <li>Platform Revenue: ${this.formatCurrency(strategy.platform_revenue || 0)}</li>
+                                <li>Priced at: ${new Date(strategy.pricing_timestamp).toLocaleString()}</li>
                             </ul>
                         </div>
                         
@@ -701,23 +663,46 @@
             }
         }
         
-        function generateLenderScenarios() {
+        async function generateLenderScenarios() {
             if (!demo.liveDataAvailable) {
-                alert('🚨 LIVE DATA REQUIRED: Scenario generation requires live market data. Please wait for data connection or try again.');
+                alert('🚨 LIVE DATA REQUIRED: Strategy generation requires live market data. Please wait for data connection or try again.');
                 return;
             }
             
-            demo.showLoading('Generating lender protection scenarios...');
+            demo.showLoading('Generating LIVE lender protection strategies...');
             
-            // Display scenarios
-            setTimeout(() => {
-                demo.displayLenderScenarios();
+            try {
+                // Call API to generate strategies with LIVE data
+                const response = await fetch('/api/generate-strategies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                console.log('Lender API generate-strategies response:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Strategy generation failed');
+                }
+                
+                if (data.analysis_context.data_source !== 'LIVE_MARKET_DATA') {
+                    throw new Error('Strategies not priced with live market data');
+                }
+                
                 demo.hideLoading();
+                
+                // Display LIVE strategies from API
+                demo.displayLiveStrategies(data.strategies, data.analysis_context);
                 
                 // Show step 3, hide step 2
                 document.getElementById('lending-step-2').style.display = 'none';
                 document.getElementById('lending-step-3').style.display = 'block';
-            }, 2000);
+                
+            } catch (error) {
+                demo.hideLoading();
+                console.error('Lender strategy generation error:', error);
+                alert(`🚨 STRATEGY GENERATION ERROR: ${error.message}\n\nLive market data is required. Please ensure market data connection is active and try again.`);
+            }
         }
         
         async function selectLenderScenario(scenarioType) {
@@ -726,53 +711,10 @@
                 return;
             }
             
-            demo.showLoading('Analyzing lender portfolio...');
+            demo.showLoading('Selecting strategy...');
             
             try {
-                // Step 1: Analyze lender portfolio
-                const protectionAmount = parseFloat(document.getElementById('protection-amount').value) || 0;
-                const protectionPeriod = parseInt(document.getElementById('protection-period').value) || 90;
-                
-                const analysisResponse = await fetch('/api/analyze-portfolio', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        profile: {
-                            name: 'Lender Protection',
-                            protection_type: 'downside',
-                            risk_tolerance: 'conservative'
-                        },
-                        positions: {
-                            btc_size: protectionAmount,
-                            protection_period: protectionPeriod,
-                            protection_type: 'downside'
-                        }
-                    })
-                });
-                
-                const analysisData = await analysisResponse.json();
-                if (!analysisData.success) {
-                    throw new Error(analysisData.error || 'Portfolio analysis failed');
-                }
-                
-                demo.hideLoading();
-                demo.showLoading('Generating protection strategies...');
-                
-                // Step 2: Generate strategies
-                const strategiesResponse = await fetch('/api/generate-strategies', {
-                    method: 'POST'
-                });
-                
-                const strategiesData = await strategiesResponse.json();
-                console.log('Lender strategies response:', strategiesData);
-                if (!strategiesData.success) {
-                    throw new Error(strategiesData.error || 'Strategy generation failed');
-                }
-                
-                demo.hideLoading();
-                demo.showLoading('Selecting strategy...');
-                
-                // Step 3: Select strategy
+                // Step 1: Select strategy (analysis and generation already done)
                 const selectResponse = await fetch('/api/select-strategy', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -788,7 +730,7 @@
                 demo.hideLoading();
                 demo.showLoading('Executing protection strategy...');
                 
-                // Step 4: Execute strategy
+                // Step 2: Execute strategy
                 const executeResponse = await fetch('/api/execute-strategy', {
                     method: 'POST'
                 });
