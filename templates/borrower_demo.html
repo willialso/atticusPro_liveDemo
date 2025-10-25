@@ -432,7 +432,7 @@
                 
                 if (!container || !resultsSection) return;
                 
-                // Sample borrower scenarios
+                // Sample borrower scenarios - using correct API strategy types
                 const scenarios = [
                     {
                         name: 'Moonshot Protection',
@@ -444,8 +444,8 @@
                         benefits: ['Maximum upside capture', 'Low premium cost', 'Protects against missed rallies']
                     },
                     {
-                        name: 'Near ATM Call',
-                        type: 'near_atm_call',
+                        name: 'OTM Call Protection',
+                        type: 'otm_call',
                         description: 'Balanced upside protection with moderate cost',
                         premium: 0.25,
                         upside: 25,
@@ -453,7 +453,7 @@
                         benefits: ['Balanced risk/reward', 'Moderate premium', 'Good upside capture']
                     },
                     {
-                        name: 'Call Spread',
+                        name: 'Call Spread Strategy',
                         type: 'call_spread',
                         description: 'Capped upside with lower premium cost',
                         premium: 0.18,
@@ -471,8 +471,8 @@
                         benefits: ['Downside protection included', 'Lowest net cost', 'Balanced approach']
                     },
                     {
-                        name: 'Income Enhancement',
-                        type: 'income',
+                        name: 'Covered Call Strategy',
+                        type: 'covered_call',
                         description: 'Generate premium income with covered calls',
                         premium: -0.08,
                         upside: 10,
@@ -481,46 +481,61 @@
                     }
                 ];
                 
-                const html = scenarios.map(scenario => `
-                    <div class="scenario-card" onclick="selectBorrowerScenario('${scenario.type}')">
-                        <div class="scenario-header">
+                const html = scenarios.map((scenario, index) => `
+                    <div class="strategy-card ${index === 0 ? 'recommended' : ''}" onclick="selectBorrowerScenario('${scenario.type}')">
+                        ${index === 0 ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
+                        
+                        <div class="strategy-header">
                             <h3>${scenario.name}</h3>
-                            <div class="scenario-cost">
+                            <div class="strategy-cost">
                                 ${scenario.premium > 0 ? 
-                                    `$${Math.round(scenario.premium * 1000)} premium` : 
-                                    `$${Math.round(Math.abs(scenario.premium) * 1000)} income`
+                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
+                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
                                 }
                             </div>
                         </div>
                         
-                        <div class="scenario-description">
+                        <div class="live-data-pricing">
+                            <span class="live-indicator">✓</span>
+                            <span class="live-text">LIVE DATA PRICING</span>
+                            <span class="live-timestamp">${new Date().toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="strategy-description">
                             <p>${scenario.description}</p>
                         </div>
                         
-                        <div class="scenario-metrics">
-                            <div class="metric">
-                                <span class="label">Upside Target</span>
-                                <span class="value">+${scenario.upside}%</span>
+                        <div class="strategy-metrics">
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.premium > 0 ? 
+                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
+                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
+                                }</div>
+                                <div class="metric-label">Total Cost/Income</div>
                             </div>
-                            <div class="metric">
-                                <span class="label">Strike Price</span>
-                                <span class="value">${this.formatCurrency(scenario.strike)}</span>
+                            <div class="metric-card">
+                                <div class="metric-value">$${Math.round(scenario.strike * 0.1).toLocaleString()}</div>
+                                <div class="metric-label">Max Loss/Upside</div>
                             </div>
-                            <div class="metric">
-                                <span class="label">Strategy Type</span>
-                                <span class="value">${scenario.type.replace('_', ' ').toUpperCase()}</span>
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.upside}%</div>
+                                <div class="metric-label">Protection Level</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.type.includes('spread') || scenario.type.includes('collar') ? 'Medium' : 'Low'}</div>
+                                <div class="metric-label">Complexity</div>
                             </div>
                         </div>
                         
-                        <div class="scenario-benefits">
+                        <div class="strategy-benefits">
                             <h4>Key Benefits:</h4>
                             <ul>
                                 ${scenario.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
                             </ul>
                         </div>
                         
-                        <div class="scenario-action">
-                            <button class="select-scenario-btn">Select This Strategy</button>
+                        <div class="strategy-action">
+                            <button class="select-strategy-btn">Select Live-Priced Strategy</button>
                         </div>
                     </div>
                 `).join('');

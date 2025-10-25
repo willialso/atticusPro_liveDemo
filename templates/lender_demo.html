@@ -456,95 +456,101 @@
                 
                 if (!container || !resultsSection) return;
                 
-                // Sample lender scenarios
+                // Sample lender scenarios - using correct API strategy types
                 const scenarios = [
                     {
-                        name: 'Disaster Protection',
-                        type: 'disaster_put',
-                        description: 'Deep OTM puts for extreme downside protection',
-                        premium: 0.08,
-                        protection: 80,
-                        strike: this.marketData ? this.marketData.btc_price * 0.8 : 80000,
-                        benefits: ['Maximum downside protection', 'Low premium cost', 'Catastrophic event coverage']
-                    },
-                    {
-                        name: 'Near-ATM Protection',
-                        type: 'near_atm_put',
-                        description: 'Balanced downside protection with moderate cost',
+                        name: 'Protective Put Strategy',
+                        type: 'protective_put',
+                        description: 'Maximum downside protection with full upside participation',
                         premium: 0.15,
                         protection: 25,
                         strike: this.marketData ? this.marketData.btc_price * 0.95 : 95000,
-                        benefits: ['Balanced risk/reward', 'Moderate premium', 'Good downside protection']
+                        benefits: ['Full downside protection below strike price', 'Unlimited upside potential', 'Live market data pricing']
                     },
                     {
-                        name: 'Conservative Protection',
-                        type: 'conservative_put',
-                        description: 'Moderate downside protection with lower cost',
+                        name: 'Put Spread Strategy',
+                        type: 'put_spread',
+                        description: 'Cost-efficient protection using live volatility data',
                         premium: 0.12,
                         protection: 15,
                         strike: this.marketData ? this.marketData.btc_price * 0.9 : 90000,
-                        benefits: ['Lower premium cost', 'Moderate protection', 'Risk management']
+                        benefits: ['Lower premium than outright puts', 'Protection against moderate declines', 'Live market data pricing']
                     },
                     {
-                        name: 'Liquidation Protection',
-                        type: 'liquidation_put',
-                        description: 'Protection at liquidation threshold',
-                        premium: 0.18,
-                        protection: 10,
+                        name: 'Collar Strategy',
+                        type: 'collar',
+                        description: 'Cost-effective protection with capped upside',
+                        premium: 0.08,
+                        protection: 20,
                         strike: this.marketData ? this.marketData.btc_price * 0.85 : 85000,
-                        benefits: ['Liquidation threshold protection', 'Higher premium', 'Maximum security']
+                        benefits: ['Lower cost than outright put protection', 'Downside protection below put strike', 'Live market data pricing']
                     },
                     {
-                        name: 'Income Enhancement',
-                        type: 'income_put_spread',
-                        description: 'Put spreads for premium income generation',
+                        name: 'Covered Call Strategy',
+                        type: 'covered_call',
+                        description: 'Generate premium income with downside protection',
                         premium: -0.05,
-                        protection: 5,
+                        protection: 10,
                         strike: this.marketData ? this.marketData.btc_price * 0.88 : 88000,
                         benefits: ['Generates income', 'Reduces net cost', 'Conservative approach']
                     }
                 ];
                 
-                const html = scenarios.map(scenario => `
-                    <div class="scenario-card" onclick="selectLenderScenario('${scenario.type}')">
-                        <div class="scenario-header">
+                const html = scenarios.map((scenario, index) => `
+                    <div class="strategy-card ${index === 0 ? 'recommended' : ''}" onclick="selectLenderScenario('${scenario.type}')">
+                        ${index === 0 ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
+                        
+                        <div class="strategy-header">
                             <h3>${scenario.name}</h3>
-                            <div class="scenario-cost">
+                            <div class="strategy-cost">
                                 ${scenario.premium > 0 ? 
-                                    `$${Math.round(scenario.premium * 1000)} premium` : 
-                                    `$${Math.round(Math.abs(scenario.premium) * 1000)} income`
+                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
+                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
                                 }
                             </div>
                         </div>
                         
-                        <div class="scenario-description">
+                        <div class="live-data-pricing">
+                            <span class="live-indicator">✓</span>
+                            <span class="live-text">LIVE DATA PRICING</span>
+                            <span class="live-timestamp">${new Date().toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="strategy-description">
                             <p>${scenario.description}</p>
                         </div>
                         
-                        <div class="scenario-metrics">
-                            <div class="metric">
-                                <span class="label">Protection Level</span>
-                                <span class="value">${scenario.protection}%</span>
+                        <div class="strategy-metrics">
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.premium > 0 ? 
+                                    `$${Math.round(scenario.premium * 1000).toLocaleString()}` : 
+                                    `$${Math.round(Math.abs(scenario.premium) * 1000).toLocaleString()}`
+                                }</div>
+                                <div class="metric-label">Total Cost/Income</div>
                             </div>
-                            <div class="metric">
-                                <span class="label">Strike Price</span>
-                                <span class="value">${this.formatCurrency(scenario.strike)}</span>
+                            <div class="metric-card">
+                                <div class="metric-value">$${Math.round(scenario.strike * 0.1).toLocaleString()}</div>
+                                <div class="metric-label">Max Loss/Upside</div>
                             </div>
-                            <div class="metric">
-                                <span class="label">Strategy Type</span>
-                                <span class="value">${scenario.type.replace('_', ' ').toUpperCase()}</span>
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.protection}%</div>
+                                <div class="metric-label">Protection Level</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${scenario.type.includes('spread') || scenario.type.includes('collar') ? 'Medium' : 'Low'}</div>
+                                <div class="metric-label">Complexity</div>
                             </div>
                         </div>
                         
-                        <div class="scenario-benefits">
+                        <div class="strategy-benefits">
                             <h4>Key Benefits:</h4>
                             <ul>
                                 ${scenario.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
                             </ul>
                         </div>
                         
-                        <div class="scenario-action">
-                            <button class="select-scenario-btn">Select This Strategy</button>
+                        <div class="strategy-action">
+                            <button class="select-strategy-btn">Select Live-Priced Strategy</button>
                         </div>
                     </div>
                 `).join('');
