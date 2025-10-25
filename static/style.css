@@ -3573,6 +3573,30 @@ body {
     margin-left: auto;
 }
 
+.premium-discount {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border-radius: 12px;
+    border: 1px solid var(--warning);
+}
+
+.discount-badge {
+    color: var(--warning);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.discount-amount {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: auto;
+}
+
 .strategy-description {
     margin-bottom: 24px;
 }

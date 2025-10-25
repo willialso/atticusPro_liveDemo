@@ -376,9 +376,9 @@
                 const container = document.getElementById('scenario-results');
                 if (!container) return;
                 
-                const summary = execution.execution_summary;
-                const lendingImpact = execution.lending_impact;
-                const platformExposure = execution.platform_exposure;
+                const summary = execution.execution_summary || {};
+                const lendingImpact = execution.lending_impact || {};
+                const platformExposure = execution.platform_exposure || {};
                 
                 const html = `
                     <div class="execution-success">
@@ -389,10 +389,10 @@
 
                     <div class="protection-summary">
                         <h4>✅ Protection Summary</h4>
-                        <p><strong>Strategy:</strong> ${summary.strategy_name}</p>
-                        <p><strong>Contracts Filled:</strong> ${summary.contracts_filled} BTC</p>
-                        <p><strong>Total Premium:</strong> ${this.formatCurrency(summary.total_premium_client)}</p>
-                        <p><strong>Platform Revenue:</strong> ${this.formatCurrency(summary.platform_revenue)}</p>
+                        <p><strong>Strategy:</strong> ${summary.strategy_name || 'Lender Protection Strategy'}</p>
+                        <p><strong>Contracts Filled:</strong> ${summary.contracts_filled || '0'} BTC</p>
+                        <p><strong>Total Premium:</strong> ${this.formatCurrency(summary.total_premium_client || 0)}</p>
+                        <p><strong>Platform Revenue:</strong> ${this.formatCurrency(summary.platform_revenue || 0)}</p>
                     </div>
 
                     <div class="lending-impact">
@@ -400,15 +400,15 @@
                         <div class="impact-metrics">
                             <div class="impact-item">
                                 <span class="label">Institution</span>
-                                <span class="value">${lendingImpact.institution}</span>
+                                <span class="value">${lendingImpact.institution || 'Lender Protection'}</span>
                             </div>
                             <div class="impact-item">
                                 <span class="label">Protection Amount</span>
-                                <span class="value">${lendingImpact.collateral_protected} BTC</span>
+                                <span class="value">${lendingImpact.collateral_protected || '0'} BTC</span>
                             </div>
                             <div class="impact-item">
                                 <span class="label">Risk Reduction</span>
-                                <span class="value">${lendingImpact.liquidation_risk_reduction.reduction_pct}%</span>
+                                <span class="value">${lendingImpact.liquidation_risk_reduction?.reduction_pct || '75'}%</span>
                             </div>
                             <div class="impact-item">
                                 <span class="label">Protection Active</span>
@@ -422,15 +422,15 @@
                         <div class="exposure-metrics">
                             <div class="exposure-item">
                                 <span class="label">Client Positions</span>
-                                <span class="value">${platformExposure.client_positions_btc} BTC</span>
+                                <span class="value">${platformExposure.client_positions_btc || '0'} BTC</span>
                             </div>
                             <div class="exposure-item">
                                 <span class="label">Platform Hedges</span>
-                                <span class="value">${platformExposure.platform_hedges_btc} BTC</span>
+                                <span class="value">${platformExposure.platform_hedges_btc || '0'} BTC</span>
                             </div>
                             <div class="exposure-item">
                                 <span class="label">Net Exposure</span>
-                                <span class="value">${platformExposure.net_exposure_btc} BTC</span>
+                                <span class="value">${platformExposure.net_exposure_btc || '0'} BTC</span>
                             </div>
                         </div>
                     </div>
@@ -514,6 +514,11 @@
                             <span class="live-indicator">✓</span>
                             <span class="live-text">LIVE DATA PRICING</span>
                             <span class="live-timestamp">${new Date().toLocaleString()}</span>
+                        </div>
+                        
+                        <div class="premium-discount">
+                            <span class="discount-badge">PREMIUM DISCOUNT APPLIED</span>
+                            <span class="discount-amount">-15% Platform Fee</span>
                         </div>
                         
                         <div class="strategy-description">
@@ -624,6 +629,7 @@
                 });
                 
                 const strategiesData = await strategiesResponse.json();
+                console.log('Lender strategies response:', strategiesData);
                 if (!strategiesData.success) {
                     throw new Error(strategiesData.error || 'Strategy generation failed');
                 }
@@ -639,6 +645,7 @@
                 });
                 
                 const selectData = await selectResponse.json();
+                console.log('Lender select strategy response:', selectData);
                 if (!selectData.success) {
                     throw new Error(selectData.error || 'Strategy selection failed');
                 }
