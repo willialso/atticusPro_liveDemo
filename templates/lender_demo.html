@@ -144,28 +144,18 @@
                                     </div>
                                     
                                     <div class="overview-item">
-                                        <span class="label">Projected Lending Income</span>
-                                        <span class="value" id="lending-income">$0</span>
+                                        <span class="label">Expected Lending Rate</span>
+                                        <span class="value" id="lending-rate-display">10% APY</span>
                                     </div>
                                     
                                     <div class="overview-item">
-                                        <span class="label">Protection Premium</span>
-                                        <span class="value" id="premium-cost">$0</span>
-                                    </div>
-                                    
-                                    <div class="overview-item">
-                                        <span class="label">Net Income</span>
-                                        <span class="value" id="net-income">$0</span>
-                                    </div>
-                                    
-                                    <div class="overview-item">
-                                        <span class="label">Net ROI</span>
-                                        <span class="value" id="net-roi">0%</span>
+                                        <span class="label">Position Value</span>
+                                        <span class="value" id="position-value">$0</span>
                                     </div>
                                 </div>
                                 
                                 <div class="helper-text">
-                                    Configure protection parameters above
+                                    Configure parameters above and click "Analyze Protection Position" to see live-priced strategies with value calculations
                                 </div>
                             </div>
                         </div>
@@ -249,6 +239,11 @@
             constructor() {
                 this.marketData = null;
                 this.liveDataAvailable = false;
+                // Initialize values for strategy calculations
+                this.protectionAmount = 0;
+                this.protectionPeriod = 90;
+                this.lendingRate = 0.10; // 10% APY default
+                this.positionValueUSD = 0;
                 this.init();
             }
             
@@ -341,36 +336,22 @@
                 if (protectionAmount > 0 && this.marketData && this.marketData.btc_price) {
                     document.getElementById('protection-display').textContent = `${protectionAmount} BTC`;
                     
-                    // Calculate realistic premium cost (catastrophe protection tier - lowest cost option)
-                    // This represents "catastrophe protection" near liquidation price (cheapest of three tiers)
-                    // Catastrophe tier targets <2% APR, actual pricing typically 0.1-0.2% annual
-                    const premiumCostBTC = (protectionAmount * 0.0015 * (protectionPeriod / 365)).toFixed(3);
+                    // Calculate position value in USD
+                    const positionValueUSD = protectionAmount * this.marketData.btc_price;
+                    document.getElementById('position-value').textContent = this.formatCurrency(positionValueUSD);
                     
-                    // Convert to USD using live BTC price
-                    const premiumCostUSD = parseFloat(premiumCostBTC) * this.marketData.btc_price;
-                    
-                    // Calculate lending income (10% APY assumed for BTC lending)
-                    const BTC_LENDING_APY = 0.10; // 10% annual percentage yield
-                    const protectionValueUSD = protectionAmount * this.marketData.btc_price;
-                    const lendingIncomeUSD = protectionValueUSD * (BTC_LENDING_APY * (protectionPeriod / 365));
-                    
-                    // Calculate net income (lending income - premium cost)
-                    const netIncomeUSD = lendingIncomeUSD - premiumCostUSD;
-                    
-                    // Calculate ROI as percentage of premium cost
-                    const netROI = premiumCostUSD > 0 ? (netIncomeUSD / premiumCostUSD) * 100 : 0;
-                    
-                    // Update displays with formatted values
-                    document.getElementById('lending-income').textContent = this.formatCurrency(lendingIncomeUSD);
-                    document.getElementById('premium-cost').textContent = this.formatCurrency(premiumCostUSD);
-                    document.getElementById('net-income').textContent = this.formatCurrency(netIncomeUSD);
-                    document.getElementById('net-roi').textContent = `${Math.round(netROI)}%`;
+                    // Store values for later use in strategy calculations
+                    this.protectionAmount = protectionAmount;
+                    this.protectionPeriod = protectionPeriod;
+                    this.lendingRate = 0.10; // 10% APY default
+                    this.positionValueUSD = positionValueUSD;
                 } else {
                     document.getElementById('protection-display').textContent = 'Enter amount';
-                    document.getElementById('lending-income').textContent = '$0';
-                    document.getElementById('premium-cost').textContent = '$0';
-                    document.getElementById('net-income').textContent = '$0';
-                    document.getElementById('net-roi').textContent = '0%';
+                    document.getElementById('position-value').textContent = '$0';
+                    this.protectionAmount = 0;
+                    this.protectionPeriod = 90;
+                    this.lendingRate = 0.10;
+                    this.positionValueUSD = 0;
                 }
             }
             
@@ -570,24 +551,38 @@
                             <p>${strategy.strategy_subtitle || strategy.strategy_category || 'Professional downside protection strategy'}</p>
                         </div>
                         
+                        ${(() => {
+                            // Calculate value metrics for lender
+                            const premiumCost = strategy.total_client_cost || strategy.total_net_received || 0;
+                            const protectionAmount = this.protectionAmount || 1;
+                            const protectionPeriod = this.protectionPeriod || 90;
+                            const lendingRate = this.lendingRate || 0.10;
+                            const positionValue = this.positionValueUSD || (protectionAmount * (this.marketData?.btc_price || 111000));
+                            
+                            const lendingIncome = positionValue * (lendingRate * (protectionPeriod / 365));
+                            const netIncome = lendingIncome - premiumCost;
+                            const roi = premiumCost > 0 ? (netIncome / premiumCost) * 100 : 0;
+                            
+                            return `
                         <div class="strategy-metrics">
                             <div class="metric-card">
-                                <div class="metric-value">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</div>
-                                <div class="metric-label">Total Cost</div>
+                                <div class="metric-value">${this.formatCurrency(premiumCost)}</div>
+                                <div class="metric-label">Protection Premium</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${this.formatCurrency(strategy.strike_price || 0)}</div>
-                                <div class="metric-label">Strike Price</div>
+                                <div class="metric-value">${this.formatCurrency(Math.round(lendingIncome))}</div>
+                                <div class="metric-label">Lending Income</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${strategy.position_size || '0'} BTC</div>
-                                <div class="metric-label">Position Size</div>
+                                <div class="metric-value">${this.formatCurrency(Math.round(netIncome))}</div>
+                                <div class="metric-label">Net Income</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${strategy.complexity || 'Medium'}</div>
-                                <div class="metric-label">Complexity</div>
+                                <div class="metric-value">${Math.round(roi)}%</div>
+                                <div class="metric-label">Net ROI</div>
                             </div>
-                        </div>
+                        </div>`;
+                        })()}
                         
                         <div class="strategy-benefits">
                             <h4>Key Details:</h4>
