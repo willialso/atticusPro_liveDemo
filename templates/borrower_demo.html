@@ -446,40 +446,11 @@
                         </div>
                     </div>
 
-                    <div class="platform-exposure-management">
-                        <h4>Platform Exposure Management</h4>
-                        <div class="exposure-metrics">
-                            <div class="exposure-item">
-                                <span class="label">Client Positions</span>
-                                <span class="value">${platformExposure.client_positions_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Platform Hedges</span>
-                                <span class="value">${platformExposure.platform_hedges_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Net Exposure</span>
-                                <span class="value">${platformExposure.net_exposure_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Hedge Action</span>
-                                <span class="value">HEDGED</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="execution-venues">
                         <h4>Execution Venues</h4>
                         <div class="venues-content">
                             <p>Professional execution across institutional venues with live market data verification.</p>
                         </div>
-                    </div>
-
-                    <div class="execution-actions">
-                        <button class="secondary-btn" onclick="location.reload()">New Protection</button>
-                        <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
-                            Contact via Telegram →
-                        </a>
                     </div>
                 `;
                 
@@ -629,7 +600,7 @@
                         <div class="metrics-grid">
                             <div class="metric-item">
                                 <span class="metric-label">Loan Amount</span>
-                                <span class="metric-value">$${demo.formatCurrency(loanAmount)}</span>
+                                <span class="metric-value">${demo.formatCurrency(loanAmount)}</span>
                             </div>
                             <div class="metric-item">
                                 <span class="metric-label">Collateral</span>
