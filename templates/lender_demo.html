@@ -63,114 +63,150 @@
                     </div>
                 </div>
 
-                <!-- Nexus Mutual Style Layout -->
-                <div class="lender-layout">
-                    <!-- Left Panel - Details -->
-                    <div class="details-panel">
-                        <h2>Protection Details</h2>
+                <!-- Step-by-Step Workflow -->
+                <div class="workflow-container">
+                    <!-- Step 1: Configure Protection -->
+                    <div id="lending-step-1" class="workflow-step">
+                        <h3>Step 1: Configure Protection Parameters</h3>
                         
-                        <div class="form-group">
-                            <label>Protection Amount</label>
-                            <div class="amount-input">
-                                <input type="number" id="protection-amount" placeholder="10" step="0.1" min="0.1">
-                                <span class="unit">BTC</span>
+                        <div class="lender-layout">
+                            <!-- Left Panel - Details -->
+                            <div class="details-panel">
+                                <h4>Protection Details</h4>
+                                
+                                <div class="form-group">
+                                    <label>Protection Amount</label>
+                                    <div class="amount-input">
+                                        <input type="number" id="protection-amount" placeholder="1" step="0.1" min="0.1" value="1">
+                                        <span class="unit">BTC</span>
+                                    </div>
+                                    <div class="max-info">
+                                        <span>Max: <span id="max-protection">Loading...</span> BTC</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Protection Period</label>
+                                    <div class="period-slider-container">
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="protection-period" min="28" max="365" value="90" class="period-slider">
+                                            <div class="slider-track"></div>
+                                        </div>
+                                        <div class="period-labels">
+                                            <span>28 days</span>
+                                            <span id="period-value">90 days</span>
+                                            <span>365 days</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Terms & Conditions</label>
+                                    <div class="terms-list">
+                                        <div class="term-item">
+                                            <span class="checkmark">✓</span>
+                                            <span>Disaster Protection</span>
+                                        </div>
+                                        <div class="term-item">
+                                            <span class="checkmark">✓</span>
+                                            <span>Near-ATM Protection</span>
+                                        </div>
+                                        <div class="term-item">
+                                            <span class="checkmark">✓</span>
+                                            <span>Conserv Protection</span>
+                                        </div>
+                                        <div class="term-item">
+                                            <span class="checkmark">✓</span>
+                                            <span>Liquidation Protection</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Cover Chains</label>
+                                    <div class="chain-info">
+                                        <span>Bitcoin mainnet only</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="max-info">
-                                <span>Max: <span id="max-protection">Loading...</span> BTC</span>
+
+                            <!-- Right Panel - Overview -->
+                            <div class="overview-panel">
+                                <h4>Protection Overview</h4>
+                                
+                                <div class="overview-content">
+                                    <div class="overview-item">
+                                        <span class="label">Strategy</span>
+                                        <span class="value" id="strategy-name">Bitcoin Lending Protection</span>
+                                    </div>
+                                    
+                                    <div class="overview-item">
+                                        <span class="label">Protection</span>
+                                        <span class="value" id="protection-display">1 BTC</span>
+                                    </div>
+                                    
+                                    <div class="overview-item">
+                                        <span class="label">Period</span>
+                                        <span class="value" id="period-display">90 days</span>
+                                    </div>
+                                    
+                                    <div class="overview-item">
+                                        <span class="label">Annual Fee</span>
+                                        <span class="value" id="annual-fee">2.9%</span>
+                                    </div>
+                                    
+                                    <div class="overview-item">
+                                        <span class="label">Premium Cost</span>
+                                        <span class="value" id="premium-cost">0.XX BTC</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="helper-text">
+                                    Configure protection parameters above
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label>Protection Period</label>
-                            <div class="period-slider-container">
-                                <div class="slider-wrapper">
-                                    <input type="range" id="protection-period" min="28" max="365" value="90" class="period-slider">
-                                    <div class="slider-track"></div>
-                                </div>
-                                <div class="period-labels">
-                                    <span>28 days</span>
-                                    <span id="period-value">90 days</span>
-                                    <span>365 days</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Terms & Conditions</label>
-                            <div class="terms-list">
-                                <div class="term-item">
-                                    <span class="checkmark">✓</span>
-                                    <span>Disaster Protection</span>
-                                </div>
-                                <div class="term-item">
-                                    <span class="checkmark">✓</span>
-                                    <span>Near-ATM Protection</span>
-                                </div>
-                                <div class="term-item">
-                                    <span class="checkmark">✓</span>
-                                    <span>Conservative Protection</span>
-                                </div>
-                                <div class="term-item">
-                                    <span class="checkmark">✓</span>
-                                    <span>Liquidation Protection</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Cover Chains</label>
-                            <div class="chain-info">
-                                <span>Bitcoin mainnet only</span>
-                            </div>
+                        <div class="step-button-container">
+                            <button class="action-btn" onclick="analyzeLenderPosition()">
+                                Analyze Protection Position →
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Right Panel - Overview -->
-                    <div class="overview-panel">
-                        <h2>Protection Overview</h2>
-                        
-                        <div class="overview-content">
-                            <div class="overview-item">
-                                <span class="label">Strategy</span>
-                                <span class="value" id="strategy-name">Bitcoin Lending Protection</span>
-                            </div>
-                            
-                            <div class="overview-item">
-                                <span class="label">Protection</span>
-                                <span class="value" id="protection-display">10 BTC</span>
-                            </div>
-                            
-                            <div class="overview-item">
-                                <span class="label">Period</span>
-                                <span class="value" id="period-display">90 days</span>
-                            </div>
-                            
-                            <div class="overview-item">
-                                <span class="label">Annual Fee</span>
-                                <span class="value" id="annual-fee">1.9%</span>
-                            </div>
-                            
-                            <div class="overview-item">
-                                <span class="label">Premium Cost</span>
-                                <span class="value" id="premium-cost">0.XX BTC</span>
-                            </div>
+                    <!-- Step 2: Risk Analysis -->
+                    <div id="lending-step-2" class="workflow-step" style="display:none;">
+                        <h3>Step 2: Risk Analysis</h3>
+                        <div id="lender-analysis-results" class="analysis-content">
+                            <!-- Populated by JavaScript -->
                         </div>
-                        
-                        <button class="generate-scenarios-btn" onclick="generateLenderScenarios()">
-                            Generate Scenarios
-                        </button>
-                        
-                        <div class="helper-text">
-                            Configure protection parameters to see pricing
+                        <div class="step-button-container">
+                            <button class="action-btn" onclick="generateLenderScenarios()">
+                                Generate Protection Strategies →
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Scenario Results -->
-                <div id="scenario-results" class="scenario-results" style="display: none;">
-                    <h2>Protection Scenarios</h2>
-                    <div id="scenarios-container">
-                        <!-- Populated by JavaScript -->
+                    <!-- Step 3: Strategy Selection -->
+                    <div id="lending-step-3" class="workflow-step" style="display:none;">
+                        <h3>Step 3: Smart Protection Strategies</h3>
+                        <div id="scenarios-container" class="scenario-results">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Execution Summary -->
+                    <div id="lending-step-4" class="workflow-step" style="display:none;">
+                        <h3>Step 4: Execution Summary</h3>
+                        <div id="scenario-results" class="execution-content">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div class="final-actions">
+                            <button class="secondary-btn" onclick="location.reload()">New Protection</button>
+                            <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
+                                Contact via Telegram →
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -477,9 +513,8 @@
             
             displayLenderScenarios() {
                 const container = document.getElementById('scenarios-container');
-                const resultsSection = document.getElementById('scenario-results');
                 
-                if (!container || !resultsSection) return;
+                if (!container) return;
                 
                 // Sample lender scenarios - using correct API strategy types
                 const scenarios = [
@@ -586,13 +621,84 @@
                 `).join('');
                 
                 container.innerHTML = html;
-                resultsSection.style.display = 'block';
             }
         }
         
         // Navigation functions
         function goToLendingRouter() {
             window.location.href = '/lending-router';
+        }
+        
+        async function analyzeLenderPosition() {
+            if (!demo.liveDataAvailable) {
+                alert('🚨 LIVE DATA REQUIRED: Analysis requires live market data. Please wait for data connection or try again.');
+                return;
+            }
+            
+            demo.showLoading('Analyzing lender position...');
+            
+            try {
+                const protectionAmount = parseFloat(document.getElementById('protection-amount').value) || 1;
+                const protectionPeriod = parseInt(document.getElementById('protection-period').value) || 90;
+                
+                const analysisResponse = await fetch('/api/analyze-portfolio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profile: {
+                            name: 'Lender Protection',
+                            protection_type: 'downside',
+                            risk_tolerance: 'conservative'
+                        },
+                        positions: {
+                            btc_size: protectionAmount,
+                            protection_period: protectionPeriod,
+                            protection_type: 'downside'
+                        }
+                    })
+                });
+                
+                const analysisData = await analysisResponse.json();
+                if (!analysisData.success) {
+                    throw new Error(analysisData.error || 'Portfolio analysis failed');
+                }
+                
+                demo.hideLoading();
+                
+                // Display analysis results in step 2
+                document.getElementById('lender-analysis-results').innerHTML = `
+                    <div class="analysis-card">
+                        <h4>Protection Analysis</h4>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Amount</span>
+                                <span class="metric-value">${protectionAmount} BTC</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Period</span>
+                                <span class="metric-value">${protectionPeriod} days</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">BTC Value</span>
+                                <span class="metric-value">$${demo.formatCurrency(protectionAmount * demo.marketData.btc_price)}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Type</span>
+                                <span class="metric-value">Downside</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Show step 2, hide step 1
+                document.getElementById('lending-step-1').style.display = 'none';
+                document.getElementById('lending-step-2').style.display = 'block';
+                
+            } catch (error) {
+                demo.hideLoading();
+                console.error('Lender analysis error:', error);
+                alert(`🚨 ANALYSIS ERROR: ${error.message}\n\nLive market data is required. Please ensure market data connection is active and try again.`);
+            }
         }
         
         function generateLenderScenarios() {
@@ -603,10 +709,14 @@
             
             demo.showLoading('Generating lender protection scenarios...');
             
-            // Simulate scenario generation
+            // Display scenarios
             setTimeout(() => {
                 demo.displayLenderScenarios();
                 demo.hideLoading();
+                
+                // Show step 3, hide step 2
+                document.getElementById('lending-step-2').style.display = 'none';
+                document.getElementById('lending-step-3').style.display = 'block';
             }, 2000);
         }
         
@@ -691,10 +801,14 @@
                 demo.hideLoading();
                 demo.displayExecutionResults(executeData.execution);
                 
+                // Show step 4, hide step 3
+                document.getElementById('lending-step-3').style.display = 'none';
+                document.getElementById('lending-step-4').style.display = 'block';
+                
             } catch (error) {
                 demo.hideLoading();
                 console.error('Lender execution error:', error);
-                alert(`🚨 EXECUTION ERROR: ${error.message}`);
+                alert(`🚨 EXECUTION ERROR: ${error.message}\n\nLive market data is required for strategy execution. Please ensure market data connection is active and try again.`);
             }
         }
         

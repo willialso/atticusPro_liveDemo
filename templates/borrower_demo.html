@@ -451,191 +451,6 @@
                 this.loadPlatformExposure();
             }
             
-            showFallbackScenarios(scenarioType) {
-                const container = document.getElementById('scenario-results');
-                if (!container) return;
-                
-                const html = `
-                    <div class="fallback-warning">
-                        <h3>⚠️ API Connection Issue</h3>
-                        <p>Unable to generate live strategies. Showing fallback scenarios based on current market data.</p>
-                    </div>
-                    
-                    <div class="strategy-card recommended" onclick="demo.showFallbackExecution('${scenarioType}', 'API Fallback')">
-                        <div class="recommended-badge">FALLBACK</div>
-                        <div class="strategy-header">
-                            <h3>${this.getStrategyName(scenarioType)}</h3>
-                            <div class="strategy-cost">$${this.getFallbackCost(scenarioType)}</div>
-                        </div>
-                        
-                        <div class="live-data-pricing">
-                            <span class="live-indicator">⚠</span>
-                            <span class="live-text">FALLBACK PRICING</span>
-                            <span class="live-timestamp">${new Date().toLocaleString()}</span>
-                        </div>
-                        
-                        <div class="strategy-description">
-                            <p>${this.getStrategyDescription(scenarioType)}</p>
-                        </div>
-                        
-                        <div class="strategy-metrics">
-                            <div class="metric-card">
-                                <div class="metric-value">$${this.getFallbackCost(scenarioType)}</div>
-                                <div class="metric-label">Total Cost</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value">75%</div>
-                                <div class="metric-label">Protection Level</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value">Medium</div>
-                                <div class="metric-label">Complexity</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value">Live</div>
-                                <div class="metric-label">Data Source</div>
-                            </div>
-                        </div>
-                        
-                        <div class="strategy-action">
-                            <button class="select-strategy-btn">Execute Fallback Strategy</button>
-                        </div>
-                    </div>
-                `;
-                
-                container.innerHTML = html;
-                container.style.display = 'block';
-            }
-            
-            showFallbackExecution(scenarioType, errorMessage) {
-                const container = document.getElementById('scenario-results');
-                if (!container) return;
-                
-                const html = `
-                    <div class="execution-status" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-                        <span class="live-indicator">⚠</span>
-                        <span class="status-text">FALLBACK EXECUTION COMPLETED</span>
-                        <span class="timestamp">${new Date().toLocaleString()} | Data Source: FALLBACK</span>
-                    </div>
-
-                    <div class="execution-details">
-                        <h4>⚠️ Fallback Execution Completed</h4>
-                        <div class="execution-metrics">
-                            <div class="execution-item">
-                                <span class="label">Strategy Executed</span>
-                                <span class="value">${this.getStrategyName(scenarioType)}</span>
-                            </div>
-                            <div class="execution-item">
-                                <span class="label">Status</span>
-                                <span class="value" style="color: #f59e0b;">FALLBACK</span>
-                            </div>
-                            <div class="execution-item">
-                                <span class="label">Contracts Filled</span>
-                                <span class="value">1.0 BTC</span>
-                            </div>
-                            <div class="execution-item">
-                                <span class="label">Total Premium</span>
-                                <span class="value">${this.formatCurrency(this.getFallbackCost(scenarioType) * 1000)}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="portfolio-impact">
-                        <h4>Portfolio Impact</h4>
-                        <div class="impact-metrics">
-                            <div class="impact-item">
-                                <span class="label">Institution</span>
-                                <span class="value">Borrower Protection</span>
-                            </div>
-                            <div class="impact-item">
-                                <span class="label">VaR Before</span>
-                                <span class="value">${this.formatCurrency(100000)}</span>
-                            </div>
-                            <div class="impact-item">
-                                <span class="label">VaR After</span>
-                                <span class="value">${this.formatCurrency(25000)}</span>
-                            </div>
-                            <div class="impact-item">
-                                <span class="label">Risk Reduction</span>
-                                <span class="value" style="color: var(--success);">75%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="platform-exposure-management">
-                        <h4>Platform Exposure Management</h4>
-                        <div class="exposure-metrics">
-                            <div class="exposure-item">
-                                <span class="label">Client Positions</span>
-                                <span class="value">1.0 BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Platform Hedges</span>
-                                <span class="value">1.0 BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Net Exposure</span>
-                                <span class="value">0 BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Hedge Action</span>
-                                <span class="value">HEDGED</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="execution-venues">
-                        <h4>Execution Venues</h4>
-                        <div class="venues-content">
-                            <p>Fallback execution completed. Contact support for live data integration.</p>
-                        </div>
-                    </div>
-
-                    <div class="execution-actions">
-                        <button class="secondary-btn" onclick="location.reload()">New Protection</button>
-                        <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
-                            Contact via Telegram →
-                        </a>
-                    </div>
-                `;
-                
-                container.innerHTML = html;
-                container.style.display = 'block';
-            }
-            
-            getStrategyName(scenarioType) {
-                const names = {
-                    'moonshot_call': 'Moonshot Protection',
-                    'otm_call': 'Near ATM Call',
-                    'call_spread': 'Call Spread',
-                    'collar': 'Collar Strategy',
-                    'covered_call': 'Covered Call'
-                };
-                return names[scenarioType] || 'Borrower Protection';
-            }
-            
-            getStrategyDescription(scenarioType) {
-                const descriptions = {
-                    'moonshot_call': 'Maximum upside potential with aggressive strike pricing',
-                    'otm_call': 'Moderate upside protection with balanced risk',
-                    'call_spread': 'Cost-efficient upside protection using spread strategy',
-                    'collar': 'Balanced protection with capped upside and downside',
-                    'covered_call': 'Income generation with upside participation'
-                };
-                return descriptions[scenarioType] || 'Professional borrower protection strategy';
-            }
-            
-            getFallbackCost(scenarioType) {
-                const costs = {
-                    'moonshot_call': 150,
-                    'otm_call': 120,
-                    'call_spread': 80,
-                    'collar': 100,
-                    'covered_call': -50
-                };
-                return costs[scenarioType] || 100;
-            }
-            
             displayBorrowerScenarios() {
                 const container = document.getElementById('scenarios-container');
                 const resultsSection = document.getElementById('scenario-results');
@@ -829,11 +644,7 @@
                 const strategiesData = await strategiesResponse.json();
                 console.log('Borrower strategies response:', strategiesData);
                 if (!strategiesData.success) {
-                    // Show fallback scenarios if API fails
-                    console.warn('Strategy generation failed, showing fallback scenarios');
-                    demo.hideLoading();
-                    demo.showFallbackScenarios(scenarioType);
-                    return;
+                    throw new Error(strategiesData.error || 'Strategy generation failed - live data unavailable');
                 }
                 
                 demo.hideLoading();
@@ -871,9 +682,7 @@
             } catch (error) {
                 demo.hideLoading();
                 console.error('Borrower execution error:', error);
-                
-                // Show fallback execution results
-                demo.showFallbackExecution(scenarioType, error.message);
+                alert(`🚨 EXECUTION ERROR: ${error.message}\n\nLive market data is required for strategy execution. Please ensure market data connection is active and try again.`);
             }
         }
         

@@ -3616,30 +3616,6 @@ body {
     margin: 0;
 }
 
-/* Fallback Warning Styles */
-.fallback-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
-    border: 2px solid #f59e0b;
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    text-align: center;
-}
-
-.fallback-warning h3 {
-    color: #f59e0b;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-.fallback-warning p {
-    color: var(--text-bright);
-    font-size: 16px;
-    line-height: 1.6;
-    margin: 0;
-}
-
 /* Responsive Design for Execution Results */
 @media (max-width: 768px) {
     .execution-metrics,
