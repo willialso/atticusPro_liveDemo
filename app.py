@@ -2099,6 +2099,8 @@ class PlatformRiskManager:
             
             print(f"📊 [EXPOSURE] Platform exposure calculated:")
             print(f"   Institutional BTC Exposure: {platform_state['total_client_exposure_btc']} BTC")
+            print(f"   Options Positions: {len(platform_state['options_positions'])}")
+            print(f"   Options Hedges: {len(platform_state['options_hedge_positions'])}")
             print(f"   Lending Options Delta: {platform_state['net_options_delta']:.4f}")
             print(f"   Lending BTC Equivalent: {options_btc_equivalent:.4f} BTC")
             print(f"   Total Client Exposure: {total_client_exposure} BTC")
@@ -2268,7 +2270,13 @@ class PlatformRiskManager:
             platform_state['net_options_delta'] = 0.0  # Delta-neutral after hedge
             platform_state['total_hedge_cost'] += hedge_position['cost']
             
+            # CRITICAL: Update total_platform_hedges_btc to include options hedge
+            # Convert hedge_size (delta units) to BTC equivalent for sidebar display
+            options_hedge_btc_equivalent = hedge_size  # 1 delta unit = 1 BTC equivalent
+            platform_state['total_platform_hedges_btc'] += options_hedge_btc_equivalent
+            
             print(f"🛡️ [HEDGE] Options risk hedged: {hedge_size:.4f} delta")
+            print(f"📊 [HEDGE] Updated total_platform_hedges_btc: {platform_state['total_platform_hedges_btc']:.4f} BTC")
             
             return {
                 'status': 'hedged',
