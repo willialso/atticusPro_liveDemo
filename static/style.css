@@ -3753,6 +3753,9 @@ body {
     color: var(--warning);
     font-weight: 600;
     font-size: 14px;
+    background: rgba(251, 191, 36, 0.15);
+    padding: 4px 12px;
+    border-radius: 6px;
 }
 
 .discount-amount {
@@ -3805,6 +3808,12 @@ body {
     color: var(--text-light);
     font-weight: 500;
     display: block;
+}
+
+/* Override global metric alignment for strategy cards - ensure centering */
+.strategy-card .metric-card .metric-value,
+.strategy-card .metric-card .metric-label {
+    text-align: center !important;
 }
 
 .strategy-benefits {

@@ -491,8 +491,13 @@
 
                     <div class="execution-venues">
                         <h4>Execution Venues</h4>
-                        <div class="venues-content">
-                            <p>Professional execution across institutional venues with live market data verification.</p>
+                        <div style="display: grid; gap: 12px;">
+                            ${(summary.execution_venues || []).length > 0 ? (summary.execution_venues || []).map(venue => `
+                                <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, rgba(30,41,59,0.2) 0%, rgba(37,99,235,0.1) 100%); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2);">
+                                    <span style="font-weight: 700; font-size: 16px; color: var(--success);">${venue.exchange.toUpperCase()}</span>
+                                    <span style="font-size: 16px; color: var(--text-bright);">${Math.round(venue.size * 100) / 100} BTC (${venue.liquidity} liquidity)</span>
+                                </div>
+                            `).join('') : '<p style="color: var(--text-light); font-size: 16px;">Professional execution across institutional venues with live market data verification.</p>'}
                         </div>
                     </div>
 
