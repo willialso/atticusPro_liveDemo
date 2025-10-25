@@ -2057,10 +2057,18 @@ class PlatformRiskManager:
         print("✅ PlatformRiskManager initialized")
     
     def calculate_net_exposure(self):
-        """Calculate platform net exposure"""
+        """Calculate platform net exposure (institutional + lending)"""
         try:
-            # Calculate total exposure (institutional only)
-            total_client_exposure = platform_state['total_client_exposure_btc']
+            # Calculate total exposure (institutional BTC + lending options delta)
+            # Convert lending options delta to "BTC-equivalent" for unified display
+            # For downside protection (short puts): 1 BTC short put ≈ 0.5 BTC exposure (typical delta)
+            options_btc_equivalent = abs(platform_state['net_options_delta']) * 0.5
+            
+            total_client_exposure = (
+                platform_state['total_client_exposure_btc'] +  # Institutional BTC exposure
+                options_btc_equivalent                          # Lending options delta (converted)
+            )
+            
             total_platform_hedges = platform_state['total_platform_hedges_btc']
             net_exposure = total_client_exposure - total_platform_hedges
             
@@ -2082,10 +2090,20 @@ class PlatformRiskManager:
                 'active_institutions': len(platform_state['active_institutions']),
                 'total_premium_collected': platform_state['total_premium_collected'],
                 'total_hedge_cost': platform_state['total_hedge_cost'],
-                'net_revenue': platform_state['total_premium_collected'] - platform_state['total_hedge_cost']
+                'net_revenue': platform_state['total_premium_collected'] - platform_state['total_hedge_cost'],
+                # Break down exposure by source for transparency
+                'institutional_exposure_btc': platform_state['total_client_exposure_btc'],
+                'lending_exposure_btc_equivalent': options_btc_equivalent,
+                'lending_options_delta': platform_state['net_options_delta']
             }
             
-            print(f"📊 [EXPOSURE] Platform exposure calculated: {exposure_data}")
+            print(f"📊 [EXPOSURE] Platform exposure calculated:")
+            print(f"   Institutional BTC Exposure: {platform_state['total_client_exposure_btc']} BTC")
+            print(f"   Lending Options Delta: {platform_state['net_options_delta']:.4f}")
+            print(f"   Lending BTC Equivalent: {options_btc_equivalent:.4f} BTC")
+            print(f"   Total Client Exposure: {total_client_exposure} BTC")
+            print(f"   Platform Hedges: {total_platform_hedges} BTC")
+            print(f"   Net Exposure: {net_exposure} BTC")
             return exposure_data
             
         except Exception as e:

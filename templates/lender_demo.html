@@ -597,11 +597,15 @@
         }
         
         async function analyzeLenderPosition() {
+            console.log('🔵 analyzeLenderPosition() called');
+            
             if (!demo.liveDataAvailable) {
+                console.error('❌ Live data not available');
                 alert('🚨 LIVE DATA REQUIRED: Analysis requires live market data. Please wait for data connection or try again.');
                 return;
             }
             
+            console.log('✅ Live data available, showing loading...');
             demo.showLoading('Analyzing lender position...');
             
             try {
@@ -663,12 +667,14 @@
                 `;
                 
                 // Show step 2, hide step 1
+                console.log('✅ Analysis complete, showing Step 2');
                 document.getElementById('lending-step-1').style.display = 'none';
                 document.getElementById('lending-step-2').style.display = 'block';
+                console.log('✅ Step 2 visibility set to block');
                 
             } catch (error) {
                 demo.hideLoading();
-                console.error('Lender analysis error:', error);
+                console.error('❌ Lender analysis error:', error);
                 alert(`🚨 ANALYSIS ERROR: ${error.message}\n\nLive market data is required. Please ensure market data connection is active and try again.`);
             }
         }
