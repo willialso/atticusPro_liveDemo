@@ -3891,53 +3891,40 @@ body {
     }
 }
 
-/* 4-Step Workflow Styles (for Borrower/Lender Demos) */
+/* Lending Demo Dark Theme Styles - Matching Institutional */
 .workflow-container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
-.workflow-step {
-    background: white;
-    border-radius: 12px;
-    padding: 32px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.workflow-step h3 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--border);
-}
+/* Workflow steps inherit institutional dark styling from lines 734-753 */
 
 .step-button-container {
     display: flex;
-    justify-content: flex-end;
-    margin-top: 32px;
-    gap: 16px;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 24px;
 }
 
 .action-btn {
-    background: var(--success);
+    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
     color: white;
-    padding: 14px 32px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    padding: 18px 48px;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    text-transform: none;
 }
 
 .action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+    border-color: var(--success);
 }
 
 .analysis-content,
@@ -3946,61 +3933,181 @@ body {
 }
 
 .analysis-card {
-    background: var(--bg-light);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(16, 185, 129, 0.2) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.4);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(12px);
+    margin-bottom: 32px;
 }
 
 .analysis-card h4 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--warning-light);
+    margin-bottom: 24px;
+    text-align: center;
 }
 
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    gap: 24px;
 }
 
 .metric-item {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 20px;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .metric-label {
     font-size: 14px;
-    color: var(--text-secondary);
-    font-weight: 500;
+    color: var(--text-light);
+    font-weight: 600;
 }
 
 .metric-value {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--warning-light);
 }
 
 .final-actions {
     display: flex;
     justify-content: center;
+    gap: 24px;
+    margin-top: 40px;
+}
+
+/* Execution Results Dark Styling - Matching Institutional */
+.execution-status {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(13, 148, 136, 0.2) 100%);
+    border: 2px solid var(--success);
+    border-radius: 16px;
+    padding: 24px 32px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
     gap: 16px;
-    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+.execution-status .live-indicator {
+    color: var(--success);
+    font-size: 24px;
+}
+
+.execution-status .status-text {
+    color: var(--success);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.execution-status .timestamp {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-left: auto;
+}
+
+.execution-details {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(37, 99, 235, 0.2) 100%);
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    backdrop-filter: blur(12px);
+}
+
+.execution-details h4 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--success);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.execution-metrics,
+.impact-metrics,
+.exposure-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.execution-item,
+.impact-item,
+.exposure-item {
+    padding: 20px;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    transition: all 0.3s ease;
+}
+
+.execution-item:hover,
+.impact-item:hover,
+.exposure-item:hover {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: var(--warning-light);
+}
+
+.execution-item .label,
+.impact-item .label,
+.exposure-item .label {
+    display: block;
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.execution-item .value,
+.impact-item .value,
+.exposure-item .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--warning-light);
+}
+
+.portfolio-impact,
+.execution-venues {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(37, 99, 235, 0.2) 100%);
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    backdrop-filter: blur(12px);
+}
+
+.portfolio-impact h4,
+.execution-venues h4 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--warning);
+    margin-bottom: 20px;
+}
+
+.venues-content {
+    color: var(--text-light);
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 @media (max-width: 768px) {
-    .workflow-step {
-        padding: 20px;
-    }
-    
     .step-button-container {
-        justify-content: stretch;
+        flex-direction: column;
     }
     
     .action-btn {
         width: 100%;
+        padding: 16px 32px;
     }
     
     .final-actions {
@@ -4009,5 +4116,30 @@ body {
     
     .metrics-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .analysis-card {
+        padding: 24px;
+    }
+    
+    .execution-metrics,
+    .impact-metrics,
+    .exposure-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .execution-details,
+    .portfolio-impact,
+    .execution-venues {
+        padding: 24px;
+    }
+    
+    .execution-status {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .execution-status .timestamp {
+        margin-left: 0;
     }
 }
