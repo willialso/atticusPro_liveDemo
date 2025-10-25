@@ -149,7 +149,7 @@
                                     </div>
                                     
                                     <div class="overview-item">
-                                        <span class="label">Premium Cost (90 days)</span>
+                                        <span class="label">Catastrophe Premium</span>
                                         <span class="value" id="premium-cost">$0</span>
                                     </div>
                                 </div>
@@ -330,8 +330,10 @@
                 if (protectionAmount > 0 && this.marketData && this.marketData.btc_price) {
                     document.getElementById('protection-display').textContent = `${protectionAmount} BTC`;
                     
-                    // Calculate realistic premium cost (estimated 2% of collateral per year)
-                    const premiumCostBTC = (protectionAmount * 0.02 * (protectionPeriod / 365)).toFixed(3);
+                    // Calculate realistic premium cost (catastrophe protection tier - lowest cost option)
+                    // This represents "catastrophe protection" near liquidation price (cheapest of three tiers)
+                    // Catastrophe tier targets <2% APR, actual pricing typically 0.1-0.2% annual
+                    const premiumCostBTC = (protectionAmount * 0.0015 * (protectionPeriod / 365)).toFixed(3);
                     
                     // Convert to USD using live BTC price
                     const premiumCostUSD = parseFloat(premiumCostBTC) * this.marketData.btc_price;
