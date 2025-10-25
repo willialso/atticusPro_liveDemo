@@ -97,9 +97,14 @@
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label>Current BTC Price</label>
-                                <div class="price-display">
-                                    <span id="current-btc-price" class="price-value">Loading...</span>
+                                <label>Loan-to-Value Ratio</label>
+                                <div class="slider-container">
+                                    <input type="range" id="ltv-ratio" min="10" max="90" value="60" class="ltv-slider">
+                                    <div class="slider-labels">
+                                        <span>10%</span>
+                                        <span id="ltv-value">60%</span>
+                                        <span>90%</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -109,15 +114,15 @@
                             <div class="summary-grid">
                                 <div class="summary-item">
                                     <span class="label">LTV Ratio</span>
-                                    <span id="ltv-ratio" class="value">Loading...</span>
+                                    <span id="ltv-ratio-display" class="value">60%</span>
                                 </div>
                                 <div class="summary-item">
                                     <span class="label">Collateral Value</span>
-                                    <span id="collateral-value" class="value">Loading...</span>
+                                    <span id="collateral-value-display" class="value">Loading...</span>
                                 </div>
                                 <div class="summary-item">
-                                    <span class="label">Protection Coverage</span>
-                                    <span id="protection-coverage" class="value">Loading...</span>
+                                    <span class="label">Liquidation Price</span>
+                                    <span id="liquidation-price-display" class="value">Loading...</span>
                                 </div>
                             </div>
                         </div>
@@ -198,12 +203,19 @@
                 const loanAmount = document.getElementById('loan-amount');
                 const collateralAmount = document.getElementById('collateral-amount');
                 const durationSlider = document.getElementById('loan-duration');
+                const ltvSlider = document.getElementById('ltv-ratio');
                 
                 if (loanAmount) loanAmount.addEventListener('input', () => this.updateLoanSummary());
                 if (collateralAmount) collateralAmount.addEventListener('input', () => this.updateLoanSummary());
                 if (durationSlider) {
                     durationSlider.addEventListener('input', () => {
                         document.getElementById('duration-value').textContent = `${durationSlider.value} days`;
+                        this.updateLoanSummary();
+                    });
+                }
+                if (ltvSlider) {
+                    ltvSlider.addEventListener('input', () => {
+                        document.getElementById('ltv-value').textContent = `${ltvSlider.value}%`;
                         this.updateLoanSummary();
                     });
                 }
@@ -262,21 +274,26 @@
                 if (!this.marketData || !this.liveDataAvailable) return;
                 
                 const loanAmount = parseFloat(document.getElementById('loan-amount').value) || 0;
-                const collateralAmount = parseFloat(document.getElementById('collateral-amount').value) || 0;
+                const ltvRatio = parseFloat(document.getElementById('ltv-ratio').value) || 60;
                 const btcPrice = this.marketData.btc_price;
                 
-                if (loanAmount > 0 && collateralAmount > 0 && btcPrice > 0) {
+                if (loanAmount > 0 && btcPrice > 0) {
+                    // Calculate collateral based on LTV ratio
+                    const collateralAmount = loanAmount / (ltvRatio / 100) / btcPrice;
                     const collateralValue = collateralAmount * btcPrice;
-                    const ltvRatio = (loanAmount / collateralValue) * 100;
-                    const protectionCoverage = collateralValue;
+                    const liquidationPrice = loanAmount / collateralAmount;
                     
-                    document.getElementById('ltv-ratio').textContent = `${ltvRatio.toFixed(1)}%`;
-                    document.getElementById('collateral-value').textContent = this.formatCurrency(collateralValue);
-                    document.getElementById('protection-coverage').textContent = this.formatCurrency(protectionCoverage);
+                    // Update collateral input
+                    document.getElementById('collateral-amount').value = collateralAmount.toFixed(4);
+                    
+                    // Update display elements
+                    document.getElementById('ltv-ratio-display').textContent = `${ltvRatio}%`;
+                    document.getElementById('collateral-value-display').textContent = this.formatCurrency(collateralValue);
+                    document.getElementById('liquidation-price-display').textContent = this.formatCurrency(liquidationPrice);
                 } else {
-                    document.getElementById('ltv-ratio').textContent = 'Enter amounts';
-                    document.getElementById('collateral-value').textContent = 'Enter amounts';
-                    document.getElementById('protection-coverage').textContent = 'Enter amounts';
+                    document.getElementById('ltv-ratio-display').textContent = 'Enter loan amount';
+                    document.getElementById('collateral-value-display').textContent = 'Enter loan amount';
+                    document.getElementById('liquidation-price-display').textContent = 'Enter loan amount';
                 }
             }
             
