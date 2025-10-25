@@ -2120,11 +2120,11 @@ body {
 
 /* LANDING PAGE STYLES */
 .landing-hero {
-    min-height: 100vh;
+    min-height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 80px 0;
+    padding: 60px 0;
     background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-main) 50%, var(--primary-light) 100%);
 }
 
@@ -2135,7 +2135,7 @@ body {
 }
 
 .hero-logo {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 }
 
 .logo-large {
@@ -2145,7 +2145,7 @@ body {
 }
 
 .hero-text {
-    margin-bottom: 60px;
+    margin-bottom: 40px;
 }
 
 .hero-title {
@@ -2181,14 +2181,16 @@ body {
     background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
     border: 2px solid var(--secondary);
     border-radius: 20px;
-    padding: 32px 48px;
+    padding: 28px 40px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
     min-width: 280px;
+    min-height: 160px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 16px;
     box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
 }
@@ -2235,7 +2237,7 @@ body {
 
 /* Features Preview */
 .features {
-    padding: 80px 0;
+    padding: 60px 0;
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
 }
 
@@ -2315,6 +2317,7 @@ body {
     
     .cta-btn {
         min-width: 260px;
+        min-height: 160px;
         padding: 24px 32px;
     }
     
