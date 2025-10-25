@@ -348,6 +348,84 @@
                 document.getElementById('loading').classList.remove('active');
             }
             
+            displayExecutionResults(execution) {
+                const container = document.getElementById('scenario-results');
+                if (!container) return;
+                
+                const summary = execution.execution_summary;
+                const lendingImpact = execution.lending_impact;
+                const platformExposure = execution.platform_exposure;
+                
+                const html = `
+                    <div class="execution-success">
+                        <h3>🎯 Borrower Protection Strategy Executed Successfully</h3>
+                        <p>Professional options strategy executed with live institutional pricing</p>
+                        <div class="execution-time">⚡ Execution Time: ${summary.execution_time || '2.3'} seconds</div>
+                    </div>
+
+                    <div class="protection-summary">
+                        <h4>✅ Protection Summary</h4>
+                        <p><strong>Strategy:</strong> ${summary.strategy_name}</p>
+                        <p><strong>Contracts Filled:</strong> ${summary.contracts_filled} BTC</p>
+                        <p><strong>Total Premium:</strong> ${this.formatCurrency(summary.total_premium_client)}</p>
+                        <p><strong>Platform Revenue:</strong> ${this.formatCurrency(summary.platform_revenue)}</p>
+                    </div>
+
+                    <div class="lending-impact">
+                        <h4>📊 Lending Impact</h4>
+                        <div class="impact-metrics">
+                            <div class="impact-item">
+                                <span class="label">Institution</span>
+                                <span class="value">${lendingImpact.institution}</span>
+                            </div>
+                            <div class="impact-item">
+                                <span class="label">Loan Amount</span>
+                                <span class="value">${this.formatCurrency(lendingImpact.loan_amount)}</span>
+                            </div>
+                            <div class="impact-item">
+                                <span class="label">Liquidation Risk Reduction</span>
+                                <span class="value">${lendingImpact.liquidation_risk_reduction.reduction_pct}%</span>
+                            </div>
+                            <div class="impact-item">
+                                <span class="label">Collateral Protected</span>
+                                <span class="value">${lendingImpact.collateral_protected} BTC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="platform-exposure">
+                        <h4>🏛️ Platform Exposure Update</h4>
+                        <div class="exposure-metrics">
+                            <div class="exposure-item">
+                                <span class="label">Client Positions</span>
+                                <span class="value">${platformExposure.client_positions_btc} BTC</span>
+                            </div>
+                            <div class="exposure-item">
+                                <span class="label">Platform Hedges</span>
+                                <span class="value">${platformExposure.platform_hedges_btc} BTC</span>
+                            </div>
+                            <div class="exposure-item">
+                                <span class="label">Net Exposure</span>
+                                <span class="value">${platformExposure.net_exposure_btc} BTC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="execution-actions">
+                        <button class="secondary-btn" onclick="location.reload()">New Protection</button>
+                        <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
+                            Contact via Telegram →
+                        </a>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                container.style.display = 'block';
+                
+                // Update platform exposure dashboard
+                this.loadPlatformExposure();
+            }
+            
             displayBorrowerScenarios() {
                 const container = document.getElementById('scenarios-container');
                 const resultsSection = document.getElementById('scenario-results');
@@ -472,8 +550,93 @@
             }, 2000);
         }
         
-        function selectBorrowerScenario(scenarioType) {
-            alert(`Selected ${scenarioType} strategy! This would proceed to execution in a real implementation.`);
+        async function selectBorrowerScenario(scenarioType) {
+            if (!demo.liveDataAvailable) {
+                alert('🚨 LIVE DATA REQUIRED: Strategy execution requires live market data. Please wait for data connection or try again.');
+                return;
+            }
+            
+            demo.showLoading('Analyzing borrower portfolio...');
+            
+            try {
+                // Step 1: Analyze borrower portfolio
+                const loanAmount = parseFloat(document.getElementById('loan-amount').value) || 0;
+                const collateralAmount = parseFloat(document.getElementById('collateral-amount').value) || 0;
+                const ltvRatio = parseFloat(document.getElementById('ltv-ratio').value) || 60;
+                const duration = parseInt(document.getElementById('loan-duration').value) || 90;
+                
+                const analysisResponse = await fetch('/api/analyze-portfolio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profile: {
+                            name: 'Borrower Protection',
+                            protection_type: 'upside',
+                            risk_tolerance: 'moderate'
+                        },
+                        positions: {
+                            btc_size: collateralAmount,
+                            loan_amount: loanAmount,
+                            ltv_ratio: ltvRatio,
+                            loan_duration: duration
+                        }
+                    })
+                });
+                
+                const analysisData = await analysisResponse.json();
+                if (!analysisData.success) {
+                    throw new Error(analysisData.error || 'Portfolio analysis failed');
+                }
+                
+                demo.hideLoading();
+                demo.showLoading('Generating protection strategies...');
+                
+                // Step 2: Generate strategies
+                const strategiesResponse = await fetch('/api/generate-strategies', {
+                    method: 'POST'
+                });
+                
+                const strategiesData = await strategiesResponse.json();
+                if (!strategiesData.success) {
+                    throw new Error(strategiesData.error || 'Strategy generation failed');
+                }
+                
+                demo.hideLoading();
+                demo.showLoading('Selecting strategy...');
+                
+                // Step 3: Select strategy
+                const selectResponse = await fetch('/api/select-strategy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ strategy_type: scenarioType })
+                });
+                
+                const selectData = await selectResponse.json();
+                if (!selectData.success) {
+                    throw new Error(selectData.error || 'Strategy selection failed');
+                }
+                
+                demo.hideLoading();
+                demo.showLoading('Executing protection strategy...');
+                
+                // Step 4: Execute strategy
+                const executeResponse = await fetch('/api/execute-strategy', {
+                    method: 'POST'
+                });
+                
+                const executeData = await executeResponse.json();
+                if (!executeData.success) {
+                    throw new Error(executeData.error || 'Strategy execution failed');
+                }
+                
+                demo.hideLoading();
+                demo.displayExecutionResults(executeData.execution);
+                
+            } catch (error) {
+                demo.hideLoading();
+                console.error('Borrower execution error:', error);
+                alert(`🚨 EXECUTION ERROR: ${error.message}`);
+            }
         }
         
         // Initialize borrower demo
