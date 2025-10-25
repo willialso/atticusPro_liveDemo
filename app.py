@@ -1597,6 +1597,7 @@ class LivePricingEngine:
                 'strategy_description': f'Generate income from BTC lending collateral using live market data.',
                 'position_size': size,
                 'call_strike': round(call_strike, 2),
+                'strike_price': round(call_strike, 2),  # For frontend compatibility
                 'premium_received_gross': round(gross_premium, 2),
                 'platform_markup': round(markup_amount, 2),
                 'execution_fee': exec_fee,
@@ -1610,7 +1611,7 @@ class LivePricingEngine:
                 'max_upside': round(call_strike, 2),
                 'breakeven': round(S - (enhanced_net_received / size), 2),
                 'upside_participation': f"100% up to ${call_strike:,.0f}",
-                'time_to_expiry_days': 45,
+                'time_to_expiry_days': int(T * 365),
                 'key_benefits': [
                     'Generate income from BTC collateral',
                     'Live market data pricing',
@@ -1736,6 +1737,7 @@ class LivePricingEngine:
                 'upside_focused': True,
                 'position_size': size,
                 'call_strike': round(call_strike, 2),
+                'strike_price': round(call_strike, 2),  # For frontend compatibility
                 'premium_per_contract_base': round(call_price, 2),
                 'base_premium_total': round(base_premium, 2),
                 'platform_markup': round(markup_amount, 2),
@@ -1824,6 +1826,7 @@ class LivePricingEngine:
                 'upside_focused': True,
                 'position_size': size,
                 'call_strike': round(call_strike, 2),
+                'strike_price': round(call_strike, 2),  # For frontend compatibility
                 'premium_per_contract_base': round(call_price, 2),
                 'base_premium_total': round(base_premium, 2),
                 'platform_markup': round(markup_amount, 2),
@@ -1922,6 +1925,8 @@ class LivePricingEngine:
                 'position_size': size,
                 'buy_strike': round(buy_strike, 2),
                 'sell_strike': round(sell_strike, 2),
+                'strike_price': round(buy_strike, 2),  # For frontend compatibility (show buy strike)
+                'call_strike': round(buy_strike, 2),
                 'buy_call_price': round(buy_call_price, 2),
                 'sell_call_price': round(sell_call_price, 2),
                 'net_premium_per_contract': round(net_premium_per_contract, 2),

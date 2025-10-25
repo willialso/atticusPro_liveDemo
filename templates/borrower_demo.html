@@ -63,82 +63,117 @@
                     </div>
                 </div>
 
-                <!-- Borrower Configuration -->
-                <div class="borrower-config">
-                    <h2>Configure Your Protection</h2>
-                    <div class="config-form">
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Loan Amount (USD)</label>
-                                <div class="input-with-unit">
-                                    <input type="number" id="loan-amount" placeholder="1000000" step="1000" min="10000">
-                                    <span class="input-unit">USD</span>
+                <!-- 4-STEP WORKFLOW (like institutional) -->
+                <div class="workflow-container">
+                    
+                    <!-- Step 1: Configure Protection -->
+                    <div id="borrower-step-1" class="workflow-step active">
+                        <h3>Step 1: Configure Protection Parameters</h3>
+                        <div class="borrower-config">
+                            <div class="config-form">
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label>Loan Amount (USD)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="loan-amount" placeholder="1000000" step="1000" min="10000">
+                                            <span class="input-unit">USD</span>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Collateral Amount (BTC)</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" id="collateral-amount" placeholder="1.0" step="0.01" min="0.1">
+                                            <span class="input-unit">BTC</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="input-group">
-                                <label>Collateral Amount (BTC)</label>
-                                <div class="input-with-unit">
-                                    <input type="number" id="collateral-amount" placeholder="1.0" step="0.01" min="0.1">
-                                    <span class="input-unit">BTC</span>
+                                
+                                <div class="form-row">
+                                    <div class="input-group">
+                                        <label>Loan Duration</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="loan-duration" min="28" max="365" value="90" class="duration-slider">
+                                            <div class="slider-labels">
+                                                <span>28 days</span>
+                                                <span id="duration-value">90 days</span>
+                                                <span>365 days</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Loan-to-Value Ratio</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="ltv-ratio" min="10" max="90" value="60" class="ltv-slider">
+                                            <div class="slider-labels">
+                                                <span>10%</span>
+                                                <span id="ltv-value">60%</span>
+                                                <span>90%</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Loan Duration</label>
-                                <div class="slider-container">
-                                    <input type="range" id="loan-duration" min="28" max="365" value="90" class="duration-slider">
-                                    <div class="slider-labels">
-                                        <span>28 days</span>
-                                        <span id="duration-value">90 days</span>
-                                        <span>365 days</span>
+
+                                <div class="loan-summary">
+                                    <h3>Loan Summary</h3>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <span class="label">LTV Ratio</span>
+                                            <span id="ltv-ratio-display" class="value">60%</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="label">Collateral Value</span>
+                                            <span id="collateral-value-display" class="value">Loading...</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="label">Liquidation Price</span>
+                                            <span id="liquidation-price-display" class="value">Loading...</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group">
-                                <label>Loan-to-Value Ratio</label>
-                                <div class="slider-container">
-                                    <input type="range" id="ltv-ratio" min="10" max="90" value="60" class="ltv-slider">
-                                    <div class="slider-labels">
-                                        <span>10%</span>
-                                        <span id="ltv-value">60%</span>
-                                        <span>90%</span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-
-                        <div class="loan-summary">
-                            <h3>Loan Summary</h3>
-                            <div class="summary-grid">
-                                <div class="summary-item">
-                                    <span class="label">LTV Ratio</span>
-                                    <span id="ltv-ratio-display" class="value">60%</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="label">Collateral Value</span>
-                                    <span id="collateral-value-display" class="value">Loading...</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="label">Liquidation Price</span>
-                                    <span id="liquidation-price-display" class="value">Loading...</span>
-                                </div>
-                            </div>
+                        <div class="step-button-container">
+                            <button class="action-btn" onclick="analyzeBorrowerPosition()">
+                                Analyze Protection Position →
+                            </button>
                         </div>
-
-                        <button class="generate-btn" onclick="generateBorrowerScenarios()">
-                            Generate Protection Scenarios
-                        </button>
                     </div>
-                </div>
 
-                <!-- Scenario Results -->
-                <div id="scenario-results" class="scenario-results" style="display: none;">
-                    <h2>Protection Scenarios</h2>
-                    <div id="scenarios-container">
-                        <!-- Populated by JavaScript -->
+                    <!-- Step 2: Risk Analysis -->
+                    <div id="borrower-step-2" class="workflow-step" style="display:none;">
+                        <h3>Step 2: Risk Analysis</h3>
+                        <div id="borrower-analysis-results" class="analysis-content">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div class="step-button-container">
+                            <button class="action-btn" onclick="generateBorrowerStrategies()">
+                                Generate Protection Strategies →
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- Step 3: Strategy Selection -->
+                    <div id="borrower-step-3" class="workflow-step" style="display:none;">
+                        <h3>Step 3: Smart Protection Strategies</h3>
+                        <div id="scenarios-container" class="scenario-results">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Execution Summary -->
+                    <div id="borrower-step-4" class="workflow-step" style="display:none;">
+                        <h3>Step 4: Execution Summary</h3>
+                        <div id="borrower-execution-results" class="execution-content">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                        <div class="final-actions">
+                            <button class="secondary-btn" onclick="location.reload()">New Protection</button>
+                            <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
+                                Contact via Telegram →
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -349,8 +384,12 @@
             }
             
             displayExecutionResults(execution) {
-                const container = document.getElementById('scenario-results');
+                const container = document.getElementById('borrower-execution-results');
                 if (!container) return;
+                
+                // Show step 4, hide step 3
+                document.getElementById('borrower-step-3').style.display = 'none';
+                document.getElementById('borrower-step-4').style.display = 'block';
                 
                 const summary = execution.execution_summary || {};
                 const lendingImpact = execution.lending_impact || {};
@@ -531,7 +570,7 @@
             window.location.href = '/lending-router';
         }
         
-        async function generateBorrowerScenarios() {
+        async function analyzeBorrowerPosition() {
             if (!demo.liveDataAvailable) {
                 alert('🚨 LIVE DATA REQUIRED: Analysis requires live market data. Please wait for data connection or try again.');
                 return;
@@ -582,10 +621,35 @@
                 }
                 
                 demo.hideLoading();
-                demo.showLoading('Generating LIVE protection strategies...');
                 
-                // Step 2: Generate strategies with LIVE data
-                await generateBorrowerStrategies();
+                // Display analysis results in step 2
+                document.getElementById('borrower-analysis-results').innerHTML = `
+                    <div class="analysis-card">
+                        <h4>Protection Analysis</h4>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Loan Amount</span>
+                                <span class="metric-value">$${demo.formatCurrency(loanAmount)}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Collateral</span>
+                                <span class="metric-value">${collateralAmount} BTC</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Collateral Value</span>
+                                <span class="metric-value">${demo.formatCurrency(collateralAmount * demo.marketData.btc_price)}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Duration</span>
+                                <span class="metric-value">${duration} days</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Show step 2, hide step 1
+                document.getElementById('borrower-step-1').style.display = 'none';
+                document.getElementById('borrower-step-2').style.display = 'block';
                 
             } catch (error) {
                 demo.hideLoading();
@@ -640,8 +704,9 @@
                 // Display LIVE strategies from API
                 demo.displayLiveStrategies(data.strategies, data.analysis_context);
                 
-                // Show scenario results section
-                document.getElementById('scenario-results').style.display = 'block';
+                // Show step 3, hide step 2
+                document.getElementById('borrower-step-2').style.display = 'none';
+                document.getElementById('borrower-step-3').style.display = 'block';
                 
             } catch (error) {
                 demo.hideLoading();

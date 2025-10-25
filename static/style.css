@@ -3886,3 +3886,124 @@ body {
         margin-left: 0;
     }
 }
+
+/* 4-Step Workflow Styles (for Borrower/Lender Demos) */
+.workflow-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workflow-step {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.workflow-step h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+}
+
+.step-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+    gap: 16px;
+}
+
+.action-btn {
+    background: var(--success);
+    color: white;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.analysis-content,
+.execution-content {
+    width: 100%;
+}
+
+.analysis-card {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.analysis-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.final-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+@media (max-width: 768px) {
+    .workflow-step {
+        padding: 20px;
+    }
+    
+    .step-button-container {
+        justify-content: stretch;
+    }
+    
+    .action-btn {
+        width: 100%;
+    }
+    
+    .final-actions {
+        flex-direction: column;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
