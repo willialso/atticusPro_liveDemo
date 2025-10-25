@@ -121,13 +121,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label>Cover Chains</label>
-                                    <div class="chain-info">
-                                        <span>Bitcoin mainnet only</span>
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Right Panel - Overview -->
@@ -152,12 +145,12 @@
                                     
                                     <div class="overview-item">
                                         <span class="label">Est. Annual Cost</span>
-                                        <span class="value" id="annual-fee">2.0%</span>
+                                        <span class="value" id="annual-fee">$0</span>
                                     </div>
                                     
                                     <div class="overview-item">
-                                        <span class="label">Premium Cost</span>
-                                        <span class="value" id="premium-cost">0.XX BTC</span>
+                                        <span class="label">Premium Cost (90 days)</span>
+                                        <span class="value" id="premium-cost">$0</span>
                                     </div>
                                 </div>
                                 
@@ -334,24 +327,25 @@
                 const protectionAmount = parseFloat(document.getElementById('protection-amount').value) || 0;
                 const protectionPeriod = parseInt(document.getElementById('protection-period').value) || 90;
                 
-                if (protectionAmount > 0) {
+                if (protectionAmount > 0 && this.marketData && this.marketData.btc_price) {
                     document.getElementById('protection-display').textContent = `${protectionAmount} BTC`;
                     
-                    // Calculate realistic premium cost (estimated 2-4% of collateral per year)
-                    const premiumCost = (protectionAmount * 0.02 * (protectionPeriod / 365)).toFixed(3);
-                    document.getElementById('premium-cost').textContent = `${premiumCost} BTC`;
+                    // Calculate realistic premium cost (estimated 2% of collateral per year)
+                    const premiumCostBTC = (protectionAmount * 0.02 * (protectionPeriod / 365)).toFixed(3);
                     
-                    // Calculate annualized protection cost as percentage
-                    if (premiumCost > 0 && protectionAmount > 0) {
-                        const annualizedCost = (parseFloat(premiumCost) / protectionAmount * 365 / protectionPeriod * 100).toFixed(1);
-                        document.getElementById('annual-fee').textContent = `${annualizedCost}%`;
-                    } else {
-                        document.getElementById('annual-fee').textContent = '2.0%';
-                    }
+                    // Convert to USD using live BTC price
+                    const premiumCostUSD = parseFloat(premiumCostBTC) * this.marketData.btc_price;
+                    
+                    // Calculate annualized cost in USD
+                    const annualCostUSD = premiumCostUSD * 365 / protectionPeriod;
+                    
+                    // Update displays with formatted USD values
+                    document.getElementById('premium-cost').textContent = this.formatCurrency(premiumCostUSD);
+                    document.getElementById('annual-fee').textContent = this.formatCurrency(annualCostUSD);
                 } else {
                     document.getElementById('protection-display').textContent = 'Enter amount';
-                    document.getElementById('annual-fee').textContent = '2.0%';
-                    document.getElementById('premium-cost').textContent = '0.XX BTC';
+                    document.getElementById('annual-fee').textContent = '$0';
+                    document.getElementById('premium-cost').textContent = '$0';
                 }
             }
             
