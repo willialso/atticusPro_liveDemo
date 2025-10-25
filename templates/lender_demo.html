@@ -151,8 +151,8 @@
                                     </div>
                                     
                                     <div class="overview-item">
-                                        <span class="label">Annual Fee</span>
-                                        <span class="value" id="annual-fee">2.9%</span>
+                                        <span class="label">Est. Annual Cost</span>
+                                        <span class="value" id="annual-fee">2.0%</span>
                                     </div>
                                     
                                     <div class="overview-item">
@@ -200,12 +200,6 @@
                         <h3>Step 4: Execution Summary</h3>
                         <div id="scenario-results" class="execution-content">
                             <!-- Populated by JavaScript -->
-                        </div>
-                        <div class="final-actions">
-                            <button class="secondary-btn" onclick="location.reload()">New Protection</button>
-                            <a href="https://t.me/willialso" target="_blank" class="telegram-btn">
-                                Contact via Telegram →
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -343,16 +337,20 @@
                 if (protectionAmount > 0) {
                     document.getElementById('protection-display').textContent = `${protectionAmount} BTC`;
                     
-                    // Calculate annual fee (simplified)
-                    const annualFee = (2.5 + (protectionPeriod / 365) * 0.5).toFixed(1);
-                    document.getElementById('annual-fee').textContent = `${annualFee}%`;
-                    
-                    // Calculate premium cost (simplified)
+                    // Calculate realistic premium cost (estimated 2-4% of collateral per year)
                     const premiumCost = (protectionAmount * 0.02 * (protectionPeriod / 365)).toFixed(3);
                     document.getElementById('premium-cost').textContent = `${premiumCost} BTC`;
+                    
+                    // Calculate annualized protection cost as percentage
+                    if (premiumCost > 0 && protectionAmount > 0) {
+                        const annualizedCost = (parseFloat(premiumCost) / protectionAmount * 365 / protectionPeriod * 100).toFixed(1);
+                        document.getElementById('annual-fee').textContent = `${annualizedCost}%`;
+                    } else {
+                        document.getElementById('annual-fee').textContent = '2.0%';
+                    }
                 } else {
                     document.getElementById('protection-display').textContent = 'Enter amount';
-                    document.getElementById('annual-fee').textContent = '1.9%';
+                    document.getElementById('annual-fee').textContent = '2.0%';
                     document.getElementById('premium-cost').textContent = '0.XX BTC';
                 }
             }
