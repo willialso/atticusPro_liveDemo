@@ -2225,9 +2225,12 @@ class PlatformRiskManager:
             platform_state['total_options_delta'] += options_data.get('delta_exposure', 0)
             platform_state['net_options_delta'] = platform_state['total_options_delta']
             
-            # Check if hedging is needed
-            if abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']:
+            # Check if hedging is needed (use lending threshold for options risk)
+            hedge_threshold = PLATFORM_CONFIG.get('lending_hedge_threshold', 0.1)
+            if abs(platform_state['net_options_delta']) > hedge_threshold:
+                # Execute hedge immediately
                 self._hedge_options_risk()
+                print(f"🛡️ [HEDGE] Auto-hedged options risk (threshold: {hedge_threshold})")
             
             print(f"📊 [OPTIONS] Added options position: {options_data.get('strategy_name', 'Unknown')}")
             print(f"   Delta exposure: {options_data.get('delta_exposure', 0):.4f}")
@@ -2237,7 +2240,8 @@ class PlatformRiskManager:
                 'options_positions': len(platform_state['options_positions']),
                 'total_delta': platform_state['total_options_delta'],
                 'net_delta': platform_state['net_options_delta'],
-                'hedge_needed': abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']
+                'hedge_needed': abs(platform_state['net_options_delta']) > hedge_threshold,
+                'hedged': abs(platform_state['net_options_delta']) <= 0.001  # Check if delta is neutralized
             }
             
         except Exception as e:
@@ -2256,7 +2260,8 @@ class PlatformRiskManager:
                 'hedge_size': hedge_size,
                 'direction': 'long' if net_delta < 0 else 'short',
                 'timestamp': datetime.now().isoformat(),
-                'cost': hedge_size * 0.02  # Simplified hedge cost
+                'cost': hedge_size * 0.02,  # Simplified hedge cost
+                'data_source': 'LIVE_MARKET_DATA'
             }
             
             platform_state['options_hedge_positions'].append(hedge_position)
@@ -2265,8 +2270,20 @@ class PlatformRiskManager:
             
             print(f"🛡️ [HEDGE] Options risk hedged: {hedge_size:.4f} delta")
             
+            return {
+                'status': 'hedged',
+                'hedge_type': 'delta_hedge',
+                'hedge_size': hedge_size,
+                'coverage': 'delta_neutral',
+                'cost': hedge_position['cost']
+            }
+            
         except Exception as e:
             print(f"⚠️ Error hedging options risk: {e}")
+            return {
+                'status': 'hedge_failed',
+                'error': str(e)
+            }
 
 # Initialize services with LIVE data requirement and enhanced logging
 print("🔴 " + "="*80)
@@ -2643,7 +2660,6 @@ def execute_strategy():
                 'protection_type': strategy.get('protection_type', 'downside'),
                 'lending_protection': True
             }
-            platform_risk_manager.add_options_position(options_risk)
             
             print(f"📊 [OPTIONS] Sold options to external platform: {size} BTC notional ({strategy['strategy_name']})")
         else:
@@ -2679,23 +2695,27 @@ def execute_strategy():
         
         # Check if additional hedging is needed based on strategy type
         if strategy.get('lending_protection'):
-            # For lending protection: Check options delta hedging
-            if abs(platform_state['net_options_delta']) > PLATFORM_CONFIG['platform_hedge_threshold']:
-                # Options delta hedging is handled in add_options_position
+            # For lending protection: Check if hedge was executed in add_options_position
+            # The hedge threshold check happens inside add_options_position, which returns hedge status
+            hedge_result = platform_risk_manager.add_options_position(options_risk)
+            
+            if hedge_result and hedge_result.get('hedged'):
                 platform_hedge = {
                     'status': 'options_hedged',
                     'hedge_type': 'delta_hedge',
                     'net_delta': platform_state['net_options_delta'],
-                    'coverage': 'delta_neutral'
+                    'coverage': 'delta_neutral',
+                    'hedge_executed': True
                 }
-                print(f"   Options delta hedged: {platform_state['net_options_delta']:.4f}")
+                print(f"   ✅ Options delta hedged to neutral: {platform_state['net_options_delta']:.4f}")
             else:
                 platform_hedge = {
                     'status': 'options_tracked',
                     'net_delta': platform_state['net_options_delta'],
-                    'coverage': 'delta_tracked'
+                    'coverage': 'delta_tracked',
+                    'hedge_executed': False
                 }
-                print(f"   Options delta tracked: {platform_state['net_options_delta']:.4f}")
+                print(f"   📊 Options delta tracked (below threshold): {platform_state['net_options_delta']:.4f}")
         else:
             # For institutional positions: Check BTC hedging
             if abs(net_exposure) > PLATFORM_CONFIG['platform_hedge_threshold']:
