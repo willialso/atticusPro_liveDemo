@@ -562,10 +562,14 @@
                             risk_tolerance: 'moderate'
                         },
                         positions: {
-                            btc_size: collateralAmount,
+                            collateral_btc: collateralAmount,
+                            btc_size: collateralAmount,  // Backward compatibility
                             loan_amount: loanAmount,
                             ltv_ratio: ltvRatio,
-                            loan_duration: duration
+                            loan_term: duration,
+                            loan_duration: duration,  // Backward compatibility
+                            protection_period: duration,  // For pricing engine
+                            protection_type: 'upside'
                         }
                     })
                 });

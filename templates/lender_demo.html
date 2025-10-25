@@ -613,9 +613,12 @@
                             risk_tolerance: 'conservative'
                         },
                         positions: {
-                            btc_size: protectionAmount,
+                            collateral_btc: protectionAmount,
+                            btc_size: protectionAmount,  // Backward compatibility
                             protection_period: protectionPeriod,
-                            protection_type: 'downside'
+                            loan_term: protectionPeriod,  // Also send as loan_term
+                            protection_type: 'downside',
+                            ltv_ratio: 70  // Default LTV for lenders
                         }
                     })
                 });
@@ -642,7 +645,7 @@
                             </div>
                             <div class="metric-item">
                                 <span class="metric-label">BTC Value</span>
-                                <span class="metric-value">$${demo.formatCurrency(protectionAmount * demo.marketData.btc_price)}</span>
+                                <span class="metric-value">${demo.formatCurrency(protectionAmount * demo.marketData.btc_price)}</span>
                             </div>
                             <div class="metric-item">
                                 <span class="metric-label">Protection Type</span>

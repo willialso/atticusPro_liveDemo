@@ -836,23 +836,42 @@ class PortfolioAnalyzer:
             volatility = self.market.get_live_volatility()
             print(f"   ✅ Live Volatility: {volatility:.4f}")
             
-            # Extract loan parameters
+            # Extract loan parameters - FLEXIBLE to accept multiple naming conventions
+            # Support both frontend parameter styles
+            collateral_btc = (
+                float(loan_params.get('collateral_btc', 0)) or 
+                float(loan_params.get('btc_size', 0)) or 
+                1.0
+            )
             loan_amount = float(loan_params.get('loan_amount', 0))
-            loan_term = int(loan_params.get('loan_term', 90))
+            loan_term = (
+                int(loan_params.get('loan_term', 0)) or 
+                int(loan_params.get('loan_duration', 0)) or 
+                int(loan_params.get('protection_period', 90))
+            )
             ltv_ratio = float(loan_params.get('ltv_ratio', 70))
             protection_type = loan_params.get('protection_type', 'downside')
             
+            # If loan_amount not provided but collateral is, calculate it from LTV
+            if loan_amount == 0 and collateral_btc > 0:
+                collateral_value = collateral_btc * btc_price
+                loan_amount = collateral_value * (ltv_ratio / 100)
+                print(f"   💡 Calculated loan_amount from collateral: ${loan_amount:,.2f}")
+            
+            # If collateral not provided but loan_amount is, calculate it
+            if collateral_btc == 0 and loan_amount > 0:
+                collateral_value = loan_amount / (ltv_ratio / 100)
+                collateral_btc = collateral_value / btc_price
+                print(f"   💡 Calculated collateral from loan_amount: {collateral_btc:.4f} BTC")
+            else:
+                collateral_value = collateral_btc * btc_price
+            
             print(f"   Lending Calculations:")
+            print(f"     Collateral: {collateral_btc:.4f} BTC (${collateral_value:,.2f})")
             print(f"     Loan Amount: ${loan_amount:,.2f}")
             print(f"     Loan Term: {loan_term} days")
             print(f"     LTV Ratio: {ltv_ratio}%")
             print(f"     Protection Type: {protection_type}")
-            
-            # Calculate collateral requirements
-            collateral_value = loan_amount / (ltv_ratio / 100)
-            collateral_btc = collateral_value / btc_price
-            
-            print(f"     Collateral Required: {collateral_btc:.4f} BTC (${collateral_value:,.2f})")
             
             # Calculate lending-specific risk metrics
             liquidation_risk_30pct = collateral_value * 0.30  # 30% BTC decline liquidation risk
