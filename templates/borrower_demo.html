@@ -611,6 +611,21 @@
                 
                 const data = await response.json();
                 console.log('Borrower API generate-strategies response:', data);
+                console.log('Number of strategies returned:', data.strategies?.length);
+                console.log('Analysis context:', data.analysis_context);
+                
+                // Log each strategy for debugging
+                if (data.strategies) {
+                    data.strategies.forEach((strategy, index) => {
+                        console.log(`Strategy ${index + 1}:`, {
+                            type: strategy.strategy_type,
+                            name: strategy.strategy_name,
+                            cost: strategy.total_client_cost,
+                            strike: strategy.strike_price,
+                            size: strategy.position_size
+                        });
+                    });
+                }
                 
                 if (!data.success) {
                     throw new Error(data.error || 'Strategy generation failed');

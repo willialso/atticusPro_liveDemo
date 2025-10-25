@@ -624,6 +624,8 @@
                 });
                 
                 const analysisData = await analysisResponse.json();
+                console.log('Lender analysis response:', analysisData);
+                
                 if (!analysisData.success) {
                     throw new Error(analysisData.error || 'Portfolio analysis failed');
                 }
@@ -683,6 +685,8 @@
                 
                 const data = await response.json();
                 console.log('Lender API generate-strategies response:', data);
+                console.log('Number of strategies returned:', data.strategies?.length);
+                console.log('Analysis context:', data.analysis_context);
                 
                 if (!data.success) {
                     throw new Error(data.error || 'Strategy generation failed');

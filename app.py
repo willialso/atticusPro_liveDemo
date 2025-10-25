@@ -1066,7 +1066,10 @@ class LivePricingEngine:
                     if is_lending:
                         # Get required parameters for lending strategy pricing
                         vol = self.market.get_live_volatility()
-                        T = 45 / 365.0  # 45 days to expiry
+                        # Use actual loan term from user input (not hardcoded)
+                        loan_term = profile.get('loan_term', 90)
+                        T = loan_term / 365.0
+                        print(f"     Loan Term: {loan_term} days (T={T:.4f} years)")
                         strategy = self._price_lending_strategy(
                             strategy_type, hedge_size, current_price, vol, T, risk_free_rate, protection_type
                         )
