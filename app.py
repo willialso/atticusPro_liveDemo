@@ -1069,7 +1069,10 @@ class LivePricingEngine:
                         # Use actual loan term from user input (not hardcoded)
                         loan_term = profile.get('loan_term', 90)
                         T = loan_term / 365.0
-                        print(f"     Loan Term: {loan_term} days (T={T:.4f} years)")
+                        print(f"     📅 Loan Term: {loan_term} days (T={T:.4f} years)")
+                        print(f"     🎯 Protection Type: {protection_type}")
+                        print(f"     📊 Hedge Size: {hedge_size} BTC")
+                        print(f"     💰 Current Price: ${current_price:,.2f}")
                         strategy = self._price_lending_strategy(
                             strategy_type, hedge_size, current_price, vol, T, risk_free_rate, protection_type
                         )
@@ -2410,13 +2413,32 @@ def analyze_portfolio():
     """Analyze portfolio using LIVE data only with logging"""
     try:
         data = request.get_json() or {}
-        mode = data.get('mode', 'institutional')  # NEW: Support lending mode
+        
+        # Auto-detect lending mode from multiple sources
+        mode = data.get('mode', 'institutional')
+        profile = data.get('profile', {})
+        positions = data.get('positions', {})
         portfolio_type = data.get('type', 'pension_fund')
         custom_params = data.get('custom_params')
-        loan_params = data.get('loan_params')  # NEW: Lending parameters
+        loan_params = data.get('loan_params')
         
-        print(f"📊 [API] Portfolio analysis request: {portfolio_type}")
+        # CRITICAL: Auto-detect lending if profile has protection_type
+        if 'protection_type' in profile or 'protection_type' in positions:
+            mode = 'lending'
+            # Convert profile/positions format to loan_params format
+            loan_params = {
+                'collateral_btc': positions.get('collateral_btc') or positions.get('btc_size', 1.0),
+                'loan_amount': positions.get('loan_amount', 0),
+                'loan_term': positions.get('loan_term') or positions.get('loan_duration') or positions.get('protection_period', 90),
+                'ltv_ratio': positions.get('ltv_ratio', 70),
+                'protection_type': profile.get('protection_type') or positions.get('protection_type', 'downside')
+            }
+            print(f"💡 [AUTO-DETECT] Lending mode detected from profile.protection_type")
+            print(f"   Converted to loan_params: {loan_params}")
+        
+        print(f"📊 [API] Portfolio analysis request")
         print(f"   Mode: {mode}")
+        print(f"   Type: {portfolio_type}")
         if custom_params:
             print(f"   Custom parameters: {custom_params}")
         if loan_params:
