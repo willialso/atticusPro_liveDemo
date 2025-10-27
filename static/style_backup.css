@@ -202,7 +202,7 @@ body {
 /* Enhanced Section Headers */
 .section-header {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
 }
 
 .section-header h2 {
@@ -229,7 +229,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 32px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     width: 100%;
 }
 
@@ -268,7 +268,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     width: 100%;
 }
 
@@ -306,7 +306,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 32px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     width: 100%;
 }
 
@@ -356,7 +356,7 @@ body {
     border: 2px solid var(--success);
     border-radius: 24px;
     padding: 48px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     backdrop-filter: blur(12px);
     width: 100%;
 }

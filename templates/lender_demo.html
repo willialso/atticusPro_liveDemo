@@ -167,7 +167,7 @@
                         </div>
                     </div>
 
-                    <!-- Step 2: Risk Analysis -->
+                    <!-- Step 2: Risk Analysis (Hidden from UI but functionality preserved) -->
                     <div id="lending-step-2" class="workflow-step" style="display:none;">
                         <h3>Step 2: Risk Analysis</h3>
                         <div id="lender-analysis-results" class="analysis-content">
@@ -220,6 +220,10 @@
                 <div class="sidebar-metric">
                     <span class="metric-label">Coverage Ratio</span>
                     <span id="coverage-ratio" class="metric-value">N/A</span>
+                </div>
+                <div class="sidebar-metric">
+                    <span class="metric-label">Hedging Status</span>
+                    <span id="hedging-status" class="metric-value">ACTIVE</span>
                 </div>
             </div>
         </div>
@@ -379,14 +383,49 @@
                         : 'N/A'
                 };
                 
+                // Enhanced platform hedging status
+                const netExposure = exposure.net_exposure_btc || 0;
+                const coverageRatio = exposure.hedge_coverage_ratio || 0;
+                
+                // Determine hedging status
+                let hedgingStatus = 'ACTIVE';
+                let statusColor = 'var(--success)';
+                
+                if (Math.abs(netExposure) < 0.1) {
+                    hedgingStatus = 'NEUTRAL';
+                    statusColor = 'var(--success)';
+                } else if (coverageRatio > 0.8) {
+                    hedgingStatus = 'HEDGED';
+                    statusColor = 'var(--warning)';
+                } else if (coverageRatio < 0.5) {
+                    hedgingStatus = 'EXPOSED';
+                    statusColor = 'var(--error)';
+                }
+                
+                // Update elements with enhanced display
                 Object.entries(elements).forEach(([id, value]) => {
                     const element = document.getElementById(id);
                     if (element) {
                         element.textContent = typeof value === 'number' && id !== 'coverage-ratio'
                             ? `${Math.round(value)} BTC`
                             : value;
+                            
+                        // Add status indicators
+                        if (id === 'coverage-ratio') {
+                            element.style.color = statusColor;
+                            element.style.fontWeight = 'bold';
+                        }
                     }
                 });
+                
+                // Add hedging status indicator
+                const statusElement = document.getElementById('hedging-status');
+                if (statusElement) {
+                    statusElement.textContent = hedgingStatus;
+                    statusElement.style.color = statusColor;
+                }
+                
+                console.log(`📊 [PLATFORM] Exposure updated: ${netExposure.toFixed(2)} BTC net, ${coverageRatio.toFixed(1)}% coverage`);
             }
             
             formatCurrency(value) {
@@ -563,6 +602,14 @@
                             const netIncome = lendingIncome - premiumCost;
                             const roi = premiumCost > 0 ? (netIncome / premiumCost) * 100 : 0;
                             
+                            // Debug logging for ROI calculation
+                            console.log(`🔍 [ROI DEBUG] Strategy: ${strategy.strategy_name}`);
+                            console.log(`   Premium Cost: $${premiumCost.toLocaleString()}`);
+                            console.log(`   Lending Income: $${lendingIncome.toLocaleString()}`);
+                            console.log(`   Net Income: $${netIncome.toLocaleString()}`);
+                            console.log(`   ROI: ${roi.toFixed(2)}%`);
+                            console.log(`   Formula: (${netIncome.toLocaleString()} / ${premiumCost.toLocaleString()}) * 100`);
+                            
                             return `
                         <div class="strategy-metrics">
                             <div class="metric-card">
@@ -678,11 +725,44 @@
                     </div>
                 `;
                 
-                // Show step 2, hide step 1
-                console.log('✅ Analysis complete, showing Step 2');
+                // Skip Step 2 display but preserve all functionality
+                console.log('✅ Analysis complete, preserving Step 2 functionality');
+                
+                // Execute all Step 2 functions (hidden from UI)
+                document.getElementById('lender-analysis-results').innerHTML = `
+                    <div class="analysis-card">
+                        <h4>Protection Analysis</h4>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Amount</span>
+                                <span class="metric-value">${protectionAmount} BTC</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Period</span>
+                                <span class="metric-value">${protectionPeriod} days</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">BTC Value</span>
+                                <span class="metric-value">${demo.formatCurrency(protectionAmount * demo.marketData.btc_price)}</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Protection Type</span>
+                                <span class="metric-value">Downside</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Update platform exposure dashboard (Step 2 functionality)
+                demo.loadPlatformExposure();
+                
+                // Auto-advance to Step 3 (strategies) - skip Step 2 display
+                console.log('✅ Auto-advancing to Step 3 (strategies)');
                 document.getElementById('lending-step-1').style.display = 'none';
-                document.getElementById('lending-step-2').style.display = 'block';
-                console.log('✅ Step 2 visibility set to block');
+                document.getElementById('lending-step-3').style.display = 'block';
+                
+                // Generate strategies automatically (Step 2 functionality)
+                await generateLenderScenarios();
                 
             } catch (error) {
                 demo.hideLoading();
@@ -724,9 +804,8 @@
                 // Display LIVE strategies from API
                 demo.displayLiveStrategies(data.strategies, data.analysis_context);
                 
-                // Show step 3, hide step 2
-                document.getElementById('lending-step-2').style.display = 'none';
-                document.getElementById('lending-step-3').style.display = 'block';
+                // Step 3 is already visible (Step 2 was skipped), just ensure it's displayed
+                console.log('✅ Strategies displayed in Step 3');
                 
             } catch (error) {
                 demo.hideLoading();
