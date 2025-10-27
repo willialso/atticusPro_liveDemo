@@ -929,11 +929,13 @@ body {
     color: var(--warning-light); /* Rich yellow for labels */
     display: block;
     margin-bottom: 8px;
+    text-align: center;
 }
 
 .sidebar-metric .metric-value {
     color: var(--text-bright);
     display: block;
+    text-align: center;
 }
 
 /* Loading Overlay */
