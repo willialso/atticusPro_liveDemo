@@ -568,6 +568,19 @@
                             <p>${strategy.strategy_subtitle || strategy.strategy_category || 'Professional downside protection strategy'}</p>
                         </div>
                         
+                        <div class="strike-info">
+                            <div class="strike-price">
+                                <span class="strike-label">Strike Price:</span>
+                                <span class="strike-value">${this.formatCurrency(strategy.strike_price || strategy.protection_level || 0)}</span>
+                            </div>
+                            ${strategy.strike_price && this.marketData?.btc_price ? `
+                                <div class="strike-percentage">
+                                    <span class="percentage-label">Protection Level:</span>
+                                    <span class="percentage-value">${((strategy.strike_price / this.marketData.btc_price - 1) * 100).toFixed(1)}% below spot</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
                         ${(() => {
                             // Calculate value metrics for lender using strategy-specific data
                             // Use correct strategy-specific premium fields (prioritize discounted cost)
@@ -600,6 +613,16 @@
                             console.log(`   Net Yield Retention: ${netYieldRetention.toFixed(1)}%`);
                             console.log(`   Formula: ((${lendingIncome.toLocaleString()} - ${premiumCost.toLocaleString()}) / ${lendingIncome.toLocaleString()}) * 100`);
                             
+                            // Strike price validation and debugging
+                            console.log(`🔍 [STRIKE PRICE DEBUG] Strategy: ${strategy.strategy_name}`);
+                            console.log(`   Strike Price: $${strategy.strike_price || 'N/A'}`);
+                            console.log(`   Protection Level: $${strategy.protection_level || 'N/A'}`);
+                            console.log(`   Current BTC Price: $${this.marketData?.btc_price || 'N/A'}`);
+                            if (strategy.strike_price && this.marketData?.btc_price) {
+                                const strikePercentage = ((strategy.strike_price / this.marketData.btc_price - 1) * 100).toFixed(1);
+                                console.log(`   Strike % Below Spot: ${strikePercentage}%`);
+                            }
+                            
                             // Validation checks
                             if (premiumCost <= 0) {
                                 console.warn(`⚠️ [VALIDATION] Strategy ${strategy.strategy_name} has zero or negative premium cost`);
@@ -620,6 +643,14 @@
                             
                             if (premiumAsPctOfYield > 100) {
                                 console.warn(`⚠️ [ECONOMIC] Strategy ${strategy.strategy_name}: Premium (${premiumAsPctOfYield.toFixed(1)}%) exceeds total yield - not economically viable`);
+                            }
+                            
+                            // Strike price validation
+                            if (!strategy.strike_price && !strategy.protection_level) {
+                                console.warn(`⚠️ [STRIKE VALIDATION] Strategy ${strategy.strategy_name} has no strike price or protection level`);
+                            }
+                            if (strategy.strike_price && strategy.strike_price <= 0) {
+                                console.warn(`⚠️ [STRIKE VALIDATION] Strategy ${strategy.strategy_name} has invalid strike price: ${strategy.strike_price}`);
                             }
                             
                             return `

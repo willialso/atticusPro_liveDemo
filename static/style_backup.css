@@ -210,6 +210,40 @@ body {
     display: none !important;
 }
 
+/* Strike Price Display Styling */
+.strike-info {
+    background: linear-gradient(135deg, rgba(30,41,59,0.3) 0%, rgba(37,99,235,0.1) 100%);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.strike-price, .strike-percentage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.strike-label, .percentage-label {
+    color: var(--text-bright);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.strike-value, .percentage-value {
+    color: var(--success);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.strike-value {
+    font-size: 16px;
+}
+
 .section-header h2 {
     font-size: 48px;
     font-weight: 800;
