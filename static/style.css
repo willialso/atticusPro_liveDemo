@@ -213,7 +213,10 @@ body {
     
     .logo {
         height: 40px;
+        max-width: 100%;
+        width: auto;
         margin: 0;
+        object-fit: contain;
     }
     
     .platform-status {
@@ -242,6 +245,9 @@ body {
     
     .logo {
         height: 35px;
+        max-width: 100%;
+        width: auto;
+        object-fit: contain;
     }
 }
 
@@ -615,6 +621,32 @@ body {
     gap: 32px;
     backdrop-filter: blur(8px);
     width: 100%;
+}
+
+/* Mobile Market Data Bar */
+@media (max-width: 768px) {
+    .market-data-bar {
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .market-item {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .market-item .label {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .market-item .value {
+        font-size: 18px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
 }
 
 /* Protection Mode Selector */
@@ -1075,17 +1107,20 @@ body {
     /* Mobile step navigation */
     .nav-steps {
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
         margin-bottom: 20px;
+        align-items: center;
     }
     
     .nav-step {
         font-size: 14px;
-        padding: 12px 16px;
-        min-height: 44px;
+        padding: 12px 20px;
+        min-height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 100%;
+        max-width: 300px;
     }
 }
 
@@ -4381,5 +4416,38 @@ body {
     
     .execution-status .timestamp {
         margin-left: 0;
+    }
+}
+
+/* Mobile Problem/Solution Section Polish */
+@media (max-width: 768px) {
+    .challenge-stats-single-row,
+    .solution-features-single-row,
+    .problem-points-single-row {
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+    }
+    
+    .challenge-stat,
+    .solution-feature,
+    .problem-point {
+        width: 100%;
+        text-align: center;
+        padding: 16px;
+    }
+    
+    .challenge-stat h3,
+    .solution-feature h3,
+    .problem-point h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .challenge-stat p,
+    .solution-feature p,
+    .problem-point p {
+        font-size: 14px;
+        line-height: 1.5;
     }
 }
