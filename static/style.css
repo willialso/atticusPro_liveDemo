@@ -630,11 +630,13 @@ body {
         gap: 16px;
         padding: 20px;
         text-align: center;
+        justify-content: center;
     }
     
     .market-item {
         width: 100%;
         min-width: 0;
+        flex: 1;
     }
     
     .market-item .label {
@@ -1064,7 +1066,7 @@ body {
 }
 
 /* Mobile button optimizations - ensure 44px+ touch targets */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
     .cta-btn,
     .action-btn,
     .secondary-btn,
@@ -1076,32 +1078,32 @@ body {
     }
     
     .mobile-sidebar-toggle {
-        width: 48px !important;
-        height: 48px !important;
-        font-size: 18px !important;
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
     }
     
     /* Ensure main content doesn't get hidden behind mobile toggle */
     .main-content {
-        padding-right: 0 !important;
-        margin-right: 0 !important;
-        width: 100% !important; /* Ensure full width on mobile */
-        max-width: 100% !important; /* Prevent width constraints */
+        padding-right: 0;
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
     }
     
     /* Mobile-specific spacing adjustments */
     .container {
         padding-left: 16px;
         padding-right: 16px;
-        width: 100% !important; /* Ensure full width on mobile */
-        max-width: 100% !important; /* Prevent width constraints */
+        width: 100%;
+        max-width: 100%;
     }
     
     /* Improve mobile text readability */
     body {
         font-size: 16px;
         line-height: 1.6;
-        padding-right: 0 !important; /* CRITICAL: Remove desktop sidebar space on mobile */
+        padding-right: 0; /* Remove desktop sidebar space on mobile */
     }
     
     /* Mobile step navigation */
@@ -4419,35 +4421,3 @@ body {
     }
 }
 
-/* Mobile Problem/Solution Section Polish */
-@media (max-width: 768px) {
-    .challenge-stats-single-row,
-    .solution-features-single-row,
-    .problem-points-single-row {
-        flex-direction: column;
-        gap: 16px;
-        padding: 20px;
-    }
-    
-    .challenge-stat,
-    .solution-feature,
-    .problem-point {
-        width: 100%;
-        text-align: center;
-        padding: 16px;
-    }
-    
-    .challenge-stat h3,
-    .solution-feature h3,
-    .problem-point h3 {
-        font-size: 18px;
-        margin-bottom: 8px;
-    }
-    
-    .challenge-stat p,
-    .solution-feature p,
-    .problem-point p {
-        font-size: 14px;
-        line-height: 1.5;
-    }
-}
