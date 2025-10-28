@@ -205,6 +205,11 @@ body {
     margin-bottom: 40px;
 }
 
+/* Hide Step 2 completely from UI (functionality preserved) */
+#lending-step-2 {
+    display: none !important;
+}
+
 .section-header h2 {
     font-size: 48px;
     font-weight: 800;

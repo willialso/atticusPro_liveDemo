@@ -2678,11 +2678,18 @@ def execute_strategy():
         
         # Calculate net exposure based on strategy type
         if strategy.get('lending_protection'):
-            # For lending protection: Net exposure = Options Delta (not BTC)
+            # For lending protection: Track client BTC position AND options delta
+            # Add client BTC position for dashboard visibility
+            platform_state['total_client_exposure_btc'] += size
+            platform_state['lending_exposure_btc'] += size
+            
+            # Keep existing options delta tracking for platform hedging
             net_exposure = platform_state['net_options_delta']
             platform_state['net_platform_exposure_btc'] = net_exposure
             
             print(f"📊 [OPTIONS] Updated platform state:")
+            print(f"   Client BTC Position Added: {size} BTC")
+            print(f"   Total Client Exposure: {platform_state['total_client_exposure_btc']} BTC")
             print(f"   Options Positions: {len(platform_state['options_positions'])}")
             print(f"   Total Options Delta: {platform_state['total_options_delta']:.4f}")
             print(f"   Net Options Delta: {platform_state['net_options_delta']:.4f}")

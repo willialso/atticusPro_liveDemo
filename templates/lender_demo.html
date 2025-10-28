@@ -504,28 +504,6 @@
                         </div>
                     </div>
 
-                    <div class="platform-exposure-management">
-                        <h4>Platform Exposure Management</h4>
-                        <div class="exposure-metrics">
-                            <div class="exposure-item">
-                                <span class="label">Client Positions</span>
-                                <span class="value">${platformExposure.client_positions_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Platform Hedges</span>
-                                <span class="value">${platformExposure.platform_hedges_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Net Exposure</span>
-                                <span class="value">${platformExposure.net_exposure_btc || '0'} BTC</span>
-                            </div>
-                            <div class="exposure-item">
-                                <span class="label">Hedge Action</span>
-                                <span class="value">HEDGED</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="execution-venues">
                         <h4>Execution Venues</h4>
                         <div style="display: grid; gap: 12px;">
@@ -591,24 +569,34 @@
                         </div>
                         
                         ${(() => {
-                            // Calculate value metrics for lender
+                            // Calculate value metrics for lender using strategy-specific data
                             const premiumCost = strategy.total_client_cost || strategy.total_net_received || 0;
-                            const protectionAmount = this.protectionAmount || 1;
-                            const protectionPeriod = this.protectionPeriod || 90;
-                            const lendingRate = this.lendingRate || 0.10;
-                            const positionValue = this.positionValueUSD || (protectionAmount * (this.marketData?.btc_price || 111000));
+                            
+                            // Use strategy-specific protection amount instead of cached value
+                            const protectionAmount = strategy.protection_amount || strategy.size || strategy.notional_btc || 1;
+                            const protectionPeriod = strategy.protection_period || this.protectionPeriod || 90;
+                            const lendingRate = strategy.lending_rate || this.lendingRate || 0.10;
+                            
+                            // Calculate position value fresh for each strategy
+                            const positionValue = protectionAmount * (this.marketData?.btc_price || 111000);
                             
                             const lendingIncome = positionValue * (lendingRate * (protectionPeriod / 365));
                             const netIncome = lendingIncome - premiumCost;
-                            const roi = premiumCost > 0 ? (netIncome / premiumCost) * 100 : 0;
                             
-                            // Debug logging for ROI calculation
-                            console.log(`🔍 [ROI DEBUG] Strategy: ${strategy.strategy_name}`);
+                            // Calculate Net Yield Retention (more valuable for lenders)
+                            const netYieldRetention = lendingIncome > 0 
+                                ? ((lendingIncome - premiumCost) / lendingIncome) * 100 
+                                : 0;
+                            
+                            // Debug logging for Net Yield Retention calculation
+                            console.log(`🔍 [YIELD RETENTION DEBUG] Strategy: ${strategy.strategy_name}`);
+                            console.log(`   Strategy Protection Amount: ${protectionAmount} BTC`);
+                            console.log(`   Strategy Position Value: $${positionValue.toLocaleString()}`);
                             console.log(`   Premium Cost: $${premiumCost.toLocaleString()}`);
                             console.log(`   Lending Income: $${lendingIncome.toLocaleString()}`);
                             console.log(`   Net Income: $${netIncome.toLocaleString()}`);
-                            console.log(`   ROI: ${roi.toFixed(2)}%`);
-                            console.log(`   Formula: (${netIncome.toLocaleString()} / ${premiumCost.toLocaleString()}) * 100`);
+                            console.log(`   Net Yield Retention: ${netYieldRetention.toFixed(1)}%`);
+                            console.log(`   Formula: ((${lendingIncome.toLocaleString()} - ${premiumCost.toLocaleString()}) / ${lendingIncome.toLocaleString()}) * 100`);
                             
                             return `
                         <div class="strategy-metrics">
@@ -625,8 +613,8 @@
                                 <div class="metric-label">Net Income</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${Math.round(roi)}%</div>
-                                <div class="metric-label">Net ROI</div>
+                                <div class="metric-value">${netYieldRetention.toFixed(1)}%</div>
+                                <div class="metric-label">Yield Retained</div>
                             </div>
                         </div>`;
                         })()}
