@@ -570,16 +570,16 @@
                         
                         ${(() => {
                             // Calculate value metrics for lender using strategy-specific data
-                            const premiumCost = strategy.total_client_cost || strategy.total_net_received || 0;
+                            // Use correct strategy-specific premium fields (prioritize discounted cost)
+                            const premiumCost = strategy.total_client_cost || strategy.original_premium || strategy.base_premium_total || 0;
                             
-                            // Use strategy-specific protection amount instead of cached value
-                            const protectionAmount = strategy.protection_amount || strategy.size || strategy.notional_btc || 1;
+                            // Use user's actual BTC collateral for lending income calculation (not strategy payout)
+                            const userCollateralBTC = this.protectionAmount || 10; // User's actual BTC position
                             const protectionPeriod = strategy.protection_period || this.protectionPeriod || 90;
                             const lendingRate = strategy.lending_rate || this.lendingRate || 0.10;
                             
-                            // Calculate position value fresh for each strategy
-                            const positionValue = protectionAmount * (this.marketData?.btc_price || 111000);
-                            
+                            // Calculate lending income on user's actual collateral
+                            const positionValue = userCollateralBTC * (this.marketData?.btc_price || 111000);
                             const lendingIncome = positionValue * (lendingRate * (protectionPeriod / 365));
                             const netIncome = lendingIncome - premiumCost;
                             
@@ -588,15 +588,39 @@
                                 ? ((lendingIncome - premiumCost) / lendingIncome) * 100 
                                 : 0;
                             
-                            // Debug logging for Net Yield Retention calculation
+                            // Enhanced debugging for Net Yield Retention calculation
                             console.log(`🔍 [YIELD RETENTION DEBUG] Strategy: ${strategy.strategy_name}`);
-                            console.log(`   Strategy Protection Amount: ${protectionAmount} BTC`);
-                            console.log(`   Strategy Position Value: $${positionValue.toLocaleString()}`);
-                            console.log(`   Premium Cost: $${premiumCost.toLocaleString()}`);
+                            console.log(`   User Collateral BTC: ${userCollateralBTC} BTC`);
+                            console.log(`   Position Value: $${positionValue.toLocaleString()}`);
+                            console.log(`   Strategy Premium Cost: $${premiumCost.toLocaleString()}`);
+                            console.log(`   Strategy Original Premium: $${strategy.original_premium || 'N/A'}`);
+                            console.log(`   Strategy Base Premium: $${strategy.base_premium_total || 'N/A'}`);
                             console.log(`   Lending Income: $${lendingIncome.toLocaleString()}`);
                             console.log(`   Net Income: $${netIncome.toLocaleString()}`);
                             console.log(`   Net Yield Retention: ${netYieldRetention.toFixed(1)}%`);
                             console.log(`   Formula: ((${lendingIncome.toLocaleString()} - ${premiumCost.toLocaleString()}) / ${lendingIncome.toLocaleString()}) * 100`);
+                            
+                            // Validation checks
+                            if (premiumCost <= 0) {
+                                console.warn(`⚠️ [VALIDATION] Strategy ${strategy.strategy_name} has zero or negative premium cost`);
+                            }
+                            if (lendingIncome <= 0) {
+                                console.warn(`⚠️ [VALIDATION] Strategy ${strategy.strategy_name} has zero or negative lending income`);
+                            }
+                            if (netYieldRetention < -100) {
+                                console.warn(`⚠️ [VALIDATION] Strategy ${strategy.strategy_name} has extremely negative yield retention: ${netYieldRetention.toFixed(1)}%`);
+                            }
+                            if (netYieldRetention > 100) {
+                                console.warn(`⚠️ [VALIDATION] Strategy ${strategy.strategy_name} has impossible yield retention > 100%: ${netYieldRetention.toFixed(1)}%`);
+                            }
+                            
+                            // Economic sense validation
+                            const premiumAsPctOfYield = lendingIncome > 0 ? (premiumCost / lendingIncome) * 100 : 0;
+                            console.log(`   Premium as % of Yield: ${premiumAsPctOfYield.toFixed(1)}%`);
+                            
+                            if (premiumAsPctOfYield > 100) {
+                                console.warn(`⚠️ [ECONOMIC] Strategy ${strategy.strategy_name}: Premium (${premiumAsPctOfYield.toFixed(1)}%) exceeds total yield - not economically viable`);
+                            }
                             
                             return `
                         <div class="strategy-metrics">
@@ -613,8 +637,9 @@
                                 <div class="metric-label">Net Income</div>
                             </div>
                             <div class="metric-card">
-                                <div class="metric-value">${netYieldRetention.toFixed(1)}%</div>
+                                <div class="metric-value" style="color: ${netYieldRetention < 0 ? 'var(--error)' : netYieldRetention > 50 ? 'var(--success)' : 'var(--warning)'};">${netYieldRetention.toFixed(1)}%</div>
                                 <div class="metric-label">Yield Retained</div>
+                                ${netYieldRetention < 0 ? '<div class="metric-warning" style="color: var(--error); font-size: 12px; margin-top: 4px;">⚠️ Premium exceeds yield</div>' : ''}
                             </div>
                         </div>`;
                         })()}
