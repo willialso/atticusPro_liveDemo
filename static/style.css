@@ -1051,20 +1051,25 @@ body {
     
     /* Ensure main content doesn't get hidden behind mobile toggle */
     .main-content {
-        padding-right: 0;
-        margin-right: 0;
+        padding-right: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important; /* Ensure full width on mobile */
+        max-width: 100% !important; /* Prevent width constraints */
     }
     
     /* Mobile-specific spacing adjustments */
     .container {
         padding-left: 16px;
         padding-right: 16px;
+        width: 100% !important; /* Ensure full width on mobile */
+        max-width: 100% !important; /* Prevent width constraints */
     }
     
     /* Improve mobile text readability */
     body {
         font-size: 16px;
         line-height: 1.6;
+        padding-right: 0 !important; /* CRITICAL: Remove desktop sidebar space on mobile */
     }
     
     /* Mobile step navigation */
