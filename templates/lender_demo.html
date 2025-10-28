@@ -547,7 +547,7 @@
                         ${strategy.recommended ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
                         
                         <div class="strategy-header">
-                            <h3>${strategy.strategy_name}</h3>
+                            <h3>${strategy.strategy_name}${strategy.strike_price && this.marketData?.btc_price ? ` - ${this.formatCurrency(strategy.strike_price)} (${((strategy.strike_price / this.marketData.btc_price - 1) * 100).toFixed(1)}%)` : ''}</h3>
                             <div class="strategy-cost">${this.formatCurrency(strategy.total_client_cost || strategy.total_net_received || 0)}</div>
                         </div>
                         
@@ -566,19 +566,6 @@
                         
                         <div class="strategy-description">
                             <p>${strategy.strategy_subtitle || strategy.strategy_category || 'Professional downside protection strategy'}</p>
-                        </div>
-                        
-                        <div class="strike-info">
-                            <div class="strike-price">
-                                <span class="strike-label">Strike Price:</span>
-                                <span class="strike-value">${this.formatCurrency(strategy.strike_price || strategy.protection_level || 0)}</span>
-                            </div>
-                            ${strategy.strike_price && this.marketData?.btc_price ? `
-                                <div class="strike-percentage">
-                                    <span class="percentage-label">Protection Level:</span>
-                                    <span class="percentage-value">${((strategy.strike_price / this.marketData.btc_price - 1) * 100).toFixed(1)}% below spot</span>
-                                </div>
-                            ` : ''}
                         </div>
                         
                         ${(() => {

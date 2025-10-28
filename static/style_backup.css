@@ -210,40 +210,6 @@ body {
     display: none !important;
 }
 
-/* Strike Price Display Styling */
-.strike-info {
-    background: linear-gradient(135deg, rgba(30,41,59,0.3) 0%, rgba(37,99,235,0.1) 100%);
-    border: 1px solid rgba(16,185,129,0.3);
-    border-radius: 12px;
-    padding: 16px;
-    margin: 16px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.strike-price, .strike-percentage {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.strike-label, .percentage-label {
-    color: var(--text-bright);
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.strike-value, .percentage-value {
-    color: var(--success);
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.strike-value {
-    font-size: 16px;
-}
-
 /* Enhanced Metric Warning and Success Indicators */
 .metric-warning {
     color: var(--error);
@@ -788,6 +754,36 @@ body {
     align-items: flex-start;
     margin-bottom: 20px;
     width: 100%;
+    gap: 16px;
+}
+
+.strategy-header h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--warning-light);
+    margin: 0;
+    line-height: 1.3;
+    flex: 1;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Responsive design for strategy headers */
+@media (max-width: 768px) {
+    .strategy-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .strategy-header h3 {
+        font-size: 20px;
+        line-height: 1.4;
+    }
+    
+    .strategy-cost {
+        align-self: flex-end;
+    }
 }
 
 .strategy-name {
