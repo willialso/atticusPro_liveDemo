@@ -93,6 +93,48 @@ body {
     align-items: center;
 }
 
+/* Mobile header optimizations */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 8px 0;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .logo {
+        height: 40px;
+        margin: 0;
+    }
+    
+    .platform-status {
+        position: static;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .status-item .label,
+    .status-item .value {
+        font-size: 13px;
+    }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+    .platform-status {
+        gap: 12px;
+    }
+    
+    .status-item .label,
+    .status-item .value {
+        font-size: 12px;
+    }
+    
+    .logo {
+        height: 35px;
+    }
+}
+
 /* CONSISTENT FONT SIZING - CFO Request */
 .status-item .label,
 .status-item .value {
@@ -699,14 +741,83 @@ body {
     box-shadow: 0 10px 30px rgba(0, 136, 204, 0.6);
 }
 
-/* FIXED STRATEGIES GRID - Auto-fit for Desktop */
+/* Mobile button optimizations - ensure 44px+ touch targets */
+@media (max-width: 767px) {
+    .cta-btn,
+    .action-btn,
+    .secondary-btn,
+    .telegram-btn {
+        padding: 16px 32px;
+        font-size: 16px;
+        min-height: 48px; /* Larger touch target for mobile */
+        min-width: 120px;
+    }
+    
+    .mobile-sidebar-toggle {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+    
+    /* Ensure main content doesn't get hidden behind mobile toggle */
+    .main-content {
+        padding-right: 0;
+        margin-right: 0;
+    }
+    
+    /* Mobile-specific spacing adjustments */
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    /* Improve mobile text readability */
+    body {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    
+    /* Mobile step navigation */
+    .nav-steps {
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .nav-step {
+        font-size: 14px;
+        padding: 12px 16px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* RESPONSIVE STRATEGIES GRID - Mobile-first approach */
 .strategies-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr;
+    gap: 16px;
     margin-top: 40px;
     width: 100%;
     max-width: 100%;
+}
+
+/* Tablet and up - 2 columns */
+@media (min-width: 768px) {
+    .strategies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+/* Desktop - 3 columns */
+@media (min-width: 1200px) {
+    .strategies-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
 }
 
 .strategy-option {
@@ -720,6 +831,25 @@ body {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+    min-height: 44px; /* Ensure minimum touch target */
+}
+
+/* Mobile strategy card optimizations */
+@media (max-width: 767px) {
+    .strategy-option {
+        padding: 20px;
+        border-radius: 16px;
+        min-height: 60px; /* Larger touch target for mobile */
+    }
+    
+    .strategy-option:hover {
+        transform: none; /* Disable hover effects on touch devices */
+    }
+    
+    .strategy-option:active {
+        transform: scale(0.98); /* Touch feedback */
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%);
+    }
 }
 
 .strategy-option:hover {
@@ -774,15 +904,35 @@ body {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+        margin-bottom: 16px;
     }
     
     .strategy-header h3 {
-        font-size: 20px;
+        font-size: 18px;
         line-height: 1.4;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
     }
     
     .strategy-cost {
         align-self: flex-end;
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+    .strategy-header h3 {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    
+    .strategy-cost {
+        font-size: 12px;
+        padding: 4px 8px;
     }
 }
 
@@ -819,6 +969,33 @@ body {
     gap: 16px;
     margin-bottom: 24px;
     width: 100%;
+}
+
+/* Mobile metric cards optimization */
+@media (max-width: 767px) {
+    .strategy-metrics {
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .strategy-metric {
+        padding: 12px 8px;
+        min-height: 60px; /* Ensure adequate touch target */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .strategy-metric .metric-value {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+    
+    .strategy-metric .metric-label {
+        font-size: 11px;
+        line-height: 1.2;
+    }
 }
 
 .strategy-metric {
@@ -951,6 +1128,79 @@ body {
     backdrop-filter: blur(15px);
     z-index: 800;
     overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Mobile sidebar drawer - slides in from right */
+@media (max-width: 768px) {
+    .platform-dashboard-sidebar {
+        width: 100vw;
+        max-width: 400px;
+        transform: translateX(100%);
+        border-left: none;
+        border-top: 3px solid var(--warning-light);
+    }
+    
+    .platform-dashboard-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Mobile sidebar backdrop */
+    .sidebar-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 799;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+    
+    .sidebar-backdrop.mobile-open {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Mobile sidebar toggle button */
+    .mobile-sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        z-index: 900;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobile-sidebar-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+    }
+    
+    .mobile-sidebar-toggle:active {
+        transform: scale(0.95);
+    }
+    
+    /* Hide mobile toggle on desktop */
+    @media (min-width: 769px) {
+        .mobile-sidebar-toggle {
+            display: none;
+        }
+    }
 }
 
 .sidebar-content {
