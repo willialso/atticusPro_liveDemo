@@ -1044,9 +1044,9 @@ body {
     }
     
     .mobile-sidebar-toggle {
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 18px !important;
     }
     
     /* Ensure main content doesn't get hidden behind mobile toggle */
@@ -1466,15 +1466,15 @@ body {
 /* Mobile sidebar drawer - slides in from right */
 @media (max-width: 768px) {
     .platform-dashboard-sidebar {
-        width: 100vw;
-        max-width: 400px;
-        transform: translateX(100%);
-        border-left: none;
-        border-top: 3px solid var(--warning-light);
+        width: 100vw !important;
+        max-width: 400px !important;
+        transform: translateX(100%) !important;
+        border-left: none !important;
+        border-top: 3px solid var(--warning-light) !important;
     }
     
     .platform-dashboard-sidebar.mobile-open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
     }
     
     /* Mobile sidebar backdrop */
@@ -1498,24 +1498,24 @@ body {
     
     /* Mobile sidebar toggle button */
     .mobile-sidebar-toggle {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 20px;
-        font-weight: 700;
-        cursor: pointer;
-        z-index: 900;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: fixed !important;
+        top: 20px !important;
+        right: 20px !important;
+        width: 50px !important;
+        height: 50px !important;
+        background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        color: white !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        z-index: 900 !important;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4) !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     
     .mobile-sidebar-toggle:hover {
