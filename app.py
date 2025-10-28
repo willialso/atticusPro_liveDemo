@@ -1409,6 +1409,13 @@ class LivePricingEngine:
                 K = config['strike_price']
                 put_price = self._black_scholes_put(S, K, T, r, vol)
                 
+                # BACKEND DEBUGGING: Verify unique pricing per tier
+                print(f"🔍 [BACKEND PRICING DEBUG] Tier: {tier_name}")
+                print(f"   Strike Price: ${K:,.2f}")
+                print(f"   Black-Scholes Put Price: ${put_price:.4f}")
+                print(f"   Spot Price: ${S:,.2f}")
+                print(f"   Strike % Below Spot: {((K/S - 1) * 100):.1f}%")
+                
                 # Calculate pricing
                 base_premium = size * put_price
                 markup_amount = max(
@@ -1420,6 +1427,11 @@ class LivePricingEngine:
                 # Apply tier-specific discount
                 discount_amount = total_premium * config['discount_rate']
                 discounted_premium = total_premium - discount_amount
+                
+                print(f"   Base Premium: ${base_premium:,.2f}")
+                print(f"   Total Premium: ${total_premium:,.2f}")
+                print(f"   Discounted Premium: ${discounted_premium:,.2f}")
+                print(f"   Discount Rate: {config['discount_rate']*100:.1f}%")
                 
                 # Calculate APR equivalent
                 apr_equivalent = (discounted_premium / (size * S)) * 365 / (T * 365) * 100

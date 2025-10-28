@@ -244,6 +244,40 @@ body {
     font-size: 16px;
 }
 
+/* Enhanced Metric Warning and Success Indicators */
+.metric-warning {
+    color: var(--error);
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 600;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border-left: 3px solid var(--error);
+}
+
+.metric-success {
+    color: var(--success);
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border-left: 3px solid var(--success);
+}
+
+/* Enhanced metric card styling for better visibility */
+.metric-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
 .section-header h2 {
     font-size: 48px;
     font-weight: 800;
