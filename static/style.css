@@ -206,20 +206,22 @@ body {
 /* Mobile header optimizations */
 @media (max-width: 768px) {
     .header-content {
-        padding: 12px 0;
-        flex-direction: column;
-        gap: 16px;
-        min-height: 80px;
-        justify-content: center;
+        padding: 12px 0 !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        min-height: 80px !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
     }
     
     .logo {
-        height: 35px;
-        max-width: 90%;
-        width: auto;
-        margin: 0 auto;
-        object-fit: contain;
-        display: block;
+        height: 30px !important;
+        max-width: 80% !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        object-fit: contain !important;
+        display: block !important;
     }
     
     .platform-status {
@@ -253,12 +255,12 @@ body {
     }
     
     .logo {
-        height: 30px;
-        max-width: 85%;
-        width: auto;
-        object-fit: contain;
-        margin: 0 auto;
-        display: block;
+        height: 25px !important;
+        max-width: 75% !important;
+        width: auto !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+        display: block !important;
     }
 }
 
@@ -1146,10 +1148,12 @@ body {
     
     /* Mobile-specific spacing adjustments */
     .container {
-        padding-left: 16px;
-        padding-right: 16px;
-        width: 100%;
-        max-width: 100%;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
     
     /* Improve mobile text readability */
@@ -1161,36 +1165,37 @@ body {
     
     /* Mobile step navigation */
     .demo-nav {
-        padding: 12px 0;
+        padding: 12px 0 !important;
     }
     
     .nav-steps {
-        flex-direction: column;
-        gap: 16px;
-        margin-bottom: 24px;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
+        flex-direction: column !important;
+        gap: 16px !important;
+        margin-bottom: 24px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
     }
     
     .nav-step {
-        font-size: 14px;
-        padding: 12px 20px;
-        min-height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        max-width: 280px;
-        text-align: center;
-        margin: 0 auto;
+        font-size: 14px !important;
+        padding: 12px 20px !important;
+        min-height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        max-width: 280px !important;
+        text-align: center !important;
+        margin: 0 auto !important;
+        gap: 12px !important;
     }
     
     .step-number {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-        margin-right: 12px;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 12px !important;
+        margin-right: 12px !important;
     }
 }
 
