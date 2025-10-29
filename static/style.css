@@ -262,6 +262,16 @@ body {
         margin: 0 auto !important;
         display: block !important;
     }
+    
+    /* Force mobile logo scaling with higher specificity for small screens */
+    .header .header-content .logo {
+        height: 25px !important;
+        max-width: 75% !important;
+        width: auto !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+        display: block !important;
+    }
 }
 
 /* NAVIGATION - Matches header style */
@@ -1163,7 +1173,7 @@ body {
         padding-right: 0; /* Remove desktop sidebar space on mobile */
     }
     
-    /* Mobile step navigation */
+    /* Mobile step navigation - Enhanced specificity */
     .demo-nav {
         padding: 12px 0 !important;
     }
@@ -1196,6 +1206,27 @@ body {
         height: 28px !important;
         font-size: 12px !important;
         margin-right: 12px !important;
+    }
+    
+    /* Force mobile logo scaling with higher specificity */
+    .header .header-content .logo {
+        height: 30px !important;
+        max-width: 80% !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        object-fit: contain !important;
+        display: block !important;
+    }
+    
+    /* Force mobile header layout with higher specificity */
+    .header .header-content {
+        flex-direction: column !important;
+        gap: 16px !important;
+        min-height: 80px !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 12px 0 !important;
     }
 }
 
