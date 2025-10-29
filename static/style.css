@@ -263,14 +263,19 @@ body {
         display: block !important;
     }
     
-    /* Force mobile logo scaling with higher specificity for small screens */
+    /* Hide logo on small mobile screens and replace with text */
     .header .header-content .logo {
-        height: 25px !important;
-        max-width: 75% !important;
-        width: auto !important;
-        object-fit: contain !important;
-        margin: 0 auto !important;
-        display: block !important;
+        display: none !important;
+    }
+    
+    .header .header-content::before {
+        content: "Atticus Professional";
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+        display: block;
+        margin-bottom: 6px;
     }
 }
 
@@ -1156,13 +1161,20 @@ body {
         max-width: 100%;
     }
     
-    /* Mobile-specific spacing adjustments */
+    /* Mobile-specific spacing adjustments - Enhanced overflow prevention */
     .container {
         padding-left: 16px !important;
         padding-right: 16px !important;
         width: 100% !important;
         max-width: 100% !important;
-        overflow: hidden !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+        margin: 0 auto !important;
+    }
+    
+    /* Prevent any element from causing horizontal overflow */
+    * {
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
     
@@ -1208,25 +1220,44 @@ body {
         margin-right: 12px !important;
     }
     
-    /* Force mobile logo scaling with higher specificity */
+    /* Hide logo on mobile and replace with text */
     .header .header-content .logo {
-        height: 30px !important;
-        max-width: 80% !important;
-        width: auto !important;
-        margin: 0 auto !important;
-        object-fit: contain !important;
-        display: block !important;
+        display: none !important;
+    }
+    
+    .header .header-content::before {
+        content: "Atticus Professional";
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+        display: block;
+        margin-bottom: 8px;
     }
     
     /* Force mobile header layout with higher specificity */
     .header .header-content {
         flex-direction: column !important;
-        gap: 16px !important;
-        min-height: 80px !important;
+        gap: 12px !important;
+        min-height: 70px !important;
         justify-content: center !important;
         align-items: center !important;
         width: 100% !important;
         padding: 12px 0 !important;
+        text-align: center !important;
+    }
+    
+    /* Mobile platform status optimization */
+    .platform-status {
+        flex-direction: column !important;
+        gap: 8px !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+    
+    .status-item {
+        text-align: center !important;
+        margin: 0 !important;
     }
 }
 
@@ -1950,11 +1981,15 @@ body {
         padding-top: 20px;
     }
     
-    /* Workflow Step Mobile Optimizations */
+    /* Workflow Step Mobile Optimizations - Simplified */
     .workflow-step h3 {
-        font-size: 24px;
-        margin-bottom: 30px;
-        padding-bottom: 16px;
+        font-size: 18px !important;
+        margin-bottom: 20px !important;
+        padding: 10px !important;
+        text-align: center !important;
+        line-height: 1.3 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
     
     .demo-workflow {
