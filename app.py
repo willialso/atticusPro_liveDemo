@@ -12,7 +12,7 @@ import json
 import time
 import traceback
 from datetime import datetime, timedelta
-from flask import Flask, render_template, jsonify, request, session
+from flask import Flask, render_template, jsonify, request, session, send_from_directory
 from typing import Dict, List, Optional, Any
 
 # Try importing requests - critical for live data
@@ -2886,6 +2886,11 @@ def platform_pooling():
             'net_exposure_btc': 0.0,
             'pooling_benefits': []
         }}), 500
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    """Serve static files (CSS, JS, images)"""
+    return send_from_directory('static', filename)
 
 if __name__ == '__main__':
     print("🔴 " + "="*80)
