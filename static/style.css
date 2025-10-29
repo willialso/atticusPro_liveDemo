@@ -263,19 +263,14 @@ body {
         display: block !important;
     }
     
-    /* Hide logo on small mobile screens and replace with text */
+    /* Small mobile logo scaling - restore image with proper sizing */
     .header .header-content .logo {
-        display: none !important;
-    }
-    
-    .header .header-content::before {
-        content: "Atticus Professional";
-        font-size: 16px;
-        font-weight: 700;
-        color: white;
-        text-align: center;
-        display: block;
-        margin-bottom: 6px;
+        height: 25px !important;
+        max-width: 75% !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        object-fit: contain !important;
+        display: block !important;
     }
 }
 
@@ -1220,19 +1215,14 @@ body {
         margin-right: 12px !important;
     }
     
-    /* Hide logo on mobile and replace with text */
+    /* Mobile logo scaling - restore image with proper sizing */
     .header .header-content .logo {
-        display: none !important;
-    }
-    
-    .header .header-content::before {
-        content: "Atticus Professional";
-        font-size: 18px;
-        font-weight: 700;
-        color: white;
-        text-align: center;
-        display: block;
-        margin-bottom: 8px;
+        height: 30px !important;
+        max-width: 80% !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        object-fit: contain !important;
+        display: block !important;
     }
     
     /* Force mobile header layout with higher specificity */
@@ -2661,6 +2651,48 @@ body {
     height: 120px;
     width: auto;
     filter: brightness(1.2) contrast(1.1);
+}
+
+/* Mobile main logo - replace with styled text to prevent compression */
+@media (max-width: 768px) {
+    .logo-large {
+        display: none !important;
+    }
+    
+    .hero-logo::before {
+        content: "Atticus";
+        font-family: 'Times New Roman', serif;
+        font-size: 48px;
+        font-weight: bold;
+        color: #fbbf24; /* Yellow/gold color */
+        display: block;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+    
+    .hero-logo::after {
+        content: "PROFESSIONAL";
+        font-family: 'Calibri', 'Arial', sans-serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: #10b981; /* Green color */
+        display: block;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+}
+
+/* Extra small mobile screens - smaller main logo text */
+@media (max-width: 480px) {
+    .hero-logo::before {
+        font-size: 36px;
+        margin-bottom: 6px;
+    }
+    
+    .hero-logo::after {
+        font-size: 18px;
+        letter-spacing: 1px;
+    }
 }
 
 .hero-text {
