@@ -889,7 +889,7 @@ body {
 
 .portfolio-options h4,
 .custom-position h4 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 28px;
     color: var(--text-primary);
@@ -924,7 +924,7 @@ body {
 }
 
 .portfolio-card h5 {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0 0 12px 0;
     color: var(--text-primary); /* Flat white text */
@@ -972,7 +972,7 @@ body {
 }
 
 .input-group label {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
     color: var(--text-secondary); /* Light grey */
     margin-bottom: 12px;
@@ -1773,7 +1773,7 @@ body {
     
     .problem-card h4,
     .feature-card h4 {
-        font-size: 15px;
+        font-size: 16px;
         line-height: 1.4;
     }
     
@@ -1922,14 +1922,14 @@ body {
     }
     
     .input-group label {
-        font-size: 15px;
+        font-size: 16px;
         margin-bottom: 8px;
     }
     
     .input-group input,
     .input-group select {
         padding: 14px 16px;
-        font-size: 15px;
+        font-size: 16px;
     }
     
     .step-button-container {
