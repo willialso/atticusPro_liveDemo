@@ -2602,8 +2602,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 60px 0;
-    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-main) 50%, var(--primary-light) 100%);
+    padding: 40px 0;
+    background: var(--bg-main);
 }
 
 .hero-content {
@@ -2613,13 +2613,11 @@ body {
 }
 
 .hero-logo {
-    margin-bottom: 30px;
+    display: none;
 }
 
 .logo-large {
-    height: 120px;
-    width: auto;
-    filter: brightness(1.2) contrast(1.1);
+    display: none;
 }
 
 /* Mobile main logo - replace with styled text to prevent compression */
@@ -2665,28 +2663,20 @@ body {
 }
 
 .hero-text {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
 }
 
 .hero-title {
     font-size: 42px;
     font-weight: 700;
     margin-bottom: 24px;
-    background: linear-gradient(135deg, var(--warning-light) 0%, var(--text-white) 50%, var(--secondary-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     letter-spacing: -1px;
     line-height: 1.1;
 }
 
 .hero-subtitle {
-    font-size: 24px;
-    color: var(--text-light);
-    max-width: 800px;
-    margin: 0 auto;
-    font-weight: 500;
-    line-height: 1.4;
+    display: none;
 }
 
 .hero-cta {
@@ -2698,27 +2688,25 @@ body {
 }
 
 .cta-btn {
-    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
-    padding: 28px 40px;
+    background: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 24px 32px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     text-align: center;
     min-width: 280px;
-    min-height: 160px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+    box-shadow: none;
 }
 
 .cta-btn:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
-    border-color: var(--warning);
+    background: var(--text-secondary);
 }
 
 .lending-btn {
@@ -2746,20 +2734,21 @@ body {
 .btn-title {
     font-size: 24px;
     font-weight: 600;
-    color: var(--text-white);
+    color: var(--bg-main);
     margin: 0;
 }
 
 .btn-subtitle {
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--bg-main);
     font-weight: 500;
+    opacity: 0.8;
 }
 
 /* Features Preview */
 .features {
     padding: 60px 0;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+    background: var(--bg-main);
 }
 
 .features-grid {
@@ -2771,31 +2760,28 @@ body {
 }
 
 .feature-preview {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: none;
+    border-radius: 8px;
     padding: 32px 24px;
     text-align: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
+    transition: none;
 }
 
 .feature-preview:hover {
-    transform: translateY(-4px);
-    border-color: var(--warning);
-    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.2);
+    background: var(--bg-main);
 }
 
 .feature-preview .feature-icon {
     font-size: 48px;
     margin-bottom: 20px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    filter: none;
 }
 
 .feature-preview h3 {
     font-size: 20px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -2852,7 +2838,7 @@ body {
 .lending-router-hero {
     min-height: 100vh;
     padding: 80px 0;
-    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-main) 50%, var(--primary-light) 100%);
+    background: var(--bg-main);
 }
 
 .router-content {
@@ -2889,10 +2875,7 @@ body {
     font-size: 42px;
     font-weight: 700;
     margin-bottom: 24px;
-    background: linear-gradient(135deg, var(--warning-light) 0%, var(--text-white) 50%, var(--secondary-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     letter-spacing: -1px;
     line-height: 1.1;
 }
@@ -2921,7 +2904,7 @@ body {
     font-weight: 600;
     margin-bottom: 40px;
     text-align: center;
-    color: var(--warning-light);
+    color: var(--text-primary);
 }
 
 .challenge-grid,
@@ -2934,34 +2917,31 @@ body {
 
 .challenge-card,
 .solution-card {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: none;
+    border-radius: 8px;
     padding: 32px 24px;
     text-align: center;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
+    transition: none;
 }
 
 .challenge-card:hover,
 .solution-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--warning);
-    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.2);
+    background: var(--bg-main);
 }
 
 .challenge-icon,
 .solution-icon {
     font-size: 48px;
     margin-bottom: 20px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    filter: none;
 }
 
 .challenge-card h3,
 .solution-card h3 {
     font-size: 20px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 12px;
 }
 
@@ -2981,7 +2961,7 @@ body {
     font-size: 36px;
     font-weight: 600;
     margin-bottom: 40px;
-    color: var(--warning-light);
+    color: var(--text-primary);
 }
 
 .user-type-buttons {
@@ -2993,24 +2973,22 @@ body {
 }
 
 .user-type-btn {
-    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 40px 48px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     text-align: left;
     min-width: 320px;
     display: flex;
     align-items: center;
     gap: 24px;
-    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+    box-shadow: none;
 }
 
 .user-type-btn:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 50px rgba(37, 99, 235, 0.4);
-    border-color: var(--warning);
+    background: var(--bg-main);
 }
 
 .lender-btn {
@@ -3038,20 +3016,20 @@ body {
 .user-type-btn .btn-title {
     font-size: 24px;
     font-weight: 600;
-    color: var(--text-white);
+    color: var(--text-primary);
     margin: 0;
 }
 
 .user-type-btn .btn-description {
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-secondary);
     font-weight: 500;
     margin: 0;
 }
 
 .user-type-btn .btn-features {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--text-light);
     font-weight: 500;
     margin: 0;
     font-style: italic;
@@ -3104,7 +3082,7 @@ body {
 .borrower-demo {
     min-height: 100vh;
     padding: 80px 0;
-    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-main) 50%, var(--primary-light) 100%);
+    background: var(--bg-main);
 }
 
 .demo-header {
@@ -3116,10 +3094,7 @@ body {
     font-size: 42px;
     font-weight: 700;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, var(--warning-light) 0%, var(--text-white) 50%, var(--secondary-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     letter-spacing: -1px;
     line-height: 1.1;
 }
@@ -3132,19 +3107,18 @@ body {
 }
 
 .borrower-config {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border: 2px solid rgba(251, 191, 36, 0.3);
-    border-radius: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 48px;
     margin-bottom: 60px;
-    backdrop-filter: blur(12px);
 }
 
 .borrower-config h2 {
     font-size: 32px;
     font-weight: 600;
     margin-bottom: 40px;
-    color: var(--warning-light);
+    color: var(--text-primary);
     text-align: center;
 }
 
