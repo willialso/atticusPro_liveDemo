@@ -3833,10 +3833,10 @@ body {
 
 /* EXECUTION RESULTS STYLES */
 .execution-success {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
+    background: var(--accent-success);
+    color: var(--text-primary);
     padding: 24px;
-    border-radius: 16px;
+    border-radius: 8px;
     margin-bottom: 24px;
     text-align: center;
 }
@@ -3865,19 +3865,18 @@ body {
 .protection-summary,
 .lending-impact,
 .platform-exposure {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin-bottom: 20px;
-    backdrop-filter: blur(8px);
 }
 
 .protection-summary h4,
 .lending-impact h4,
 .platform-exposure h4 {
     font-size: 18px;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 16px;
     font-weight: 600;
 }
@@ -3897,10 +3896,10 @@ body {
 
 .impact-item,
 .exposure-item {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border-radius: 12px;
+    background: var(--bg-main);
+    border-radius: 8px;
     padding: 16px;
-    border: 1px solid rgba(251, 191, 36, 0.2);
+    border: none;
     text-align: center;
 }
 
@@ -3929,41 +3928,38 @@ body {
 }
 
 .secondary-btn {
-    background: linear-gradient(135deg, var(--secondary) 0%, rgba(30, 41, 59, 0.8) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 600;
-    color: var(--text-bright);
+    color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .secondary-btn:hover {
-    border-color: var(--warning);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-    transform: translateY(-2px);
+    background: var(--bg-main);
 }
 
 .telegram-btn {
-    background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
-    border: none;
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 600;
-    color: white;
+    color: var(--text-primary);
     text-decoration: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
+    transition: none;
+    box-shadow: none;
 }
 
 .telegram-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4);
-    color: white;
+    background: var(--bg-main);
+    color: var(--text-primary);
     text-decoration: none;
 }
 
@@ -4136,14 +4132,13 @@ body {
 
 /* INSTITUTIONAL-STYLE STRATEGY CARDS */
 .strategy-card {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
     margin-bottom: 24px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(8px);
+    transition: none;
     position: relative;
 }
 
@@ -4152,9 +4147,7 @@ body {
 }
 
 .strategy-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--warning);
-    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.2);
+    background: var(--bg-main);
 }
 
 .recommended-badge {
@@ -4181,15 +4174,15 @@ body {
 .strategy-header h3 {
     font-size: 24px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin: 0;
 }
 
 .strategy-cost {
-    background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
+    background: var(--accent-primary);
+    color: var(--bg-main);
+    padding: 6px 12px;
+    border-radius: 4px;
     font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
@@ -4275,15 +4268,15 @@ body {
 .metric-card {
     text-align: center;
     padding: 16px;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(251, 191, 36, 0.2);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: none;
 }
 
 .metric-value {
     font-size: 18px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--accent-primary);
     margin-bottom: 6px;
     display: block;
 }
@@ -4434,7 +4427,7 @@ body {
 .analysis-card h4 {
     font-size: 24px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 24px;
     text-align: center;
 }
@@ -4450,9 +4443,9 @@ body {
     flex-direction: column;
     gap: 8px;
     padding: 20px;
-    background: rgba(37, 99, 235, 0.1);
-    border-radius: 12px;
-    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: none;
 }
 
 .metric-label {
@@ -4464,7 +4457,7 @@ body {
 .metric-value {
     font-size: 22px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--accent-primary);
 }
 
 .final-actions {
@@ -4534,17 +4527,16 @@ body {
 .impact-item,
 .exposure-item {
     padding: 20px;
-    background: rgba(37, 99, 235, 0.1);
-    border-radius: 12px;
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    transition: all 0.3s ease;
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: none;
+    transition: none;
 }
 
 .execution-item:hover,
 .impact-item:hover,
 .exposure-item:hover {
-    background: rgba(37, 99, 235, 0.15);
-    border-color: var(--warning-light);
+    background: var(--bg-card);
 }
 
 .execution-item .label,
@@ -4562,24 +4554,23 @@ body {
 .exposure-item .value {
     font-size: 20px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--accent-primary);
 }
 
 .portfolio-impact,
 .execution-venues {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(37, 99, 235, 0.2) 100%);
-    border: 2px solid rgba(251, 191, 36, 0.4);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
     margin-bottom: 32px;
-    backdrop-filter: blur(12px);
 }
 
 .portfolio-impact h4,
 .execution-venues h4 {
     font-size: 20px;
     font-weight: 600;
-    color: var(--warning);
+    color: var(--text-primary);
     margin-bottom: 20px;
 }
 
