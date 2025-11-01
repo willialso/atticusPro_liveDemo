@@ -668,13 +668,12 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 32px;
-    margin-bottom: 60px;
+    padding: 24px;
+    margin-bottom: 48px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     gap: 32px;
-    backdrop-filter: blur(8px);
     width: 100%;
 }
 
@@ -849,12 +848,11 @@ body {
 
 /* Enhanced Workflow Container */
 .demo-workflow {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, rgba(51, 65, 85, 0.1) 100%);
-    border: 2px solid rgba(251, 191, 36, 0.3);
-    border-radius: 28px;
-    padding: 48px;
-    backdrop-filter: blur(12px);
-    margin-bottom: 60px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 48px;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
@@ -1094,22 +1092,21 @@ body {
 }
 
 .telegram-btn {
-    background: linear-gradient(135deg, var(--telegram-blue) 0%, #0077b5 100%);
-    color: white;
-    padding: 20px 40px;
+    background: var(--telegram-blue);
+    color: var(--text-primary);
+    padding: 16px 32px;
     border: none;
-    border-radius: 14px;
-    font-size: 18px;
-    font-weight: 700;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     text-decoration: none;
     display: inline-block;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
+    transition: none;
+    box-shadow: none;
 }
 
 .telegram-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(0, 136, 204, 0.6);
+    background: #0077b5;
 }
 
 /* Mobile button optimizations - ensure 44px+ touch targets */
@@ -1261,12 +1258,12 @@ body {
 }
 
 .strategy-option {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
-    padding: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -1274,29 +1271,26 @@ body {
 }
 
 .strategy-option:hover {
-    border-color: var(--warning);
-    transform: translateY(-6px);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-    box-shadow: 0 20px 50px rgba(251, 191, 36, 0.3);
+    border-color: var(--accent-primary);
 }
 
 .strategy-option.recommended {
-    border-color: var(--success);
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+    border-color: var(--accent-success);
+    background: var(--bg-card);
 }
 
 .strategy-option.recommended::before {
     content: "RECOMMENDED";
     position: absolute;
-    top: -16px;
+    top: -12px;
     left: 24px;
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    background: var(--accent-success);
+    color: var(--text-primary);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: none;
 }
 
 .strategy-header {
@@ -1308,23 +1302,23 @@ body {
 }
 
 .strategy-name {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--warning-light); /* Rich yellow for strategy names */
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
     flex: 1;
     margin-right: 16px;
     line-height: 1.2;
 }
 
 .strategy-cost {
-    background: linear-gradient(135deg, var(--warning) 0%, var(--amber) 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 700;
+    background: var(--accent-primary);
+    color: var(--bg-main);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
     white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    box-shadow: none;
 }
 
 /* Mobile strategy card optimizations */
@@ -1385,14 +1379,14 @@ body {
 .strategy-metric {
     text-align: center;
     padding: 16px;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(251, 191, 36, 0.2);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .strategy-metric .metric-label {
-    font-size: 13px;
-    color: var(--text-light);
+    font-size: 12px;
+    color: var(--text-secondary);
     margin-bottom: 6px;
     display: block;
     line-height: 1.3;
@@ -1400,8 +1394,8 @@ body {
 
 .strategy-metric .metric-value {
     font-size: 16px;
-    font-weight: 700;
-    color: var(--warning-light); /* Rich yellow for values */
+    font-weight: 600;
+    color: var(--text-primary);
     line-height: 1.2;
 }
 
@@ -1413,25 +1407,23 @@ body {
 }
 
 .analysis-card {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
-    padding: 36px;
-    backdrop-filter: blur(8px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
     width: 100%;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .analysis-card:hover {
-    border-color: var(--warning);
-    transform: translateY(-2px);
+    border-color: var(--accent-primary);
 }
 
 .analysis-card h4 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 28px;
-    color: var(--warning-light); /* Rich yellow for headings */
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: var(--text-primary);
 }
 
 .institution-subtitle {
@@ -1482,24 +1474,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px; /* Increased gap between label and value */
-    padding: 20px 28px; /* Increased padding for better text display */
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(251, 191, 36, 0.2);
-    min-height: 60px; /* Ensure minimum height for consistent appearance */
+    gap: 20px;
+    padding: 16px 24px;
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    min-height: 56px;
 }
 
 .metric-label {
-    color: var(--text-light);
-    font-size: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
     font-weight: 500;
-    flex-shrink: 0; /* Prevent label from shrinking */
+    flex-shrink: 0;
 }
 
 .metric-value {
-    font-weight: 700;
-    color: var(--warning-light); /* Rich yellow for values */
+    font-weight: 600;
+    color: var(--text-primary);
     font-size: 16px;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -1518,31 +1510,29 @@ body {
 }
 
 .scenario-card {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(245, 158, 11, 0.15) 100%);
-    border: 2px solid var(--warning);
-    border-radius: 16px;
-    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .scenario-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--warning);
-    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+    border-color: var(--accent-primary);
 }
 
 .scenario-card h5 {
-    font-size: 15px;
-    color: var(--warning-light); /* Rich yellow for scenario labels */
-    margin-bottom: 12px;
-    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 
 .scenario-value {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--warning);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 /* RIGHT SIDEBAR PLATFORM DASHBOARD */
@@ -1552,9 +1542,8 @@ body {
     right: 0;
     width: 300px;
     height: 100vh;
-    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--primary) 50%, var(--primary-light) 100%); /* Matches header */
-    border-left: 3px solid var(--warning-light);
-    backdrop-filter: blur(15px);
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
     z-index: 800;
     overflow-y: auto;
     transition: transform 0.3s ease-in-out;
@@ -1566,12 +1555,12 @@ body {
 }
 
 .sidebar-content h4 {
-    font-size: 18px; /* Consistent font size */
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 600;
     margin-bottom: 32px;
-    color: var(--warning-light); /* Rich yellow for heading */
+    color: var(--text-primary);
     text-align: center;
-    border-bottom: 2px solid var(--warning);
+    border-bottom: 1px solid var(--border);
     padding-bottom: 16px;
 }
 
@@ -1582,27 +1571,26 @@ body {
 
 .sidebar-metric {
     text-align: center;
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%);
-    border-radius: 16px;
-    border: 2px solid rgba(251, 191, 36, 0.3);
-    transition: all 0.3s ease;
+    padding: 16px;
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: none;
 }
 
 .sidebar-metric:hover {
-    border-color: var(--warning);
-    transform: translateY(-2px);
+    border-color: var(--accent-primary);
 }
 
-/* CONSISTENT FONT SIZING - CFO Request */
+/* CONSISTENT FONT SIZING */
 .sidebar-metric .metric-label,
 .sidebar-metric .metric-value {
-    font-size: 16px; /* Standardized font size */
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .sidebar-metric .metric-label {
-    color: var(--warning-light); /* Rich yellow for labels */
+    color: var(--text-secondary);
     display: block;
     margin-bottom: 8px;
 }
@@ -1652,24 +1640,23 @@ body {
         right: 20px !important;
         width: 50px !important;
         height: 50px !important;
-        background: linear-gradient(135deg, var(--warning) 0%, var(--accent) 100%) !important;
+        background: var(--accent-primary) !important;
         border: none !important;
-        border-radius: 50% !important;
-        color: white !important;
+        border-radius: 8px !important;
+        color: var(--bg-main) !important;
         font-size: 20px !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
         cursor: pointer !important;
         z-index: 900 !important;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4) !important;
-        transition: all 0.3s ease !important;
+        box-shadow: none !important;
+        transition: none !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
     
     .mobile-sidebar-toggle:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+        background: var(--text-secondary) !important;
     }
     
     .mobile-sidebar-toggle:active {
@@ -2877,21 +2864,19 @@ body {
 }
 
 .back-btn {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 12px 24px;
-    color: var(--text-bright);
+    color: var(--text-primary);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .back-btn:hover {
-    border-color: var(--warning);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-    transform: translateY(-2px);
+    border-color: var(--accent-primary);
 }
 
 .router-text {
@@ -3674,21 +3659,19 @@ body {
 }
 
 .back-btn {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 12px 24px;
-    color: var(--text-bright);
+    color: var(--text-primary);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .back-btn:hover {
-    border-color: var(--warning);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-    transform: translateY(-2px);
+    border-color: var(--accent-primary);
 }
 
 
