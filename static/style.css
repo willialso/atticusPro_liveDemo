@@ -2709,7 +2709,7 @@ body {
 
 .hero-cta {
     display: flex;
-    gap: 32px;
+    gap: 20px; /* Reduced from 32px for tighter spacing */
     justify-content: center;
     align-items: stretch;
     flex-wrap: wrap;
