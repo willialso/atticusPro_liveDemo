@@ -199,7 +199,7 @@ body {
 }
 
 .status-item .label {
-    color: var(--warning-light); /* Rich yellow for headers */
+    color: var(--text-secondary);
     margin-bottom: 4px;
     display: block;
 }
@@ -598,15 +598,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
-    background: var(--bg-main); /* Slightly darker than card */
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    padding: 16px 0;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
     transition: none;
 }
 
 .pricing-item:hover {
-    border-color: var(--accent-primary); /* Minimal hover */
+    border-bottom-color: var(--border);
 }
 
 .pricing-item .label {
@@ -665,10 +666,10 @@ body {
 
 /* Enhanced Demo Section */
 .market-data-bar {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 24px 0;
     margin-bottom: 48px;
     display: flex;
     justify-content: space-around;
@@ -758,7 +759,7 @@ body {
 .mode-label {
     font-size: 18px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 4px;
 }
 
@@ -799,7 +800,7 @@ body {
 .lending-summary h5 {
     font-size: 18px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--text-primary);
     margin-bottom: 16px;
     text-align: center;
 }
@@ -874,9 +875,9 @@ body {
     font-size: 28px;
     font-weight: 600;
     margin-bottom: 50px;
-    color: var(--warning-light); /* Rich yellow for step headers */
+    color: var(--text-primary);
     text-align: center;
-    border-bottom: 3px solid var(--warning);
+    border-bottom: 1px solid var(--border);
     padding-bottom: 24px;
 }
 
@@ -895,7 +896,7 @@ body {
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 28px;
-    color: var(--warning-light); /* Rich yellow for headings */
+    color: var(--text-primary);
 }
 
 .portfolio-grid {
@@ -1016,7 +1017,7 @@ body {
     right: 22px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--warning-light);
+    color: var(--text-secondary);
     font-size: 16px;
     font-weight: 600;
     pointer-events: none;
@@ -1335,7 +1336,7 @@ body {
     
     .strategy-option:active {
         transform: scale(0.98); /* Touch feedback */
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%);
+        background: var(--bg-main);
     }
     
     .strategy-header {
@@ -1607,7 +1608,7 @@ body {
         max-width: 400px !important;
         transform: translateX(100%) !important;
         border-left: none !important;
-        border-top: 3px solid var(--warning-light) !important;
+        border-top: 1px solid var(--border) !important;
     }
     
     .platform-dashboard-sidebar.mobile-open {
@@ -3177,7 +3178,7 @@ body {
     right: 22px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--warning-light);
+    color: var(--text-secondary);
     font-size: 16px;
     font-weight: 600;
     pointer-events: none;
@@ -3804,7 +3805,7 @@ body {
     appearance: none;
     height: 8px;
     border-radius: 4px;
-    background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 50%, var(--success) 100%);
+    background: var(--bg-card);
     outline: none;
     cursor: pointer;
 }
@@ -3815,20 +3816,20 @@ body {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--warning);
+    background: var(--accent-primary);
     cursor: pointer;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--bg-main);
+    box-shadow: none;
 }
 
 .ltv-slider::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--warning);
+    background: var(--accent-primary);
     cursor: pointer;
-    border: 3px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border: 3px solid var(--bg-main);
+    box-shadow: none;
 }
 
 /* EXECUTION RESULTS STYLES */
@@ -3916,7 +3917,7 @@ body {
 .exposure-item .value {
     font-size: 16px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--accent-primary);
     display: block;
 }
 
@@ -4044,49 +4045,49 @@ body {
     display: block;
     font-size: 16px;
     font-weight: 600;
-    color: var(--warning-light);
+    color: var(--accent-primary);
 }
 
 .portfolio-impact {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin-bottom: 24px;
 }
 
 .portfolio-impact h4 {
-    color: var(--warning-light);
+    color: var(--text-primary);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
 }
 
 .platform-exposure-management {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin-bottom: 24px;
 }
 
 .platform-exposure-management h4 {
-    color: var(--warning-light);
+    color: var(--text-primary);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
 }
 
 .execution-venues {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin-bottom: 24px;
 }
 
 .execution-venues h4 {
-    color: var(--warning-light);
+    color: var(--text-primary);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -4229,12 +4230,13 @@ body {
 }
 
 .discount-badge {
-    color: var(--warning);
+    color: var(--text-primary);
     font-weight: 600;
     font-size: 14px;
-    background: rgba(251, 191, 36, 0.15);
+    background: var(--bg-card);
     padding: 4px 12px;
     border-radius: 6px;
+    border: 1px solid var(--border);
 }
 
 .discount-amount {
