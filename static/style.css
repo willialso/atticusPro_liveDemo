@@ -387,7 +387,7 @@ body {
 
 .stat-card {
     background: var(--bg-card); /* Flat card background */
-    border: 1px solid var(--border); /* Subtle grey border */
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px; /* Smaller radius for clean look */
     padding: 24px 16px;
     text-align: center;
@@ -405,8 +405,8 @@ body {
 }
 
 .stat-card:hover {
-    /* Minimal hover - just subtle border color change */
-    border-color: var(--accent-primary);
+    /* Minimal hover - subtle background change */
+    background: var(--bg-main);
 }
 
 /* Stat card headings (numbers) */
@@ -907,7 +907,7 @@ body {
 
 .portfolio-card {
     background: var(--bg-card); /* Flat card background */
-    border: 1px solid var(--border); /* Subtle grey border */
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px;
     padding: 24px 20px;
     cursor: pointer;
@@ -923,7 +923,7 @@ body {
 }
 
 .portfolio-card:hover {
-    border-color: var(--accent-primary); /* Minimal hover */
+    background: var(--bg-main); /* Minimal hover */
 }
 
 .portfolio-card h5 {
@@ -1408,7 +1408,7 @@ body {
 
 .analysis-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px;
     padding: 32px;
     width: 100%;
@@ -1416,7 +1416,7 @@ body {
 }
 
 .analysis-card:hover {
-    border-color: var(--accent-primary);
+    background: var(--bg-main); /* Minimal hover */
 }
 
 .analysis-card h4 {
@@ -1478,7 +1478,7 @@ body {
     padding: 16px 24px;
     background: var(--bg-main);
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: none; /* Removed border for cleaner look */
     min-height: 56px;
 }
 
@@ -1511,7 +1511,7 @@ body {
 
 .scenario-card {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px;
     padding: 16px;
     text-align: center;
@@ -1519,7 +1519,7 @@ body {
 }
 
 .scenario-card:hover {
-    border-color: var(--accent-primary);
+    background: var(--bg-main); /* Minimal hover */
 }
 
 .scenario-card h5 {
