@@ -2745,7 +2745,7 @@ body {
 
 .btn-title {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-white);
     margin: 0;
 }
@@ -3037,7 +3037,7 @@ body {
 
 .user-type-btn .btn-title {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-white);
     margin: 0;
 }
@@ -3142,7 +3142,7 @@ body {
 
 .borrower-config h2 {
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 40px;
     color: var(--warning-light);
     text-align: center;
@@ -3279,7 +3279,7 @@ body {
 
 .loan-summary h3 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 24px;
     color: var(--warning-light);
     text-align: center;
@@ -3310,7 +3310,7 @@ body {
 
 .summary-item .value {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
 }
 
@@ -3343,7 +3343,7 @@ body {
 
 .scenario-results h2 {
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 40px;
     color: var(--warning-light);
     text-align: center;
@@ -3419,7 +3419,7 @@ body {
 .details-panel h2,
 .overview-panel h2 {
     font-size: 28px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 32px;
     color: var(--warning-light);
     text-align: center;
@@ -3592,7 +3592,7 @@ body {
 .overview-item .value {
     color: var(--warning-light);
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .generate-scenarios-btn {
@@ -3702,7 +3702,7 @@ body {
 
 .scenario-header h3 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     margin: 0;
 }
@@ -3753,7 +3753,7 @@ body {
 
 .scenario-metrics .value {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     display: block;
 }
@@ -3876,7 +3876,7 @@ body {
 .execution-success h3 {
     font-size: 24px;
     margin-bottom: 12px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .execution-success p {
@@ -3948,7 +3948,7 @@ body {
 .impact-item .value,
 .exposure-item .value {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     display: block;
 }
@@ -4027,7 +4027,7 @@ body {
 
 .status-text {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .timestamp {
@@ -4079,7 +4079,7 @@ body {
 .execution-item .value {
     display: block;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
 }
 
@@ -4094,7 +4094,7 @@ body {
 .portfolio-impact h4 {
     color: var(--warning-light);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
@@ -4109,7 +4109,7 @@ body {
 .platform-exposure-management h4 {
     color: var(--warning-light);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
@@ -4124,7 +4124,7 @@ body {
 .execution-venues h4 {
     color: var(--warning-light);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 16px;
 }
 
@@ -4212,7 +4212,7 @@ body {
 
 .strategy-header h3 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     margin: 0;
 }
@@ -4223,7 +4223,7 @@ body {
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -4314,7 +4314,7 @@ body {
 
 .metric-value {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     margin-bottom: 6px;
     display: block;
@@ -4465,7 +4465,7 @@ body {
 
 .analysis-card h4 {
     font-size: 24px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
     margin-bottom: 24px;
     text-align: center;
@@ -4495,7 +4495,7 @@ body {
 
 .metric-value {
     font-size: 22px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
 }
 
@@ -4593,7 +4593,7 @@ body {
 .impact-item .value,
 .exposure-item .value {
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning-light);
 }
 
@@ -4610,7 +4610,7 @@ body {
 .portfolio-impact h4,
 .execution-venues h4 {
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--warning);
     margin-bottom: 20px;
 }
