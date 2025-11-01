@@ -303,9 +303,9 @@ body {
     align-items: center;
     gap: 20px;
     padding: 14px 28px; /* Slightly reduced for consistency */
-    border-radius: 16px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     opacity: 0.7;
     font-size: 18px;
 }
@@ -708,12 +708,11 @@ body {
 
 /* Protection Mode Selector */
 .protection-mode-selector {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border: 2px solid rgba(251, 191, 36, 0.3);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
     margin-bottom: 40px;
-    backdrop-filter: blur(8px);
 }
 
 .mode-selector-container {
@@ -724,12 +723,12 @@ body {
 }
 
 .mode-btn {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(30, 41, 59, 0.1) 100%);
-    border: 2px solid var(--secondary);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px 32px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     text-align: center;
     min-width: 280px;
     display: flex;
@@ -739,15 +738,12 @@ body {
 }
 
 .mode-btn:hover {
-    border-color: var(--warning);
-    transform: translateY(-4px);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-    box-shadow: 0 15px 40px rgba(251, 191, 36, 0.3);
+    background: var(--bg-main);
 }
 
 .mode-btn.active {
     border-color: var(--accent-primary);
-    background: var(--bg-card);
+    background: var(--bg-main);
     box-shadow: none;
 }
 
@@ -1326,7 +1322,7 @@ body {
 @media (max-width: 767px) {
     .strategy-option {
         padding: 20px;
-        border-radius: 16px;
+        border-radius: 8px;
         min-height: 60px; /* Larger touch target for mobile */
     }
     
@@ -2279,13 +2275,14 @@ body {
 
 /* Discount Badge */
 .discount-badge {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-    color: white;
+    background: var(--bg-card);
+    color: var(--text-primary);
     padding: 4px 8px;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
     margin-left: 8px;
+    border: 1px solid var(--border);
 }
 
 .discounted-price {
@@ -2310,18 +2307,16 @@ body {
 }
 
 .protection-tier {
-    background: var(--card-bg);
-    border: 2px solid var(--border);
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 20px;
-    transition: all 0.3s ease;
+    transition: none;
     cursor: pointer;
 }
 
 .protection-tier:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    background: var(--bg-main);
 }
 
 .protection-tier.catastrophe {
@@ -2473,18 +2468,16 @@ body {
 }
 
 .moonshot-option {
-    background: linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(139,92,246,0.1) 100%);
-    border: 2px solid var(--purple);
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
 }
 
 .moonshot-option:hover {
-    border-color: var(--purple-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(168,85,247,0.2);
+    background: var(--bg-main);
 }
 
 .moonshot-header {
@@ -2513,13 +2506,13 @@ body {
 }
 
 .moonshot-description {
-    background: rgba(168,85,247,0.1);
-    border: 1px solid rgba(168,85,247,0.3);
+    background: var(--bg-main);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 16px;
     font-size: 14px;
-    color: var(--text-light);
+    color: var(--text-secondary);
 }
 
 .moonshot-metrics {
@@ -3857,10 +3850,11 @@ body {
 .execution-time {
     font-size: 18px;
     font-weight: 600;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--bg-main);
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 8px;
     display: inline-block;
+    border: 1px solid var(--border);
 }
 
 .protection-summary,
