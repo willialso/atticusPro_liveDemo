@@ -440,7 +440,7 @@ body {
 
 .problem-card {
     background: var(--bg-card); /* Flat card background */
-    border: 1px solid var(--border); /* Subtle grey border */
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px;
     padding: 24px 16px;
     transition: none;
@@ -459,7 +459,7 @@ body {
 
 .problem-card:hover {
     /* Minimal hover */
-    border-color: var(--accent-primary);
+    background: var(--bg-main);
 }
 
 /* Problem card headings */
@@ -504,7 +504,7 @@ body {
 
 .feature-card {
     background: var(--bg-card); /* Flat card background */
-    border: 1px solid var(--border); /* Subtle grey border - consistent */
+    border: none; /* Removed border for cleaner look */
     border-radius: 8px;
     padding: 24px;
     text-align: center;
@@ -524,7 +524,7 @@ body {
 /* All feature cards use same border color - no color coding */
 .feature-card:hover {
     /* Minimal hover */
-    border-color: var(--accent-primary);
+    background: var(--bg-main);
 }
 
 .feature-icon {
