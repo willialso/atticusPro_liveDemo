@@ -356,7 +356,7 @@ body {
 /* Enhanced Section Headers - Tighter */
 .section-header {
     text-align: center;
-    margin-bottom: 40px; /* Much tighter */
+    margin-bottom: 48px; /* Generous spacing */
 }
 
 .section-header h2 {
@@ -379,8 +379,8 @@ body {
 .challenge-stats-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 24px; /* Generous spacing */
+    margin-bottom: 48px;
     width: 100%;
     align-items: start;
 }
@@ -432,8 +432,8 @@ body {
 .problem-points-single-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 24px; /* Generous spacing */
+    margin-bottom: 48px;
     width: 100%;
     align-items: start;
 }
@@ -496,8 +496,8 @@ body {
 .solution-features-single-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px; /* Tighter spacing */
-    margin-bottom: 40px; /* Much tighter */
+    gap: 24px; /* Generous spacing */
+    margin-bottom: 48px;
     width: 100%;
     align-items: start;
 }
