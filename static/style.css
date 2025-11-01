@@ -210,7 +210,7 @@ body {
 }
 
 .status-item .value.live {
-    color: var(--success);
+    color: var(--accent-primary);
     position: relative;
 }
 
@@ -745,9 +745,9 @@ body {
 }
 
 .mode-btn.active {
-    border-color: var(--success);
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+    box-shadow: none;
 }
 
 .mode-icon {
@@ -789,9 +789,9 @@ body {
 }
 
 .lending-summary {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-    border: 2px solid var(--success);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin: 24px 0;
 }
@@ -815,9 +815,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .summary-item .label {
@@ -1275,7 +1275,7 @@ body {
 }
 
 .strategy-option.recommended {
-    border-color: var(--accent-success);
+    border-color: var(--accent-primary);
     background: var(--bg-card);
 }
 
@@ -1284,8 +1284,8 @@ body {
     position: absolute;
     top: -12px;
     left: 24px;
-    background: var(--accent-success);
-    color: var(--text-primary);
+    background: var(--accent-primary);
+    color: var(--bg-main);
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 11px;
@@ -2092,10 +2092,10 @@ body {
 }
 
 .strategy-category {
-    background: rgba(16, 185, 129, 0.05);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border-radius: 8px;
     padding: 24px;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--border);
 }
 
 .category-header {
@@ -2129,9 +2129,9 @@ body {
 
 /* Discount Styling */
 .discount-info {
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(56, 142, 60, 0.1) 100%);
-    border: 2px solid rgba(76, 175, 80, 0.3);
-    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 16px;
     margin: 16px 0;
 }
@@ -2144,14 +2144,14 @@ body {
 }
 
 .discount-label {
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--text-primary);
     font-size: 16px;
 }
 
 .discount-amount {
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--accent-primary);
     font-size: 18px;
 }
 
@@ -2169,27 +2169,27 @@ body {
 }
 
 .price-line.discount {
-    background: rgba(76, 175, 80, 0.1);
+    background: var(--bg-card);
     border-radius: 8px;
     padding: 12px;
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--accent-primary);
 }
 
 /* Option Details */
 .option-details {
     margin: 20px 0;
     padding: 16px;
-    background: rgba(16, 185, 129, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .option-details h6 {
-    color: var(--success);
+    color: var(--text-primary);
     margin-bottom: 12px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .details-grid {
@@ -2222,16 +2222,16 @@ body {
 .scenario-analysis {
     margin: 20px 0;
     padding: 16px;
-    background: rgba(16, 185, 129, 0.05);
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .scenario-analysis h6 {
-    color: var(--success);
+    color: var(--text-primary);
     margin-bottom: 12px;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .scenario-table {
@@ -2245,10 +2245,10 @@ body {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 12px;
     padding: 12px;
-    background: rgba(16, 185, 129, 0.1);
+    background: var(--bg-main);
     border-radius: 8px;
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--text-primary);
     font-size: 14px;
 }
 
@@ -2267,8 +2267,8 @@ body {
 }
 
 .scenario-col.positive {
-    color: var(--success);
-    font-weight: 700;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .scenario-col.negative {
@@ -2288,8 +2288,8 @@ body {
 }
 
 .discounted-price {
-    color: var(--success);
-    font-weight: 700;
+    color: var(--accent-primary);
+    font-weight: 600;
     font-size: 18px;
 }
 
@@ -2332,7 +2332,7 @@ body {
 }
 
 .protection-tier.complete {
-    border-color: var(--success);
+    border-color: var(--border);
 }
 
 .tier-header {
@@ -2358,8 +2358,8 @@ body {
 
 .discounted-price {
     font-size: 20px;
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--accent-primary);
 }
 
 .original-price {
@@ -2369,8 +2369,8 @@ body {
 }
 
 .discount-badge {
-    background: var(--success);
-    color: white;
+    background: var(--accent-primary);
+    color: var(--bg-main);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -2407,13 +2407,13 @@ body {
 }
 
 .protection-description {
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.3);
+    background: var(--bg-main);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 16px;
     font-size: 14px;
-    color: var(--text-light);
+    color: var(--text-secondary);
 }
 
 .tier-benefits h6 {
@@ -2441,7 +2441,7 @@ body {
     content: "✓";
     position: absolute;
     left: 0;
-    color: var(--success);
+    color: var(--accent-primary);
     font-weight: 600;
 }
 
@@ -2644,7 +2644,7 @@ body {
         font-family: 'Calibri', 'Arial', sans-serif;
         font-size: 24px;
         font-weight: 600;
-        color: #10b981; /* Green color */
+        color: var(--accent-primary);
         display: block;
         text-align: center;
         letter-spacing: 2px;
@@ -2722,13 +2722,14 @@ body {
 }
 
 .lending-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    border-color: var(--success);
-    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+    background: var(--text-primary);
+    border: none;
+    color: var(--bg-main);
+    box-shadow: none;
 }
 
 .lending-btn:hover {
-    box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+    background: var(--text-secondary);
 }
 
 .btn-icon {
@@ -3013,13 +3014,14 @@ body {
 }
 
 .lender-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    border-color: var(--success);
-    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+    background: var(--text-primary);
+    border: none;
+    color: var(--bg-main);
+    box-shadow: none;
 }
 
 .lender-btn:hover {
-    box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+    background: var(--text-secondary);
 }
 
 .user-type-btn .btn-icon {
@@ -3255,22 +3257,22 @@ body {
 
 .price-display {
     padding: 18px 22px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-    border: 2px solid var(--success);
-    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     text-align: center;
 }
 
 .price-value {
     font-size: 20px;
-    font-weight: 700;
-    color: var(--success);
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .loan-summary {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-    border: 2px solid var(--success);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
     margin: 32px 0;
 }
@@ -3295,9 +3297,9 @@ body {
     align-items: center;
     gap: 8px;
     padding: 20px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 148, 136, 0.15) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .summary-item .label {
@@ -3313,23 +3315,22 @@ body {
 }
 
 .generate-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--text-primary);
     border: none;
-    border-radius: 14px;
-    padding: 20px 40px;
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bg-main);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     width: 100%;
     margin-top: 32px;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    box-shadow: none;
 }
 
 .generate-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+    background: var(--text-secondary);
 }
 
 .scenario-results {
@@ -3506,20 +3507,20 @@ body {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--accent-primary);
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-    border: 3px solid white;
+    box-shadow: none;
+    border: 3px solid var(--bg-main);
 }
 
 .period-slider::-moz-range-thumb {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--accent-primary);
     cursor: pointer;
-    border: 3px solid white;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    border: 3px solid var(--bg-main);
+    box-shadow: none;
 }
 
 .period-labels {
@@ -3541,14 +3542,14 @@ body {
     align-items: center;
     gap: 12px;
     padding: 12px 16px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: var(--bg-main);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .term-item .checkmark {
-    color: var(--success);
-    font-weight: 700;
+    color: var(--accent-primary);
+    font-weight: 600;
     font-size: 16px;
 }
 
@@ -3595,23 +3596,22 @@ body {
 }
 
 .generate-scenarios-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--text-primary);
     border: none;
-    border-radius: 14px;
-    padding: 20px 40px;
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bg-main);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: none;
     width: 100%;
     margin-bottom: 16px;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    box-shadow: none;
 }
 
 .generate-scenarios-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.6);
+    background: var(--text-secondary);
 }
 
 .helper-text {
@@ -3708,12 +3708,12 @@ body {
 }
 
 .scenario-cost {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
+    background: var(--accent-primary);
+    color: var(--bg-main);
+    padding: 6px 12px;
+    border-radius: 4px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -3764,7 +3764,7 @@ body {
 
 .scenario-benefits h4 {
     font-size: 16px;
-    color: var(--success);
+    color: var(--text-primary);
     margin-bottom: 12px;
     font-weight: 600;
 }
@@ -3787,8 +3787,8 @@ body {
     content: "✓";
     position: absolute;
     left: 0;
-    color: var(--success);
-    font-weight: 700;
+    color: var(--accent-primary);
+    font-weight: 600;
 }
 
 .scenario-action {
@@ -3796,21 +3796,20 @@ body {
 }
 
 .select-scenario-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--text-primary);
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 16px 32px;
     font-size: 16px;
-    font-weight: 700;
-    color: white;
+    font-weight: 600;
+    color: var(--bg-main);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: none;
+    box-shadow: none;
 }
 
 .select-scenario-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    background: var(--text-secondary);
 }
 
 /* Responsive Design for Scenario Cards */
@@ -4002,10 +4001,11 @@ body {
 
 /* Institutional Execution Results Formatting */
 .execution-status {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
     padding: 16px 24px;
-    border-radius: 12px;
+    border-radius: 8px;
     margin-bottom: 24px;
     display: flex;
     align-items: center;
@@ -4014,15 +4014,15 @@ body {
 }
 
 .live-indicator {
-    background: white;
-    color: var(--success);
+    background: var(--bg-main);
+    color: var(--text-primary);
     border-radius: 50%;
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .status-text {
@@ -4037,17 +4037,17 @@ body {
 }
 
 .execution-details {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-    border: 2px solid var(--success);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px;
     margin-bottom: 24px;
 }
 
 .execution-details h4 {
-    color: var(--success);
+    color: var(--text-primary);
     font-size: 20px;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -4061,8 +4061,8 @@ body {
 }
 
 .execution-item {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: var(--bg-main);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
     text-align: center;
@@ -4180,8 +4180,7 @@ body {
 }
 
 .strategy-card.recommended {
-    border-color: var(--success);
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    border-color: var(--accent-primary);
 }
 
 .strategy-card:hover {
@@ -4194,12 +4193,12 @@ body {
     position: absolute;
     top: -8px;
     left: 24px;
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
+    background: var(--accent-primary);
+    color: var(--bg-main);
     padding: 4px 12px;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -4234,20 +4233,20 @@ body {
     gap: 8px;
     margin-bottom: 20px;
     padding: 8px 16px;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid var(--success);
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .live-indicator {
-    color: var(--success);
-    font-weight: 700;
+    color: var(--text-primary);
+    font-weight: 600;
     font-size: 16px;
 }
 
 .live-text {
-    color: var(--success);
-    font-weight: 600;
+    color: var(--text-primary);
+    font-weight: 500;
     font-size: 14px;
 }
 
@@ -4263,9 +4262,9 @@ body {
     gap: 8px;
     margin-bottom: 20px;
     padding: 8px 16px;
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid var(--warning);
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
 }
 
 .discount-badge {
@@ -4278,14 +4277,13 @@ body {
 }
 
 .discount-amount {
-    background: var(--accent);  /* Darker green #059669 for better contrast */
-    color: white;
-    font-weight: 700;
+    background: var(--accent-primary);
+    color: var(--bg-main);
+    font-weight: 600;
     font-size: 14px;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: 4px;
     margin-left: auto;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);  /* Subtle shadow for readability */
 }
 
 .strategy-description {
@@ -4341,7 +4339,7 @@ body {
 
 .strategy-benefits h4 {
     font-size: 16px;
-    color: var(--success);
+    color: var(--text-primary);
     margin-bottom: 12px;
     font-weight: 600;
 }
@@ -4364,8 +4362,8 @@ body {
     content: "✓";
     position: absolute;
     left: 0;
-    color: var(--success);
-    font-weight: 700;
+    color: var(--accent-primary);
+    font-weight: 600;
 }
 
 .strategy-action {
@@ -4373,22 +4371,21 @@ body {
 }
 
 .select-strategy-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
+    background: var(--text-primary);
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 16px 32px;
     font-size: 16px;
-    font-weight: 700;
-    color: white;
+    font-weight: 600;
+    color: var(--bg-main);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: none;
+    box-shadow: none;
     width: 100%;
 }
 
 .select-strategy-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    background: var(--text-secondary);
 }
 
 /* Responsive Design for Strategy Cards */
@@ -4436,23 +4433,21 @@ body {
 }
 
 .action-btn {
-    background: linear-gradient(135deg, var(--success) 0%, var(--accent) 100%);
-    color: white;
-    padding: 18px 48px;
-    border: 2px solid rgba(16, 185, 129, 0.3);
-    border-radius: 16px;
-    font-size: 18px;
-    font-weight: 700;
+    background: var(--text-primary);
+    color: var(--bg-main);
+    padding: 16px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    transition: none;
+    box-shadow: none;
     text-transform: none;
 }
 
 .action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
-    border-color: var(--success);
+    background: var(--text-secondary);
 }
 
 .analysis-content,
@@ -4461,11 +4456,10 @@ body {
 }
 
 .analysis-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(16, 185, 129, 0.2) 100%);
-    border: 2px solid rgba(16, 185, 129, 0.4);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
-    backdrop-filter: blur(12px);
     margin-bottom: 32px;
 }
 
@@ -4514,9 +4508,9 @@ body {
 
 /* Execution Results Dark Styling - Matching Institutional */
 .execution-status {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(13, 148, 136, 0.2) 100%);
-    border: 2px solid var(--success);
-    border-radius: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 24px 32px;
     margin-bottom: 32px;
     display: flex;
@@ -4526,14 +4520,14 @@ body {
 }
 
 .execution-status .live-indicator {
-    color: var(--success);
-    font-size: 24px;
+    color: var(--text-primary);
+    font-size: 20px;
 }
 
 .execution-status .status-text {
-    color: var(--success);
-    font-size: 18px;
-    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .execution-status .timestamp {
@@ -4543,18 +4537,17 @@ body {
 }
 
 .execution-details {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(37, 99, 235, 0.2) 100%);
-    border: 2px solid rgba(251, 191, 36, 0.4);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     padding: 32px;
     margin-bottom: 32px;
-    backdrop-filter: blur(12px);
 }
 
 .execution-details h4 {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--success);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
     margin-bottom: 24px;
     display: flex;
     align-items: center;
