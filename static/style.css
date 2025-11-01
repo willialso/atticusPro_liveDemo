@@ -356,23 +356,15 @@ body {
 /* Enhanced Section Headers - Tighter */
 .section-header {
     text-align: center;
-    margin-bottom: 48px; /* Generous spacing */
+    margin-bottom: 32px; /* Reduced spacing for tighter layout */
 }
 
 .section-header h2 {
     font-size: 28px; /* Further reduced for cleaner look */
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 0; /* No margin needed since subtitle removed */
     color: var(--text-primary); /* Flat white - no gradient */
     letter-spacing: -0.5px;
-}
-
-.section-header .subtitle {
-    font-size: 20px;
-    color: var(--text-light);
-    max-width: 800px;
-    margin: 0 auto;
-    font-weight: 500;
 }
 
 /* ENHANCED CHALLENGE SECTION - Tighter & Cleaner */
@@ -380,7 +372,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px; /* Generous spacing */
-    margin-bottom: 48px;
+    margin-bottom: 40px; /* Reduced for CTA button placement */
     width: 100%;
     align-items: start;
 }
@@ -404,10 +396,7 @@ body {
     box-sizing: border-box;
 }
 
-.stat-card:hover {
-    /* Minimal hover - subtle background change */
-    background: var(--bg-main);
-}
+/* Removed hover effect - stat cards are informational only, not clickable */
 
 /* Stat card headings (numbers) */
 .stat-card h3 {
@@ -457,10 +446,7 @@ body {
     box-sizing: border-box;
 }
 
-.problem-card:hover {
-    /* Minimal hover */
-    background: var(--bg-main);
-}
+/* Removed hover effect - problem cards are informational only, not clickable */
 
 /* Problem card headings */
 .problem-card h4 {
@@ -522,10 +508,7 @@ body {
 }
 
 /* All feature cards use same border color - no color coding */
-.feature-card:hover {
-    /* Minimal hover */
-    background: var(--bg-main);
-}
+/* Removed hover effect - feature cards are informational only, not clickable */
 
 .feature-icon {
     font-size: 28px;
@@ -674,7 +657,7 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
     width: 100%;
 }
 
@@ -692,6 +675,7 @@ body {
         width: 100%;
         min-width: 0;
         flex: 1;
+        padding: 12px 20px;
     }
     
     .market-item .label {
@@ -827,6 +811,19 @@ body {
     color: var(--accent-primary);
     font-size: 16px;
     font-weight: 600;
+}
+
+.market-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    text-align: center;
 }
 
 .market-item .label {
@@ -1058,7 +1055,7 @@ body {
 .cta-btn {
     background: var(--text-primary); /* White background */
     color: var(--bg-main); /* Dark text */
-    margin: 50px auto;
+    margin: 40px auto; /* Reduced for tighter layout */
     display: block;
     max-width: 400px;
     box-shadow: none;
@@ -1258,7 +1255,7 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 24px;
+    padding: 32px; /* Increased to match lending consistency */
     cursor: pointer;
     transition: none;
     position: relative;
@@ -1298,13 +1295,15 @@ body {
     width: 100%;
 }
 
-.strategy-name {
+.strategy-name,
+.strategy-header h3 {
     font-size: 20px;
     font-weight: 600;
     color: var(--text-primary);
     flex: 1;
     margin-right: 16px;
     line-height: 1.2;
+    margin: 0; /* Reset default h3 margin */
 }
 
 .strategy-cost {
@@ -1367,33 +1366,49 @@ body {
 
 .strategy-metrics {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* Changed to 4 columns for consistency */
     gap: 16px;
     margin-bottom: 24px;
     width: 100%;
 }
 
-.strategy-metric {
+/* Support 2-column layout for institutional if needed */
+.strategy-option .strategy-metrics.two-columns {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.strategy-metric,
+.metric-card {
     text-align: center;
     padding: 16px;
     background: var(--bg-main);
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: none; /* Remove border for cleaner look, consistent with lending */
 }
 
-.strategy-metric .metric-label {
+.strategy-metric .metric-label,
+.metric-card .metric-label {
     font-size: 12px;
-    color: var(--text-secondary);
+    color: var(--text-light);
     margin-bottom: 6px;
     display: block;
     line-height: 1.3;
+    font-weight: 500;
 }
 
-.strategy-metric .metric-value {
-    font-size: 16px;
+.strategy-metric .metric-value,
+.metric-card .metric-value {
+    font-size: 18px; /* Increased for consistency */
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--accent-primary); /* Use gold accent for values */
     line-height: 1.2;
+    display: block;
+}
+
+/* Ensure institutional metrics work with unified styling */
+.strategy-option .strategy-metric .metric-value {
+    color: var(--accent-primary); /* Gold for consistency */
+    font-size: 18px;
 }
 
 /* Enhanced Analysis Results */
@@ -1412,9 +1427,7 @@ body {
     transition: none;
 }
 
-.analysis-card:hover {
-    background: var(--bg-main); /* Minimal hover */
-}
+/* Removed hover effect - analysis cards are informational only, not clickable */
 
 .analysis-card h4 {
     font-size: 20px;
@@ -3081,23 +3094,16 @@ body {
 
 .demo-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 32px; /* Reduced spacing for tighter layout */
 }
 
 .demo-header h1 {
     font-size: 42px;
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 0; /* No margin needed since subtitle removed */
     color: var(--text-primary);
     letter-spacing: -1px;
     line-height: 1.1;
-}
-
-.demo-subtitle {
-    font-size: 24px;
-    color: var(--text-light);
-    font-weight: 500;
-    line-height: 1.4;
 }
 
 .borrower-config {
@@ -4125,8 +4131,9 @@ body {
     }
 }
 
-/* INSTITUTIONAL-STYLE STRATEGY CARDS */
+/* Strategy card alias - unified with strategy-option for consistency */
 .strategy-card {
+    /* Alias: Use same styles as .strategy-option */
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -4135,6 +4142,9 @@ body {
     cursor: pointer;
     transition: none;
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .strategy-card.recommended {
@@ -4142,7 +4152,7 @@ body {
 }
 
 .strategy-card:hover {
-    background: var(--bg-main);
+    border-color: var(--accent-primary); /* Border color change only */
 }
 
 .recommended-badge {
@@ -4254,11 +4264,13 @@ body {
     margin: 0;
 }
 
+/* Strategy metrics - unified for both strategy-option and strategy-card */
 .strategy-metrics {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     margin-bottom: 24px;
+    width: 100%;
 }
 
 .metric-card {
@@ -4284,9 +4296,9 @@ body {
     display: block;
 }
 
-/* Override global metric alignment for strategy cards - ensure centering */
-.strategy-card .metric-card .metric-value,
-.strategy-card .metric-card .metric-label {
+/* Support strategy-option class with metric-card styling */
+.strategy-option .metric-card .metric-value,
+.strategy-option .metric-card .metric-label {
     text-align: center !important;
 }
 

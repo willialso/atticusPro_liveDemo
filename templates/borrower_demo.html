@@ -40,7 +40,6 @@
                 <!-- Demo Header -->
                 <div class="demo-header">
                     <h1>Borrower Protection Demo</h1>
-                    <p class="demo-subtitle">Protect your upside while keeping your loan intact</p>
                 </div>
 
                 <!-- Market Data Bar -->
@@ -478,7 +477,7 @@
                 }
                 
                 const html = strategies.map((strategy) => `
-                    <div class="strategy-card ${strategy.recommended ? 'recommended' : ''}" onclick="selectBorrowerScenario('${strategy.strategy_type}')">
+                    <div class="strategy-option ${strategy.recommended ? 'recommended' : ''}" onclick="selectBorrowerScenario('${strategy.strategy_type}')">
                         ${strategy.recommended ? '<div class="recommended-badge">RECOMMENDED</div>' : ''}
                         
                         <div class="strategy-header">

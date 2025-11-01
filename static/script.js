@@ -79,7 +79,7 @@ class AttticusProfessionalDemo {
         statusElements.forEach(element => {
             if (isAvailable) {
                 element.textContent = 'LIVE';
-                element.style.color = 'var(--success)';
+                element.style.color = 'var(--accent-primary)';
             } else {
                 element.textContent = 'ERROR';
                 element.style.color = 'var(--danger)';
@@ -310,9 +310,9 @@ class AttticusProfessionalDemo {
         const timestamp = new Date(analysis.data_timestamp).toLocaleString();
         
         const html = `
-            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 20px; margin-bottom: 32px; text-align: center;">
-                <h5 style="color: var(--success); margin-bottom: 8px; font-size: 16px;">✅ LIVE MARKET DATA ANALYSIS</h5>
-                <p style="color: var(--text-bright); font-size: 14px;">Data Source: ${analysis.data_source} | Timestamp: ${timestamp}</p>
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 32px; text-align: center;">
+                <h5 style="color: var(--text-primary); margin-bottom: 8px; font-size: 16px;">✓ LIVE MARKET DATA ANALYSIS</h5>
+                <p style="color: var(--text-secondary); font-size: 14px;">Data Source: ${analysis.data_source} | Timestamp: ${timestamp}</p>
             </div>
             
             <div class="analysis-card">
@@ -329,14 +329,14 @@ class AttticusProfessionalDemo {
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Live BTC Price</span>
-                        <span class="metric-value" style="color: var(--success);">${this.formatCurrency(analysis.positions.current_price)}</span>
+                        <span class="metric-value" style="color: var(--accent-primary);">${this.formatCurrency(analysis.positions.current_price)}</span>
                     </div>
                 </div>
             </div>
             
             <div class="analysis-card">
                 <h4>Risk Analysis (Live Data)</h4>
-                <p class="risk-analysis-subtitle">Volatility: <span style="color: var(--success);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span></p>
+                <p class="risk-analysis-subtitle">Volatility: <span style="color: var(--accent-primary);">${this.formatPercentage(analysis.risk_metrics.volatility * 100)}</span></p>
                 <div class="metrics-grid metrics-grid-three">
                     <div class="metric-item">
                         <span class="metric-label">1-Day VaR<br>(95%)</span>
@@ -427,9 +427,9 @@ class AttticusProfessionalDemo {
         const isLending = context.lending_protection || false;
         
         let html = `
-            <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border-radius: 20px; border: 2px solid var(--success);">
-                <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ LIVE DATA STRATEGIES for ${context.institution}</h4>
-                <p style="color: var(--text-bright); font-size: 18px;">Based on ${context.risk_tolerance} risk tolerance and ${Math.round(context.position_size)} BTC position</p>
+            <div style="text-align: center; margin-bottom: 40px; padding: 28px; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border);">
+                <h4 style="color: var(--text-primary); margin-bottom: 12px; font-size: 24px;">✓ LIVE DATA STRATEGIES for ${context.institution}</h4>
+                <p style="color: var(--text-secondary); font-size: 18px;">Based on ${context.risk_tolerance} risk tolerance and ${Math.round(context.position_size)} BTC position</p>
                 <p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">All strategies priced with live market data and real-time volatility</p>
             </div>
         `;
@@ -608,8 +608,8 @@ class AttticusProfessionalDemo {
                     </div>
                 </div>
                 
-                <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                    <div style="font-size: 12px; color: var(--success); font-weight: 700;">✅ LIVE DATA PRICING</div>
+                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 12px; color: var(--text-primary); font-weight: 700;">✓ LIVE DATA PRICING</div>
                     <div style="font-size: 11px; color: var(--text-light);">${timestamp}</div>
                 </div>
                 
@@ -641,14 +641,14 @@ class AttticusProfessionalDemo {
                 ${strategy.scenario_analysis ? this.renderScenarioTable(strategy.scenario_analysis) : ''}
                 
                 <div style="margin-top: 20px;">
-                    <h6 style="color: var(--success); margin-bottom: 10px; font-size: 15px; font-weight: 700;">Key Benefits:</h6>
+                    <h6 style="color: var(--text-primary); margin-bottom: 10px; font-size: 15px; font-weight: 700;">Key Benefits:</h6>
                     <ul style="color: var(--text-bright); font-size: 15px; margin-left: 18px; line-height: 1.4;">
                         ${strategy.key_benefits?.slice(0, 3).map(benefit => `<li style="margin-bottom: 6px;">${benefit}</li>`).join('') || '<li>Professional execution</li>'}
                     </ul>
                 </div>
                 
-                <div style="margin-top: 20px; padding: 14px; background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border-radius: 12px; text-align: center; border: 2px solid rgba(16,185,129,0.4);">
-                    <span style="color: var(--success); font-weight: 700; font-size: 15px;">Select Live-Priced Strategy</span>
+                <div style="margin-top: 20px; padding: 14px; background: var(--bg-card); border-radius: 8px; text-align: center; border: 1px solid var(--border);">
+                    <span style="color: var(--text-primary); font-weight: 700; font-size: 15px;">Select Live-Priced Strategy</span>
                 </div>
             </div>
         `;
@@ -760,9 +760,9 @@ class AttticusProfessionalDemo {
     displaySelectedStrategy(strategy) {
         const container = document.getElementById('strategy-results');
         const summaryHtml = `
-            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.2) 100%); border: 3px solid var(--success); border-radius: 16px; padding: 28px; margin-bottom: 28px; text-align: center;">
-                <h4 style="color: var(--success); margin-bottom: 12px; font-size: 24px;">✅ ${strategy.strategy_name} Selected</h4>
-                <p style="color: var(--text-bright); font-size: 17px;">Executing with live market data pricing...</p>
+            <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 28px; margin-bottom: 28px; text-align: center;">
+                <h4 style="color: var(--text-primary); margin-bottom: 12px; font-size: 24px;">${strategy.strategy_name} Selected</h4>
+                <p style="color: var(--text-secondary); font-size: 17px;">Executing with live market data pricing...</p>
                 <p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">Data Source: ${strategy.data_source}</p>
             </div>
         `;
@@ -801,14 +801,14 @@ class AttticusProfessionalDemo {
         const isLending = execution.execution_summary.lending_protection;
         
         let html = `
-            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid var(--success); border-radius: 16px; padding: 24px; margin-bottom: 32px; text-align: center;">
-                <h5 style="color: var(--success); margin-bottom: 8px; font-size: 18px;">✅ LIVE DATA EXECUTION COMPLETED</h5>
-                <p style="color: var(--text-bright); font-size: 14px;">Execution Time: ${timestamp} | Data Source: ${execution.execution_summary.data_source}</p>
-                ${isLending ? `<p style="color: var(--warning-light); font-size: 14px; margin-top: 8px;">Lending Protection: ${execution.execution_summary.protection_type.toUpperCase()}</p>` : ''}
+            <div style="background: var(--bg-card); border: 1px solid var(--accent-success); border-radius: 8px; padding: 24px; margin-bottom: 32px; text-align: center;">
+                <h5 style="color: var(--accent-success); margin-bottom: 8px; font-size: 18px;">✓ EXECUTION COMPLETED</h5>
+                <p style="color: var(--text-secondary); font-size: 14px;">Execution Time: ${timestamp} | Data Source: ${execution.execution_summary.data_source}</p>
+                ${isLending ? `<p style="color: var(--text-light); font-size: 14px; margin-top: 8px;">Lending Protection: ${execution.execution_summary.protection_type.toUpperCase()}</p>` : ''}
             </div>
             
-            <div class="analysis-card" style="background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(5,150,105,0.1) 100%); border-color: var(--success);">
-                <h4>✅ Execution Completed Successfully</h4>
+            <div class="analysis-card" style="border-color: var(--accent-success);">
+                <h4 style="color: var(--accent-success);">✓ Execution Completed Successfully</h4>
                 <div class="metrics-grid">
                     <div class="metric-item">
                         <span class="metric-label">Strategy Executed</span>
@@ -816,7 +816,7 @@ class AttticusProfessionalDemo {
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Status</span>
-                        <span class="metric-value" style="color: var(--success);">${execution.execution_summary.status.toUpperCase()}</span>
+                        <span class="metric-value" style="color: var(--accent-success);">${execution.execution_summary.status.toUpperCase()}</span>
                     </div>
                     <div class="metric-item">
                         <span class="metric-label">Contracts Filled</span>
@@ -854,7 +854,7 @@ class AttticusProfessionalDemo {
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Risk Reduction</span>
-                            <span class="metric-value" style="color: var(--success);">${execution.lending_impact.liquidation_risk_reduction.reduction_pct}%</span>
+                            <span class="metric-value" style="color: var(--accent-success);">${execution.lending_impact.liquidation_risk_reduction.reduction_pct}%</span>
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Collateral Protected</span>
@@ -883,7 +883,7 @@ class AttticusProfessionalDemo {
                         </div>
                         <div class="metric-item">
                             <span class="metric-label">Risk Reduction</span>
-                            <span class="metric-value" style="color: var(--success);">${execution.portfolio_impact.var_reduction.reduction_pct}%</span>
+                            <span class="metric-value" style="color: var(--accent-success);">${execution.portfolio_impact.var_reduction.reduction_pct}%</span>
                         </div>
                     </div>
                 </div>
@@ -917,8 +917,8 @@ class AttticusProfessionalDemo {
                 <h4>Execution Venues</h4>
                 <div style="display: grid; gap: 12px;">
                     ${execution.execution_summary.execution_venues.map(venue => `
-                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, rgba(30,41,59,0.2) 0%, rgba(37,99,235,0.1) 100%); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2);">
-                            <span style="font-weight: 700; font-size: 16px; color: var(--success);">${venue.exchange.toUpperCase()}</span>
+                        <div style="display: flex; justify-content: space-between; padding: 16px 20px; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border);">
+                            <span style="font-weight: 700; font-size: 16px; color: var(--text-primary);">${venue.exchange.toUpperCase()}</span>
                             <span style="font-size: 16px; color: var(--text-bright);">${Math.round(venue.size)} BTC (${venue.liquidity} liquidity)</span>
                         </div>
                     `).join('')}
