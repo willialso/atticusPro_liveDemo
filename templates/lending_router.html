@@ -27,90 +27,123 @@
     </header>
 
     <main class="main-content">
-        <!-- Lending Router Hero Section -->
-        <section class="lending-router-hero">
+        <!-- Demo Navigation -->
+        <nav class="demo-nav">
             <div class="container">
-                <div class="router-content">
-                    <!-- Back Button -->
-                    <div class="back-navigation">
-                        <button class="back-btn" onclick="goToLanding()">
-                            ← Back to Home
+                <div class="nav-steps">
+                    <div class="nav-step active" data-section="challenge">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Challenge</span>
+                    </div>
+                    <div class="nav-step" data-section="solution">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Solution</span>
+                    </div>
+                    <div class="nav-step" data-section="protection">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Choose Protection</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Back Navigation -->
+        <div class="back-navigation">
+            <div class="container">
+                <button class="back-btn" onclick="goToLanding()">
+                    ← Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Section 1: Challenge -->
+        <section id="challenge-section" class="demo-section active">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Challenge</h2>
+                </div>
+
+                <div class="challenge-grid">
+                    <div class="challenge-card">
+                        <div class="challenge-icon">⚠️</div>
+                        <h3>Borrower Risk</h3>
+                        <p>Risk liquidation during price surges, missing upside potential</p>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">📉</div>
+                        <h3>Lender Risk</h3>
+                        <p>Face defaults during market crashes, collateral devaluation</p>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-icon">⚡</div>
+                        <h3>Volatility Risk</h3>
+                        <p>Bitcoin's extreme volatility affects both sides of lending</p>
+                    </div>
+                </div>
+
+                <button class="cta-btn" onclick="showSection('solution')">
+                    View Solution →
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 2: Solution -->
+        <section id="solution-section" class="demo-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Solution</h2>
+                </div>
+
+                <div class="solution-grid">
+                    <div class="solution-card">
+                        <div class="solution-icon">🛡️</div>
+                        <h3>Upside Protection</h3>
+                        <p>Borrowers can capture BTC gains while keeping loans intact</p>
+                    </div>
+                    <div class="solution-card">
+                        <div class="solution-icon">🔒</div>
+                        <h3>Downside Protection</h3>
+                        <p>Lenders protected against defaults and collateral devaluation</p>
+                    </div>
+                    <div class="solution-card">
+                        <div class="solution-icon">⚡</div>
+                        <h3>Real-Time Hedging</h3>
+                        <p>Instant protection with institutional-grade execution</p>
+                    </div>
+                </div>
+
+                <button class="cta-btn" onclick="showSection('protection')">
+                    Choose Protection →
+                </button>
+            </div>
+        </section>
+
+        <!-- Section 3: Choose Protection -->
+        <section id="protection-section" class="demo-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Choose Protection Type</h2>
+                </div>
+
+                <div class="user-type-selection">
+                    <div class="user-type-buttons">
+                        <button class="user-type-btn borrower-btn" onclick="navigateToBorrower()">
+                            <span class="btn-icon">👤</span>
+                            <span class="btn-content">
+                                <span class="btn-title">Borrower Protection</span>
+                                <span class="btn-description">Protect your upside while keeping your loan</span>
+                                <span class="btn-features">Calls • Spreads • Collars • Income</span>
+                            </span>
                         </button>
-                    </div>
-                    
-                    <!-- Hero Text -->
-                    <div class="router-text">
-                        <h1 class="router-title">BTC Lending Protection Solutions</h1>
-                        <p class="router-subtitle">Protect both sides of lending markets with institutional-grade Bitcoin options protection</p>
-                    </div>
-                    
-                    <!-- Problem/Solution Section -->
-                    <div class="problem-solution">
-                        <div class="problem-section">
-                            <h2>Lending Market Challenges</h2>
-                            <div class="challenge-grid">
-                                <div class="challenge-card">
-                                    <div class="challenge-icon">⚠️</div>
-                                    <h3>Borrower Risk</h3>
-                                    <p>Risk liquidation during price surges, missing upside potential</p>
-                                </div>
-                                <div class="challenge-card">
-                                    <div class="challenge-icon">📉</div>
-                                    <h3>Lender Risk</h3>
-                                    <p>Face defaults during market crashes, collateral devaluation</p>
-                                </div>
-                                <div class="challenge-card">
-                                    <div class="challenge-icon">⚡</div>
-                                    <h3>Volatility Risk</h3>
-                                    <p>Bitcoin's extreme volatility affects both sides of lending</p>
-                                </div>
-                            </div>
-                        </div>
                         
-                        <div class="solution-section">
-                            <h2>Atticus Solution</h2>
-                            <div class="solution-grid">
-                                <div class="solution-card">
-                                    <div class="solution-icon">🛡️</div>
-                                    <h3>Upside Protection</h3>
-                                    <p>Borrowers can capture BTC gains while keeping loans intact</p>
-                                </div>
-                                <div class="solution-card">
-                                    <div class="solution-icon">🔒</div>
-                                    <h3>Downside Protection</h3>
-                                    <p>Lenders protected against defaults and collateral devaluation</p>
-                                </div>
-                                <div class="solution-card">
-                                    <div class="solution-icon">⚡</div>
-                                    <h3>Real-Time Hedging</h3>
-                                    <p>Instant protection with institutional-grade execution</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- User Type Selection -->
-                    <div class="user-type-selection">
-                        <h2>Choose Your Protection Type</h2>
-                        <div class="user-type-buttons">
-                            <button class="user-type-btn borrower-btn" onclick="navigateToBorrower()">
-                                <span class="btn-icon">👤</span>
-                                <span class="btn-content">
-                                    <span class="btn-title">Borrower Protection</span>
-                                    <span class="btn-description">Protect your upside while keeping your loan</span>
-                                    <span class="btn-features">Calls • Spreads • Collars • Income</span>
-                                </span>
-                            </button>
-                            
-                            <button class="user-type-btn lender-btn" onclick="navigateToLender()">
-                                <span class="btn-icon">🏦</span>
-                                <span class="btn-content">
-                                    <span class="btn-title">Lender Protection</span>
-                                    <span class="btn-description">Protect against defaults and volatility</span>
-                                    <span class="btn-features">Puts • Disaster Protection • Liquidation Coverage</span>
-                                </span>
-                            </button>
-                        </div>
+                        <button class="user-type-btn lender-btn" onclick="navigateToLender()">
+                            <span class="btn-icon">🏦</span>
+                            <span class="btn-content">
+                                <span class="btn-title">Lender Protection</span>
+                                <span class="btn-description">Protect against defaults and volatility</span>
+                                <span class="btn-features">Puts • Disaster Protection • Liquidation Coverage</span>
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -192,6 +225,26 @@
             }
         }
         
+        // Section navigation function (like institutional)
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.demo-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all nav steps
+            document.querySelectorAll('.nav-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(`${sectionName}-section`);
+            const targetNav = document.querySelector(`[data-section="${sectionName}"]`);
+            
+            if (targetSection) targetSection.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+        }
+        
         // Navigation functions
         function goToLanding() {
             window.location.href = '/';
@@ -209,6 +262,14 @@
         let router;
         document.addEventListener('DOMContentLoaded', function() {
             router = new LendingRouter();
+            
+            // Make nav steps clickable
+            document.querySelectorAll('.nav-step').forEach(step => {
+                step.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
         });
     </script>
 </body>
