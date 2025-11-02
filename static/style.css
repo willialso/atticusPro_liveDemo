@@ -18,6 +18,7 @@
     /* Borders - Subtle grey */
     --border: #475569;           /* Subtle grey borders (1px) */
     --border-subtle: #475569;    /* For consistent use */
+    --border-ultra-subtle: rgba(71, 85, 105, 0.2); /* 20% opacity for ultra-minimal look */
     
     /* Text Colors */
     --text-primary: #F8FAFC;     /* White for primary text */
@@ -74,6 +75,26 @@
     --spacing-lg: 32px;
     --spacing-xl: 48px;
     --spacing-2xl: 64px;
+    
+    /* Large Metric Display - For key metrics like "$83.08K" in reference */
+    --metric-large-size: 36px;
+    --metric-large-weight: 800;
+}
+
+/* Large Metric Display Class - For prominent key metrics */
+.metric-display-large {
+    font-size: var(--metric-large-size);
+    font-weight: var(--metric-large-weight);
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.metric-label-small {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    display: block;
 }
 
 body {
@@ -172,7 +193,7 @@ body {
     top: 0;
     z-index: 1000;
     color: var(--text-primary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow */
+    box-shadow: none; /* Removed for flat design - reference shows no shadows */
 }
 
 .header-content {
@@ -207,12 +228,16 @@ body {
 }
 
 .status-item .label {
+    font-size: 14px; /* Slightly smaller for hierarchy */
     color: var(--text-secondary);
     margin-bottom: 4px;
     display: block;
+    font-weight: 500;
 }
 
 .status-item .value {
+    font-size: 20px; /* Increased from 16px for better emphasis */
+    font-weight: 700; /* Increased from 600 for boldness */
     color: var(--text-white);
     display: block;
 }
@@ -408,8 +433,8 @@ body {
 
 /* Stat card headings (numbers) */
 .stat-card h3 {
-    font-size: 32px; /* Increased for crispness */
-    font-weight: 600;
+    font-size: 36px; /* Increased from 32px for better emphasis - aligns with reference */
+    font-weight: 800; /* Increased from 600 for boldness - matches reference bold numbers */
     color: var(--accent-primary); /* Flat accent color */
     margin: 0;
     line-height: var(--line-height-tight);
@@ -559,7 +584,7 @@ body {
 /* FIXED PRICING GRID - 2x2 Layout */
 .pricing-transparency {
     background: var(--bg-card); /* Flat card background */
-    border: 1px solid var(--border); /* Subtle grey border */
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border for minimal look */
     border-radius: 8px;
     padding: 32px;
     margin-bottom: 60px;
@@ -604,13 +629,13 @@ body {
 .pricing-item .label {
     color: var(--text-secondary);
     font-weight: 500;
-    font-size: 16px;
+    font-size: 14px; /* Slightly smaller for hierarchy */
 }
 
 .pricing-item .value {
-    font-weight: 600;
+    font-weight: 700; /* Increased from 600 for better emphasis */
     color: var(--text-primary); /* Flat white */
-    font-size: 16px;
+    font-size: 18px; /* Increased from 16px for better visibility */
 }
 
 /* Mobile Pricing Grid Responsiveness */
@@ -658,7 +683,7 @@ body {
 /* Enhanced Demo Section */
 .market-data-bar {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border for minimal look */
     border-radius: 8px;
     padding: 24px 32px;
     margin-bottom: 48px;
@@ -806,19 +831,19 @@ body {
     padding: 16px 20px;
     background: var(--bg-main);
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border for minimal look */
 }
 
 .summary-item .label {
     color: var(--text-light);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500; /* Reduced from 600 for hierarchy */
 }
 
 .summary-item .value {
     color: var(--accent-primary);
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 20px; /* Increased from 16px for better emphasis */
+    font-weight: 700; /* Increased from 600 for boldness */
 }
 
 .market-item {
@@ -836,22 +861,22 @@ body {
 
 .market-item .label {
     display: block;
-    font-size: 15px; /* Increased for crispness */
+    font-size: 14px; /* Slightly smaller for clear hierarchy */
     color: var(--text-secondary); /* Light grey */
     margin-bottom: 8px;
     font-weight: 500;
 }
 
 .market-item .value {
-    font-size: 22px; /* Increased for crispness */
-    font-weight: 600;
+    font-size: 22px; /* Maintained - already good size */
+    font-weight: 700; /* Increased from 600 for better emphasis */
     color: var(--text-primary); /* Flat white */
 }
 
 /* Enhanced Workflow Container */
 .demo-workflow {
     background: transparent;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border for minimal look */
     border-radius: 8px;
     padding: 32px;
     margin-bottom: 48px;
@@ -1267,11 +1292,11 @@ body {
 
 .strategy-option {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border - becomes visible on hover */
     border-radius: 8px;
     padding: 32px; /* Increased to match lending consistency */
     cursor: pointer;
-    transition: none;
+    transition: border-color 0.15s ease; /* Smooth hover transition */
     position: relative;
     width: 100%;
     max-width: 100%;
@@ -1279,7 +1304,7 @@ body {
 }
 
 .strategy-option:hover {
-    border-color: var(--accent-primary);
+    border-color: var(--accent-primary); /* Gold border on hover for clear feedback */
     background: var(--bg-card); /* Maintain background */
 }
 
@@ -1419,8 +1444,8 @@ body {
 
 .strategy-metric .metric-value,
 .metric-card .metric-value {
-    font-size: 18px; /* Increased for consistency */
-    font-weight: 600;
+    font-size: 20px; /* Increased from 18px for better emphasis */
+    font-weight: 700; /* Increased from 600 for boldness */
     color: var(--accent-primary); /* Use gold accent for values */
     line-height: 1.2;
     display: block;
@@ -3301,7 +3326,7 @@ body {
     padding: 20px;
     background: var(--bg-main);
     border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-ultra-subtle); /* Ultra-subtle border for minimal look */
 }
 
 .summary-item .label {
@@ -3311,8 +3336,8 @@ body {
 }
 
 .summary-item .value {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px; /* Increased from 18px for better emphasis */
+    font-weight: 700; /* Increased from 600 for boldness */
     color: var(--accent-primary);
 }
 
