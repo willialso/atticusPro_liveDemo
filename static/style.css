@@ -3135,7 +3135,7 @@ body {
 }
 
 .borrower-config {
-    background: var(--bg-card);
+    background: transparent; /* Removed grey background for cleaner distinction like institutional */
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 48px;
@@ -3410,7 +3410,7 @@ body {
 
 .details-panel,
 .overview-panel {
-    background: var(--bg-card);
+    background: transparent; /* Removed grey background for cleaner distinction like institutional */
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 40px;
