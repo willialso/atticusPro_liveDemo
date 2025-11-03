@@ -1388,18 +1388,20 @@ body {
 .strategies-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 32px; /* Increased from 16px to accommodate RECOMMENDED tag */
     margin-top: 40px;
+    padding-top: 16px; /* Space for first card's RECOMMENDED tag */
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
+    overflow-y: visible; /* Allow tag to extend above first card */
 }
 
 /* Tablet and up - 2 columns */
 @media (min-width: 768px) {
     .strategies-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
+        gap: 32px; /* Increased from 20px to accommodate RECOMMENDED tag */
     }
 }
 
@@ -1407,7 +1409,7 @@ body {
 @media (min-width: 1200px) {
     .strategies-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
+        gap: 36px; /* Increased from 24px to accommodate RECOMMENDED tag */
     }
 }
 
