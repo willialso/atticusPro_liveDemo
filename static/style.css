@@ -2857,7 +2857,7 @@ body {
 
 .hero-cta {
     display: flex;
-    gap: 20px; /* Reduced from 32px for tighter spacing */
+    gap: 32px; /* Matches features-grid gap for visual consistency */
     justify-content: center;
     align-items: stretch;
     flex-wrap: wrap;
@@ -2996,6 +2996,7 @@ body {
     .hero-cta {
         flex-direction: column;
         align-items: center;
+        gap: 20px; /* Matches mobile features-grid gap for consistency */
     }
     
     .cta-btn {
