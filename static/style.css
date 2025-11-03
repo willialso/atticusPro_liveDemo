@@ -253,7 +253,7 @@ body {
 .header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start; /* Left-align logo; status is absolute positioned on right */
     padding: 12px 0; /* Reduced from 16px for more compact look */
     position: relative;
 }
@@ -262,7 +262,8 @@ body {
 .logo {
     height: 50px; /* Reduced from 70px */
     width: auto;
-    margin: 0 auto;
+    margin: 0; /* Changed from 0 auto to left-align */
+    margin-right: auto; /* Push to left */
     filter: brightness(1.2) contrast(1.1); /* Slightly brighter for dark background */
 }
 
