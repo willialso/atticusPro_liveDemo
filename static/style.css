@@ -258,12 +258,31 @@ body {
     position: relative;
 }
 
+/* LOGO LINK */
+.logo-link {
+    display: inline-block;
+    margin-right: auto; /* Push to left */
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.logo-link:hover {
+    opacity: 0.9;
+}
+
+.logo-link:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 /* SMALLER LOGO */
 .logo {
     height: 50px; /* Reduced from 70px */
     width: auto;
-    margin: 0; /* Changed from 0 auto to left-align */
-    margin-right: auto; /* Push to left */
+    margin: 0;
+    display: block; /* Remove inline spacing */
     filter: brightness(1.2) contrast(1.1); /* Slightly brighter for dark background */
 }
 
@@ -314,6 +333,10 @@ body {
         width: 100% !important;
     }
     
+    .logo-link {
+        margin: 0 auto !important; /* Center on mobile */
+    }
+    
     .logo {
         height: 30px !important;
         max-width: 80% !important;
@@ -353,6 +376,10 @@ body {
         font-size: 12px;
     }
     
+    .logo-link {
+        margin: 0 auto !important; /* Center on small mobile */
+    }
+    
     .logo {
         height: 25px !important;
         max-width: 75% !important;
@@ -363,6 +390,10 @@ body {
     }
     
     /* Small mobile logo scaling - restore image with proper sizing */
+    .header .header-content .logo-link {
+        margin: 0 auto !important;
+    }
+    
     .header .header-content .logo {
         height: 25px !important;
         max-width: 75% !important;
@@ -1350,6 +1381,10 @@ body {
     }
     
     /* Mobile logo scaling - restore image with proper sizing */
+    .header .header-content .logo-link {
+        margin: 0 auto !important;
+    }
+    
     .header .header-content .logo {
         height: 30px !important;
         max-width: 80% !important;
