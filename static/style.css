@@ -2778,7 +2778,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 0;
+    padding: 60px 0 40px; /* Increased top padding for logo space */
     background: var(--bg-main);
 }
 
@@ -2786,55 +2786,74 @@ body {
     text-align: center;
     max-width: 1000px;
     margin: 0 auto;
+    padding: 0 24px; /* Side padding for mobile */
+}
+
+/* Hero Logo Container */
+.hero-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 32px; /* Space between logo and title */
+    padding-top: 24px; /* Space from header */
 }
 
 .hero-logo {
-    display: none;
+    height: 140px; /* Large, prominent on desktop */
+    width: auto;
+    max-width: 400px;
+    filter: brightness(1.1) contrast(1.05); /* Subtle enhancement */
+    object-fit: contain;
 }
 
 .logo-large {
     display: none;
 }
 
-/* Mobile main logo - replace with styled text to prevent compression */
-@media (max-width: 768px) {
-    .logo-large {
-        display: none !important;
+/* Tablet Responsive */
+@media (max-width: 1200px) {
+    .hero-logo {
+        height: 100px;
+        max-width: 300px;
     }
     
-    .hero-logo::before {
-        content: "Atticus";
-        font-family: 'Times New Roman', serif;
-        font-size: 48px;
-        font-weight: bold;
-        color: #fbbf24; /* Yellow/gold color */
-        display: block;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-    
-    .hero-logo::after {
-        content: "PROFESSIONAL";
-        font-family: 'Calibri', 'Arial', sans-serif;
-        font-size: 24px;
-        font-weight: 600;
-        color: var(--accent-primary);
-        display: block;
-        text-align: center;
-        letter-spacing: 2px;
+    .hero-logo-container {
+        margin-bottom: 28px;
+        padding-top: 20px;
     }
 }
 
-/* Extra small mobile screens - smaller main logo text */
-@media (max-width: 480px) {
-    .hero-logo::before {
-        font-size: 36px;
-        margin-bottom: 6px;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .landing-hero {
+        padding: 40px 0 32px;
     }
     
-    .hero-logo::after {
-        font-size: 18px;
-        letter-spacing: 1px;
+    .hero-logo-container {
+        margin-bottom: 24px;
+        padding-top: 20px;
+    }
+    
+    .hero-logo {
+        height: 70px; /* Still prominent on mobile */
+        max-width: 250px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+    .landing-hero {
+        padding: 32px 0 24px;
+    }
+    
+    .hero-logo {
+        height: 60px;
+        max-width: 200px;
+    }
+    
+    .hero-logo-container {
+        margin-bottom: 20px;
+        padding-top: 16px;
     }
 }
 
