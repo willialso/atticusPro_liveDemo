@@ -2857,7 +2857,7 @@ body {
 
 .hero-cta {
     display: flex;
-    gap: 32px; /* Matches features-grid gap for visual consistency */
+    gap: 16px; /* Tighter spacing for 2-button layout - reduces white space */
     justify-content: center;
     align-items: stretch;
     flex-wrap: wrap;
